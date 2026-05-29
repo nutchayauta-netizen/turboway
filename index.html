@@ -221,7 +221,6 @@
             
             <div class="module-list" id="dash-module-list"></div>
 
-            <!-- ปุ่มดูสรุปทั้งหมด (ถูกซ่อนไว้จนกว่าจะจบ 5 บท) -->
             <div id="dash-final-action" class="dash-final-action">
                 <h2 style="color: var(--success); margin-bottom: 15px;" data-i18n="readyForSummary"></h2>
                 <button class="btn-main" onclick="showFinalResult()" style="background: var(--success); border-radius: 40px; padding: 15px 40px; font-size: 1.6rem; max-width: 500px;">
@@ -316,7 +315,7 @@
                 <h1 style="font-size: 4rem; color: var(--primary); margin-bottom: 15px;" data-i18n="finalWelcome"></h1>
                 <h2 style="font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;">"Welcome to the Ngern Turbo Family!"</h2>
                 
-                <!-- เปลี่ยนฟังก์ชันเป็น Redirect ไปหน้าสอบ -->
+                <!-- เปลี่ยนจากส่งไปหน้า exam.html เป็นการลิงก์ออกไป SuccessFactors ตรงๆ -->
                 <button class="btn-main" onclick="goToFinalQuizPlatform()" style="background: var(--accent); border-radius: 40px;">
                     <i class="fa-solid fa-file-signature"></i> <span data-i18n="goToFinalQuizBtn"></span>
                 </button>
@@ -325,9 +324,6 @@
 
     </div>
 
-    <!-- ================================================== -->
-    <!-- JAVASCRIPT LOGIC                                   -->
-    <!-- ================================================== -->
     <script>
         // --- 1. DATA & TRANSLATIONS ---
         const UI_TEXT = {
@@ -451,7 +447,6 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            // Manage Navbar Items
             if(id === 'screen-login' || id === 'screen-welcome') {
                 document.getElementById('user-badge').style.display = 'none';
                 document.getElementById('btn-logout').style.display = 'none';
@@ -507,7 +502,6 @@
             document.getElementById('in-id').value = '';
             unlockedModules = [1];
             completedModules = [];
-            localStorage.removeItem('turbo_user_data'); // Clear session
             showScreen('screen-login');
         }
 
@@ -541,7 +535,6 @@
                 `;
             });
 
-            // Show final action button when all 5 modules are complete
             if (completedModules.length === 5) {
                 document.getElementById('dash-final-action').style.display = 'block';
             } else {
@@ -561,7 +554,6 @@
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
             const cData = mod.cards[cardIndex];
 
-            // Setup Header & Colors
             document.getElementById('fc-main-title').innerText = `${mod.id}. ${mod[lang].title}`;
             document.getElementById('fc-main-title').style.color = mod.color;
             document.getElementById('fc-counter').innerText = `${t('topic')} ${cardIndex + 1} / ${mod.cards.length}`;
@@ -570,19 +562,16 @@
             document.getElementById('fc-front').style.background = `linear-gradient(135deg, ${mod.color} 0%, var(--primary) 100%)`;
             document.getElementById('fc-back').style.borderColor = mod.color;
 
-            // Setup Locked Title (Top Bar)
             document.getElementById('fc-sub-f').innerText = cData.subtopic;
             document.getElementById('fc-sub-b').innerText = cData.subtopic;
             document.getElementById('fc-sub-f').style.color = 'white';
             document.getElementById('fc-sub-b').style.color = mod.color;
             
-            // Set Icons
             document.getElementById('fc-icon-f').className = `fa-solid ${cData.icon}`;
             document.getElementById('fc-icon-b').className = `fa-solid ${cData.icon}`;
             document.getElementById('fc-icon-main').className = `fa-solid ${cData.icon}`;
             document.getElementById('fc-icon-b').style.color = mod.color;
 
-            // Set Content
             document.getElementById('fc-def').innerText = cData[lang].def;
             document.getElementById('fc-trad').innerText = cData[lang].trad;
             document.getElementById('fc-turbo').innerText = cData[lang].turbo;
@@ -631,7 +620,7 @@
             }
         }
 
-        // --- 8. SUMMARY (HORIZONTAL) ---
+        // --- 8. SUMMARY ---
         function showSummary() {
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
             document.getElementById('sum-icon').style.color = mod.color;
@@ -646,7 +635,6 @@
             const list = document.getElementById('sum-list');
             list.innerHTML = '';
             
-            // Build Horizontal Cards
             mod.cards.forEach((c, idx) => {
                 list.innerHTML += `
                     <div class="summary-item" style="border-top: 8px solid ${mod.color}">
@@ -664,7 +652,6 @@
         function completeModule() {
             if (!completedModules.includes(activeModuleId)) completedModules.push(activeModuleId);
             
-            // ปลดล็อคบทที่ 2-5 ทันทีเมื่อจบ One Turbo (id=1)
             if (completedModules.includes(1)) {
                 [2, 3, 4, 5].forEach(id => {
                     if (!unlockedModules.includes(id)) unlockedModules.push(id);
@@ -675,7 +662,7 @@
             showScreen('screen-dashboard');
         }
 
-        // --- 10. FINAL RESULT (5 COLUMNS) ---
+        // --- 10. FINAL RESULT ---
         function showFinalResult() {
             const grid = document.getElementById('final-grid');
             grid.innerHTML = '';
@@ -692,19 +679,15 @@
             showScreen('screen-final');
         }
 
-        // --- 11. WELCOME TO NTB FAMILY (REDIRECT TO EXTERNAL FINAL ASSESSMENT) ---
         function goToWelcome() {
             showScreen('screen-welcome');
         }
 
-        // เปลี่ยนโค้ดตรงนี้เพื่อส่งต่อไปยังไฟล์ exam.html
+        // --- 11. REDIRECT TO SUCCESSFACTORS ---
         function goToFinalQuizPlatform() {
-            // แอบเซฟข้อมูลพนักงานลงความจำเบราว์เซอร์ เพื่อให้ไปโผล่ใน exam.html ได้ทันที
-            if (currentUser) {
-                localStorage.setItem('turbo_user_data', JSON.stringify(currentUser));
-            }
-
-            // สร้าง Loading Overlay 
+            const SF_EXAM_URL = "https://your-successfactors-link.com"; // <-- ใส่ลิงก์ของ SF จริงตรงนี้นะคะ
+            
+            // สร้าง Loading Overlay เสมือนกำลังโหลดพากลับไปหน้าหลัก
             const overlay = document.createElement('div');
             overlay.style.position = 'fixed';
             overlay.style.inset = '0';
@@ -730,17 +713,17 @@
             text.style.textAlign = 'center';
             text.style.lineHeight = '1.6';
             text.innerHTML = lang === 'th' 
-                ? "กำลังนำคุณเข้าสู่ระบบทำแบบทดสอบรวม (Post-Test)...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>กรุณารอสักครู่ ระบบกำลังจัดเตรียมข้อสอบ 25 ข้อจากเนื้อหาทั้ง 5 บท</span>" 
-                : "Redirecting you to the final Post-Test assessment...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>Please wait, preparing 25 questions from all 5 modules.</span>";
+                ? "กำลังพาท่านกลับสู่ระบบ SuccessFactors เพื่อทำแบบทดสอบ...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>กรุณารอสักครู่ ระบบกำลังบันทึกข้อมูลการเรียนของคุณ</span>" 
+                : "Redirecting you to SuccessFactors to start the assessment...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>Please wait, we are saving your learning records.</span>";
             
             overlay.appendChild(spinner);
             overlay.appendChild(text);
             document.body.appendChild(overlay);
             
-            // รอ 2 วินาที แล้วทำการเปลี่ยน URL ในหน้าต่างเดิมไปที่ไฟล์ exam.html
+            // รอ 2 วินาที แล้วทำการเปลี่ยน URL ออกไปยังลิงก์ข้อสอบของ SF (รวมถึงจุดที่จะส่งค่า Completed ผ่าน Firebase)
             setTimeout(() => {
                 document.body.removeChild(overlay);
-                window.location.href = 'exam.html'; // กระโดดไปไฟล์ข้อสอบ
+                window.location.href = SF_EXAM_URL; 
             }, 2000);
         }
 
