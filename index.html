@@ -315,7 +315,6 @@
                 <h1 style="font-size: 4rem; color: var(--primary); margin-bottom: 15px;" data-i18n="finalWelcome"></h1>
                 <h2 style="font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;">"Welcome to the Ngern Turbo Family!"</h2>
                 
-                <!-- เปลี่ยนจากส่งไปหน้า exam.html เป็นการลิงก์ออกไป SuccessFactors ตรงๆ -->
                 <button class="btn-main" onclick="goToFinalQuizPlatform()" style="background: var(--accent); border-radius: 40px;">
                     <i class="fa-solid fa-file-signature"></i> <span data-i18n="goToFinalQuizBtn"></span>
                 </button>
@@ -324,8 +323,33 @@
 
     </div>
 
-    <script>
-        // --- 1. DATA & TRANSLATIONS ---
+    <!-- ================================================== -->
+    <!-- JAVASCRIPT LOGIC (WITH FIREBASE INTEGRATION)       -->
+    <!-- ================================================== -->
+    <script type="module">
+        // ----------------------------------------------------
+        // 1. FIREBASE SETUP & INITIALIZATION
+        // ----------------------------------------------------
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDb7mitiY1A560hdtuvzHPAX2XEjuFMfnI",
+            authDomain: "turboway-a2d65.firebaseapp.com",
+            projectId: "turboway-a2d65",
+            storageBucket: "turboway-a2d65.firebasestorage.app",
+            messagingSenderId: "708063086463",
+            appId: "1:708063086463:web:064d8aef807ca3d955bc4a",
+            measurementId: "G-7580NX4XS0"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ----------------------------------------------------
+        // 2. DATA & TRANSLATIONS
+        // ----------------------------------------------------
         const UI_TEXT = {
             th: {
                 loginTitle: 'E-Learning Portal', loginSubtitle: 'เข้าสู่ระบบเพื่อเริ่มการเรียนรู้', emailLabel: 'Email บริษัท', empIdLabel: 'รหัสพนักงาน (ID)',
@@ -410,7 +434,7 @@
             }
         ];
 
-        // --- 2. STATE ---
+        // --- 3. STATE ---
         let lang = 'th';
         let currentUser = null;
         let unlockedModules = [1];
@@ -422,7 +446,7 @@
 
         function t(key) { return UI_TEXT[lang][key]; }
 
-        // --- 3. UI UPDATER ---
+        // --- 4. UI UPDATER ---
         function toggleLanguage() {
             lang = lang === 'th' ? 'en' : 'th';
             document.getElementById('lang-text').innerText = lang === 'th' ? 'EN' : 'TH';
@@ -457,7 +481,7 @@
             window.scrollTo(0,0);
         }
 
-        // --- 4. ADMIN LOGIN ---
+        // --- 5. ADMIN LOGIN ---
         function openAdminModal() { document.getElementById('admin-modal').classList.add('active'); }
         function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); document.getElementById('admin-alert').className = 'alert-box'; }
         function adminLogin() {
@@ -473,7 +497,7 @@
             }
         }
 
-        // --- 5. USER LOGIN ---
+        // --- 6. USER LOGIN ---
         function login() {
             const email = document.getElementById('in-email').value;
             const empId = document.getElementById('in-id').value;
@@ -505,7 +529,7 @@
             showScreen('screen-login');
         }
 
-        // --- 6. DASHBOARD ---
+        // --- 7. DASHBOARD ---
         function renderDashboard() {
             document.getElementById('dash-prog-text').innerText = `${completedModules.length} / 5 ${t('module')}`;
             document.getElementById('dash-prog-fill').style.width = `${(completedModules.length/5)*100}%`;
@@ -542,7 +566,7 @@
             }
         }
 
-        // --- 7. FLASHCARD ---
+        // --- 8. FLASHCARD ---
         function startModule(id) {
             activeModuleId = id; cardIndex = 0; viewedCards = []; isCardFlipped = false;
             document.getElementById('flashcard').classList.remove('flipped');
@@ -620,7 +644,7 @@
             }
         }
 
-        // --- 8. SUMMARY ---
+        // --- 9. SUMMARY ---
         function showSummary() {
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
             document.getElementById('sum-icon').style.color = mod.color;
@@ -683,11 +707,29 @@
             showScreen('screen-welcome');
         }
 
-        // --- 11. REDIRECT TO SUCCESSFACTORS ---
-        function goToFinalQuizPlatform() {
-            const SF_EXAM_URL = "https://your-successfactors-link.com"; // <-- ใส่ลิงก์ของ SF จริงตรงนี้นะคะ
+        // --- 11. FIREBASE INTEGRATION & REDIRECT ---
+        
+        // ----------------------------------------------------
+        // Map global functions so they work with HTML onclick inside type="module"
+        // ----------------------------------------------------
+        window.toggleLanguage = toggleLanguage;
+        window.showScreen = showScreen;
+        window.openAdminModal = openAdminModal;
+        window.closeAdminModal = closeAdminModal;
+        window.adminLogin = adminLogin;
+        window.login = login;
+        window.logout = logout;
+        window.startModule = startModule;
+        window.flipCard = flipCard;
+        window.changeCard = changeCard;
+        window.showSummary = showSummary;
+        window.completeModule = completeModule;
+        window.showFinalResult = showFinalResult;
+        window.goToWelcome = goToWelcome;
+
+        async function goToFinalQuizPlatform() {
+            const SF_EXAM_URL = "https://example.com/pending-sf-link"; // <-- ใส่ลิงก์ข้อสอบของ SF จริงตรงนี้นะคะ
             
-            // สร้าง Loading Overlay เสมือนกำลังโหลดพากลับไปหน้าหลัก
             const overlay = document.createElement('div');
             overlay.style.position = 'fixed';
             overlay.style.inset = '0';
@@ -713,23 +755,36 @@
             text.style.textAlign = 'center';
             text.style.lineHeight = '1.6';
             text.innerHTML = lang === 'th' 
-                ? "กำลังพาท่านกลับสู่ระบบ SuccessFactors เพื่อทำแบบทดสอบ...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>กรุณารอสักครู่ ระบบกำลังบันทึกข้อมูลการเรียนของคุณ</span>" 
+                ? "กำลังพาท่านเข้าสู่ระบบ SuccessFactors เพื่อทำแบบทดสอบ...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>กรุณารอสักครู่ ระบบกำลังบันทึกข้อมูลการเรียนของคุณ</span>" 
                 : "Redirecting you to SuccessFactors to start the assessment...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>Please wait, we are saving your learning records.</span>";
             
             overlay.appendChild(spinner);
             overlay.appendChild(text);
             document.body.appendChild(overlay);
-            
-            // รอ 2 วินาที แล้วทำการเปลี่ยน URL ออกไปยังลิงก์ข้อสอบของ SF (รวมถึงจุดที่จะส่งค่า Completed ผ่าน Firebase)
+
+            // [FIREBASE] เขียนข้อมูลลงฐานข้อมูล (Firestore)
+            try {
+                if (currentUser) {
+                    await addDoc(collection(db, "learning_completions"), {
+                        empId: currentUser.empId,
+                        email: currentUser.email,
+                        name: currentUser.name,
+                        completedAt: serverTimestamp(),
+                        modulesCompleted: 5
+                    });
+                    console.log("บันทึกข้อมูลการเรียนลง Firebase สำเร็จ!");
+                }
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล Firebase: ", error);
+            }
+
             setTimeout(() => {
                 document.body.removeChild(overlay);
                 window.location.href = SF_EXAM_URL; 
-            }, 2000);
+            }, 2500);
         }
+        window.goToFinalQuizPlatform = goToFinalQuizPlatform;
 
-        // Init language translations on load
-        toggleLanguage(); // Trigger default to TH
-        toggleLanguage(); 
     </script>
 </body>
 </html>
