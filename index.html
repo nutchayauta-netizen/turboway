@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TURBO WAYS Learning</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* === THEME COLORS === */
+        :root {
+            --primary: #002D72; 
+            --accent: #FA4786; 
+            --bg-color: #f0f4f8;
+            --text-main: #333;
+            --text-light: #666;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --shadow-sm: 0 4px 15px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; }
+
+        /* === LAYOUT === */
+        .app-container { width: 100%; max-width: 1440px; background-color: #fff; min-height: 100vh; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); position: relative; overflow-x: hidden; }
+        .screen { display: none; padding: 40px 60px; flex-grow: 1; animation: fadeIn 0.4s ease; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* === TOP NAVBAR === */
+        .top-navbar { background-color: var(--primary); color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; box-shadow: 0 4px 15px rgba(0,0,0,0.15); width: 100%; }
+        .nav-logo { font-size: 1.8rem; font-weight: 700; letter-spacing: 1px; }
+        .nav-logo span { color: var(--accent); }
+        .nav-actions { display: flex; align-items: center; gap: 20px; font-size: 1.2rem; }
+        .btn-lang, .btn-admin { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 18px; border-radius: 20px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 1.1rem;}
+        .btn-lang:hover, .btn-admin:hover { background: rgba(255,255,255,0.25); }
+        .user-badge { display: flex; align-items: center; gap: 8px; font-weight: 500; background: rgba(0,0,0,0.2); padding: 8px 20px; border-radius: 20px;}
+        .btn-logout { background: none; border: none; color: white; opacity: 0.8; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; gap: 5px; transition: 0.2s; font-weight: 500;}
+        .btn-logout:hover { opacity: 1; color: var(--accent); }
+
+        /* === ADMIN MODAL === */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #888; border: none; background: none; }
+        .modal-box input { width: 100%; padding: 15px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 10px; margin-bottom: 20px; text-align: center; outline: none; }
+        .modal-box input:focus { border-color: var(--primary); }
+
+        /* === TYPOGRAPHY & BUTTONS === */
+        h1 { font-size: 3rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        h2 { font-size: 2.2rem; font-weight: 600; margin-bottom: 15px; }
+        h3 { font-size: 1.8rem; font-weight: 600; }
+        p { font-size: 1.4rem; line-height: 1.5; color: var(--text-light); }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px 30px; font-size: 1.5rem; font-weight: 600; border-radius: 30px; cursor: pointer; transition: 0.3s; width: 100%; max-width: 400px; box-shadow: var(--shadow-sm); display: inline-flex; justify-content: center; align-items: center; gap: 10px;}
+        .btn-main:hover:not(:disabled) { transform: translateY(-3px); box-shadow: var(--shadow-md); filter: brightness(1.1); }
+        .btn-main:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+
+        /* === 0. LOGIN === */
+        .login-box { background: white; padding: 50px; border-radius: 24px; box-shadow: var(--shadow-lg); border-top: 8px solid var(--accent); width: 100%; max-width: 500px; margin: auto; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; font-size: 1.3rem; margin-bottom: 8px; font-weight: 500; }
+        .input-group input { width: 100%; padding: 15px 20px; font-size: 1.3rem; border: 2px solid #eaeaea; border-radius: 12px; outline: none; transition: 0.3s; }
+        .input-group input:focus { border-color: var(--accent); }
+        .alert-box { display: none; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 1.2rem; font-weight: 500; text-align: center; }
+        .alert-box.error { background: #fff1f0; border: 1px solid #ffa39e; color: var(--danger); display: block; animation: shake 0.4s; }
+        .alert-box.success { background: #f6ffed; border: 1px solid #b7eb8f; color: var(--success); display: block; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+        /* === 1. DASHBOARD === */
+        .dash-header { text-align: center; margin-bottom: 30px; width: 100%; }
+        .progress-bar-container { max-width: 800px; margin: 15px auto; }
+        .progress-track { background: #e0e0e0; height: 14px; border-radius: 7px; overflow: hidden; margin-top: 8px; }
+        .progress-fill { background: var(--accent); height: 100%; width: 0%; transition: width 1s ease-out; }
+        .module-list { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 900px; margin: 0 auto; }
+        .module-card { display: flex; align-items: center; padding: 18px 25px; border-radius: 20px; border: 2px solid #eaeaea; border-left-width: 12px; background: white; transition: 0.3s; cursor: pointer; }
+        .module-card.unlocked:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .module-card.locked { opacity: 0.5; filter: grayscale(100%); cursor: not-allowed; background: #fafafa; }
+        .module-card.completed { background: #f8fafc; }
+        .m-icon { width: 60px; height: 60px; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: bold; color: white; margin-right: 20px; box-shadow: var(--shadow-sm); }
+        .m-info { flex-grow: 1; text-align: left; }
+        .m-info h3 { font-size: 1.6rem; margin: 0; }
+        .m-info p { font-size: 1.1rem; margin: 3px 0 0 0; }
+        .m-status { font-size: 2.2rem; color: #ccc; }
+        .dash-final-action { display: none; text-align: center; margin-top: 35px; animation: zoomIn 0.5s ease; background: #f0fdf4; border: 2px dashed var(--success); padding: 30px; border-radius: 24px; max-width: 900px; width: 100%; box-shadow: var(--shadow-sm); }
+
+        /* === 2. FLASHCARD === */
+        .fc-header { width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #eaeaea; flex-wrap: nowrap;}
+        .btn-back { background: #f0f0f0; border: none; padding: 8px 18px; border-radius: 12px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; font-weight: 600; flex-shrink: 0; white-space: nowrap; }
+        .btn-back:hover { background: #e0e0e0; color: var(--primary); }
+        .fc-title-group { flex-grow: 1; display: flex; justify-content: center; overflow: hidden; padding: 0 15px;}
+        .module-title-display { text-align: center; font-size: 2.2rem; font-weight: 700; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .fc-counter { font-size: 1.3rem; font-weight: 600; background: #f0f0f0; padding: 8px 20px; border-radius: 20px; color: #555; white-space: nowrap; flex-shrink: 0;}
+        .flashcard-wrapper { perspective: 2000px; width: 100%; max-width: 1000px; flex-grow: 1; max-height: 480px; margin-bottom: 25px; cursor: pointer; }
+        .flashcard { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 30px; border: 4px solid; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-md); background: white; }
+        .card-top-bar { padding: 12px 30px; text-align: center; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; gap: 12px; border-bottom: 2px solid rgba(0,0,0,0.05);}
+        .card-top-bar h3 { margin: 0; font-size: 1.8rem; font-weight: 700;}
+        .card-top-bar i { font-size: 1.6rem; }
+        .card-front { color: white; }
+        .card-front .card-top-bar { background: rgba(0,0,0,0.15); border-bottom: none; color: white;}
+        .card-front .card-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 40px; text-align: center; }
+        .front-icon-wrapper { width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .front-icon-wrapper i { font-size: 3rem; color: #fff; }
+        .card-front p { font-size: 1.6rem; color: white; font-weight: 500; line-height: 1.6; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .card-back { transform: rotateY(180deg); }
+        .card-back .card-body { flex-grow: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; align-items: stretch;}
+        .way-box { padding: 25px; border-radius: 20px; display: flex; flex-direction: column; justify-content: flex-start; }
+        .trad-box { background: #fff1f0; border-left: 8px solid var(--danger); }
+        .trad-box h4 { color: var(--danger); font-size: 1.5rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;}
+        .turbo-box { background: #f0fdf4; border-left: 8px solid var(--success); }
+        .turbo-box h4 { color: var(--success); font-size: 1.5rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px;}
+        .way-box p { font-size: 1.3rem; color: #444; line-height: 1.6;}
+        .turbo-box p { font-weight: 600; color: #15803d;}
+        .hint-pulse { margin-top: auto; font-size: 1.2rem; background: rgba(0,0,0,0.3); padding: 8px 20px; border-radius: 30px; animation: pulse 2s infinite; font-weight: 500;}
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .card-nav { display: flex; justify-content: space-between; width: 100%; max-width: 1000px; margin-bottom: 15px; }
+        .btn-nav { padding: 10px 25px; font-size: 1.3rem; font-weight: 600; border-radius: 12px; border: none; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; background: #e0e0e0; color: #555; }
+        .btn-nav:not(:disabled):hover { background: #d0d0d0; }
+        .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+        .flip-warning { color: var(--danger); font-size: 1.2rem; font-weight: 500; height: 25px; margin-top: 10px; text-align: center; }
+
+        /* === 3. SUMMARY === */
+        .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 100%; max-width: 1500px; margin-bottom: 30px; align-items: stretch; }
+        .summary-item { background: white; border: 2px solid #eaeaea; border-radius: 16px; padding: 20px 15px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-sm); transition: 0.3s;}
+        .summary-item:hover { box-shadow: var(--shadow-md); transform: translateY(-3px);}
+        .summary-header-row { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;}
+        .summary-icon-cir { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; flex-shrink: 0;}
+        .summary-content { flex-grow: 1; }
+        .summary-content h4 { font-size: 1.25rem; color: #222; margin: 0; line-height: 1.2; }
+        .summary-item p { font-size: 1.05rem; margin: 0; color: #444; line-height: 1.5; flex-grow: 1; text-align: left; }
+
+        /* === 5. FINAL RESULT === */
+        .final-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; width: 100%; max-width: 1500px; margin: 30px 0; align-items: stretch; }
+        .final-card { background: white; border-radius: 16px; padding: 20px 15px; box-shadow: var(--shadow-md); border-top: 8px solid; display: flex; flex-direction: column; height: 100%; }
+        .final-card h3 { font-size: 1.3rem; margin-bottom: 15px; text-align: center; line-height: 1.3; min-height: 2.8rem; display: flex; align-items: center; justify-content: center; }
+        .final-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; margin: 0;}
+        .final-card li { display: flex; align-items: flex-start; gap: 8px; font-size: 1rem; background: #f9f9f9; padding: 10px; border-radius: 8px; font-weight: 500; color: #444; line-height: 1.4; flex-grow: 1; }
+        .final-card li i { margin-top: 3px; font-size: 1.1rem; flex-shrink: 0; }
+
+        /* === 6. WELCOME FAMILY === */
+        .welcome-family-box { text-align: center; animation: zoomIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .crown-icon { font-size: 8rem; color: #fbbf24; margin-bottom: 20px; filter: drop-shadow(0 10px 15px rgba(251,191,36,0.3)); }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- Admin Login Modal -->
+        <div class="modal-overlay" id="admin-modal">
+            <div class="modal-box">
+                <button class="modal-close" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
+                <h2 style="color: var(--primary);"><i class="fa-solid fa-key"></i> <span data-i18n="adminAccess"></span></h2>
+                <div id="admin-alert" class="alert-box"></div>
+                <input type="password" id="admin-pwd" data-i18n-placeholder="pwdPlaceholder">
+                <button class="btn-main" onclick="adminLogin()" data-i18n="accessBtn" style="max-width: 100%;"></button>
+            </div>
+        </div>
+
+        <!-- TOP NAVBAR -->
+        <nav class="top-navbar" id="top-navbar">
+            <div class="nav-logo"><span>TURBO</span> WAYS</div>
+            <div class="nav-actions">
+                <button class="btn-admin" onclick="openAdminModal()" title="Admin Setup"><i class="fa-solid fa-folder-open"></i></button>
+                <button class="btn-lang" onclick="toggleLanguage()">
+                    <i class="fa-solid fa-globe"></i> <span id="lang-text">EN</span>
+                </button>
+                <div class="user-badge" id="user-badge" style="display: none;">
+                    <i class="fa-solid fa-circle-user"></i> <span id="user-name">User</span>
+                </div>
+                <button class="btn-logout" id="btn-logout" onclick="logout()" style="display: none;">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout"></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- ==================== 0. LOGIN ==================== -->
+        <div id="screen-login" class="screen active" style="justify-content: center;">
+            <div class="login-box">
+                <h1 style="text-align: center;">TURBO WAYS</h1>
+                <h2 style="text-align: center; color: var(--accent);" data-i18n="loginTitle"></h2>
+                <p style="text-align: center; margin-bottom: 30px;" data-i18n="loginSubtitle"></p>
+
+                <div id="login-alert" class="alert-box"></div>
+
+                <div class="input-group">
+                    <label data-i18n="emailLabel"></label>
+                    <input type="email" id="in-email" placeholder="name.sur@turbo.co.th">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="empIdLabel"></label>
+                    <input type="text" id="in-id" placeholder="8 digits" maxlength="8">
+                </div>
+                <button class="btn-main" style="width: 100%; max-width: 100%; margin-top: 10px;" onclick="login()">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> <span data-i18n="loginBtn"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== 1. DASHBOARD ==================== -->
+        <div id="screen-dashboard" class="screen">
+            <div class="dash-header">
+                <h1 style="font-size: 3.5rem;">WELCOME TO NTB!</h1>
+                <div class="progress-bar-container">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.4rem; font-weight: 600; color: var(--text-light);">
+                        <span data-i18n="progress"></span>
+                        <span style="color: var(--accent);" id="dash-prog-text">0 / 5</span>
+                    </div>
+                    <div class="progress-track"><div class="progress-fill" id="dash-prog-fill"></div></div>
+                </div>
+            </div>
+            
+            <div class="module-list" id="dash-module-list"></div>
+
+            <!-- ปุ่มดูสรุปทั้งหมด (ถูกซ่อนไว้จนกว่าจะจบ 5 บท) -->
+            <div id="dash-final-action" class="dash-final-action">
+                <h2 style="color: var(--success); margin-bottom: 15px;" data-i18n="readyForSummary"></h2>
+                <button class="btn-main" onclick="showFinalResult()" style="background: var(--success); border-radius: 40px; padding: 15px 40px; font-size: 1.6rem; max-width: 500px;">
+                    <span data-i18n="viewFinalSummaryBtn"></span> <i class="fa-solid fa-file-invoice"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== 2. FLASHCARD ==================== -->
+        <div id="screen-flashcard" class="screen">
+            <div class="fc-header">
+                <button class="btn-back" onclick="showScreen('screen-dashboard')"><i class="fa-solid fa-chevron-left"></i> <span data-i18n="back"></span></button>
+                <div class="fc-title-group">
+                    <h2 id="fc-main-title" class="module-title-display">TITLE</h2>
+                </div>
+                <div class="fc-counter" id="fc-counter">1 / 5</div>
+            </div>
+
+            <div class="flashcard-wrapper" onclick="flipCard()">
+                <div class="flashcard" id="flashcard">
+                    <!-- หน้าการ์ด -->
+                    <div class="card-face card-front" id="fc-front">
+                        <div class="card-top-bar"><i id="fc-icon-f"></i><h3 id="fc-sub-f">Subtopic</h3></div>
+                        <div class="card-body">
+                            <div class="front-icon-wrapper"><i id="fc-icon-main"></i></div>
+                            <p id="fc-def">Definition</p>
+                            <div class="hint-pulse"><i class="fa-solid fa-hand-pointer"></i> <span data-i18n="cardHint"></span></div>
+                        </div>
+                    </div>
+                    <!-- หลังการ์ด -->
+                    <div class="card-face card-back" id="fc-back">
+                        <div class="card-top-bar"><i id="fc-icon-b"></i><h3 id="fc-sub-b">Subtopic</h3></div>
+                        <div class="card-body">
+                            <div class="way-box trad-box">
+                                <h4><i class="fa-solid fa-times-circle"></i> <span data-i18n="tradWay"></span></h4>
+                                <p id="fc-trad">Trad</p>
+                            </div>
+                            <div class="way-box turbo-box">
+                                <h4><i class="fa-solid fa-check-circle"></i> <span data-i18n="turboWay"></span></h4>
+                                <p id="fc-turbo">Turbo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-nav">
+                <button class="btn-nav" id="btn-fc-prev" onclick="changeCard(-1)"><i class="fa-solid fa-chevron-left"></i> <span data-i18n="prev"></span></button>
+                <button class="btn-nav" id="btn-fc-next" onclick="changeCard(1)"><span data-i18n="next"></span> <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <button class="btn-main" id="btn-go-summary" onclick="showSummary()" disabled>
+                <i class="fa-solid fa-lock" id="icon-summary-lock"></i> <span data-i18n="summaryBtn"></span>
+            </button>
+            <div class="flip-warning" id="fc-warning" data-i18n="flipWarning"></div>
+        </div>
+
+        <!-- ==================== 3. MODULE SUMMARY ==================== -->
+        <div id="screen-summary" class="screen">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <i class="fa-solid fa-book-open" id="sum-icon" style="font-size: 3.5rem; margin-bottom: 10px;"></i>
+                <h1 id="sum-title">Title</h1>
+                <p data-i18n="reviewDef"></p>
+            </div>
+            
+            <div class="summary-grid" id="sum-list"></div>
+            
+            <button class="btn-main" id="btn-finish-module" onclick="completeModule()">
+                <span data-i18n="finishModule"></span> <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- ==================== 5. FINAL RESULT ==================== -->
+        <div id="screen-final" class="screen">
+            <div style="text-align: center;">
+                <i class="fa-solid fa-flag-checkered" style="font-size: 5rem; color: var(--accent); margin-bottom: 15px;"></i>
+                <h1 style="font-size: 3.5rem;">Congratulations!</h1>
+                <p style="font-size: 1.6rem;" data-i18n="finalSubtitle"></p>
+            </div>
+            
+            <div class="final-grid" id="final-grid"></div>
+            
+            <button class="btn-main" onclick="goToWelcome()" style="background: var(--primary);">
+                <i class="fa-solid fa-check-double"></i> <span data-i18n="finishBtn"></span>
+            </button>
+        </div>
+
+        <!-- ==================== 6. WELCOME FAMILY ==================== -->
+        <div id="screen-welcome" class="screen" style="justify-content: center;">
+            <div class="welcome-family-box">
+                <i class="fa-solid fa-crown crown-icon"></i>
+                <h1 style="font-size: 4rem; color: var(--primary); margin-bottom: 15px;" data-i18n="finalWelcome"></h1>
+                <h2 style="font-size: 2.5rem; color: var(--accent); margin-bottom: 40px;">"Welcome to the Ngern Turbo Family!"</h2>
+                
+                <!-- เปลี่ยนฟังก์ชันเป็น Redirect ไปหน้าสอบ -->
+                <button class="btn-main" onclick="goToFinalQuizPlatform()" style="background: var(--accent); border-radius: 40px;">
+                    <i class="fa-solid fa-file-signature"></i> <span data-i18n="goToFinalQuizBtn"></span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================================================== -->
+    <!-- JAVASCRIPT LOGIC                                   -->
+    <!-- ================================================== -->
+    <script>
+        // --- 1. DATA & TRANSLATIONS ---
+        const UI_TEXT = {
+            th: {
+                loginTitle: 'E-Learning Portal', loginSubtitle: 'เข้าสู่ระบบเพื่อเริ่มการเรียนรู้', emailLabel: 'Email บริษัท', empIdLabel: 'รหัสพนักงาน (ID)',
+                loginBtn: 'เข้าสู่ระบบ (LOG IN)', logout: 'ออกจากระบบ', progress: 'ความคืบหน้าของคุณ', module: 'หมวด', subtopics: 'หัวข้อย่อย',
+                locked: 'รอการปลดล็อค', back: 'กลับไปหน้าหลัก', topic: 'หัวข้อที่', cardHint: 'คลิกเพื่อดูวิถี TURBO',
+                tradWay: 'The Traditional Way', turboWay: 'The TURBO Way', prev: 'ก่อนหน้า', next: 'ถัดไป',
+                summaryBtn: 'สรุปบทเรียน', flipWarning: '* กรุณาคลิกพลิกอ่านการ์ดให้ครบทุกใบ เพื่อดูสรุป', flipSuccess: 'เยี่ยมมาก! คุณสามารถกดไปหัวข้อถัดไปได้เลย',
+                summaryTitle: 'สรุปเนื้อหา', reviewDef: 'ทบทวนนิยามสำคัญของหมวดนี้', finishModule: 'จบเนื้อหาหมวดนี้ (กลับสู่หน้าหลัก)', 
+                readyForSummary: 'คุณเรียนจบครบ 5 หมวดแล้ว! พร้อมดูสรุปภาพรวมวิถีชาวเทอร์โบหรือยัง?', viewFinalSummaryBtn: 'ดูสรุปภาพรวมทั้งหมด',
+                finalWelcome: 'ขอต้อนรับสู่ครอบครัวเงินเทอร์โบ', finalSubtitle: 'คุณได้เรียนรู้วิถีชาวเทอร์โบครบทั้ง 5 หมวดแล้ว',
+                finishBtn: 'เสร็จสิ้นการเรียนรู้', adminAccess: 'Admin Setup', pwdPlaceholder: 'รหัสผ่าน', accessBtn: 'เข้าสู่ระบบ',
+                emailError: 'กรุณากรอกข้อมูลให้ครบถ้วน', emailInvalid: 'Email ต้องลงท้าย @turbo.co.th และ ID 8 หลัก',
+                adminSuccess: 'เข้าสู่ระบบแอดมินสำเร็จ', adminFail: 'รหัสผ่านไม่ถูกต้อง',
+                goToFinalQuizBtn: 'ไปสู่แบบทดสอบ'
+            },
+            en: {
+                loginTitle: 'E-Learning Portal', loginSubtitle: 'Log in to start learning', emailLabel: 'Company Email', empIdLabel: 'Employee ID',
+                loginBtn: 'LOG IN', logout: 'Log out', progress: 'Your Progress', module: 'Modules', subtopics: 'subtopics',
+                locked: 'Locked', back: 'Back to Dashboard', topic: 'Topic', cardHint: 'Click to see the TURBO Way',
+                tradWay: 'The Traditional Way', turboWay: 'The TURBO Way', prev: 'Previous', next: 'Next',
+                summaryBtn: 'Module Summary', flipWarning: '* Please click to read both sides of all cards.', flipSuccess: 'Great! You can proceed.',
+                summaryTitle: 'Module Summary', reviewDef: 'Review key definitions', finishModule: 'Finish Module (Back to Dashboard)', 
+                readyForSummary: 'You have completed all 5 modules! Ready to view final summary?', viewFinalSummaryBtn: 'View Final Summary',
+                finalWelcome: 'Welcome to the Ngern Turbo Family!', finalSubtitle: 'You have completely understood all 5 modules of the TURBO WAYS.',
+                finishBtn: 'Complete Learning', adminAccess: 'Admin Setup', pwdPlaceholder: 'Password', accessBtn: 'Log in',
+                emailError: 'Please fill in all fields.', emailInvalid: 'Email must end with @turbo.co.th and ID must be 8 digits.',
+                adminSuccess: 'Admin Login Success', adminFail: 'Incorrect Password',
+                goToFinalQuizBtn: 'Go to Assessment'
+            }
+        };
+
+        const COURSE_DATA = [
+            {
+                id: 1, color: '#f57878', th: { title: 'ONE TURBO' }, en: { title: 'ONE TURBO' },
+                cards: [
+                    { icon: 'fa-users', subtopic: 'Work Together', th: { def: '\"ที่นี่ไม่มีคำว่า \'ไม่ใช่หน้าที่ฉัน\' เราลุยแก้ปัญหาไปด้วยกันแบบไม่ชี้นิ้วหาคนผิด เพื่อนติดขัดพร้อมช่วยทันที ถ้ารู้ตัวว่างานช้าจะรีบยกมือบอกล่วงหน้า ไม่รอจนถึงเดดไลน์ และคอยอัปเดตงานให้ทีมรู้อยู่เสมอ\"', trad: 'ต่างคนต่างทำ โยนงานหรือส่งบรีฟที่ไม่เคลียร์ให้กัน พอพลาดก็โยนความผิดกันไปมา เมินปัญหาของเพื่อน และเวลางานมีปัญหาหรือเสร็จไม่ทัน มักจะเงียบไว้จนถึงวินาทีสุดท้ายแล้วค่อยบอก', turbo: 'ลุยงานไปพร้อมกัน (Co-create) ถ้างานเสร็จไม่ทันจะแจ้งทีมทันที อัปเดตงานสม่ำเสมอ และถ้าโปรเจกต์ติดหล่ม จะรีบเรียกทีมมาหาทางออกทันที โฟกัสที่ \"วิธีแก้\" ไม่ใช่หาคนผิด เพื่อหาทางออกร่วมกัน' }, en: { def: '\"Here, \'it\'s not my job\' doesn\'t exist. We solve problems together without pointing fingers. If someone is stuck, we help immediately. If we know we\'ll be late, we raise our hands in advance, not waiting for the deadline, and keep the team updated.\"', trad: 'Working in silos, throwing unclear briefs. Blaming others when things go wrong. Ignoring teammates\' problems. Staying silent about delays until the last minute.', turbo: 'Work together (Co-create). Notify the team immediately if a deadline will be missed. Update progress regularly. If a project stalls, call the team to find a solution immediately. Focus on \"how to fix\" rather than \"who to blame.\"' } },
+                    { icon: 'fa-trophy', subtopic: 'Celebrate Teams, Not Individuals', th: { def: '\"ความสำเร็จคือผลงานของ \'ทีม\' ไม่ใช่ผลงานส่วนตัว เรายินดีกับชัยชนะของกันและกัน พร้อมให้เครดิตทุกคนที่ร่วมหัวจมท้าย และไม่เอาหน้าคนเดียว\"', trad: 'พอทีมตัวเองทำยอดทะลุเป้า ก็ฉลองอยู่ทีมเดียว แล้วเคลมว่าทีมตัวเอง \"แบกบริษัท\" โดยลืมทีมหลังบ้านที่คอยซัพพอร์ต', turbo: 'ส่งต่อคำชมและให้เครดิตทุกคนเสมอ ทั้งทีมหน้าบ้านและทีมซัพพอร์ตหลังบ้านทุกทีม ว่านี่คือผลงานร่วมกัน' }, en: { def: '\"Success belongs to the \'team,\' not any individual. We celebrate each other\'s wins, give credit to everyone who worked hard, and don\'t take sole credit.\"', trad: 'Celebrating only within the team when hitting targets, claiming the team \"carried\" the company while forgetting the support teams behind the scenes.', turbo: 'Pass on praise and always give credit to everyone, both front-end and back-end support teams, acknowledging it as a collective achievement.' } },
+                    { icon: 'fa-share-nodes', subtopic: 'Share Knowledge Always', th: { def: '\"เราแชร์เทคนิคและความรู้กันเสมอ ไม่กั๊กไว้คนเดียว เพราะยิ่งแชร์ ทีมและบริษัทก็ยิ่งเก่งขึ้น การสร้างเอกสาร คู่มือ หรือสอนงานคนอื่น ช่วยให้ทุกคนทำงานได้ราบรื่น\"', trad: 'พอแก้ปัญหายากๆ หรือเจอบั๊กได้ ก็เก็บวิธีแก้ไว้กับตัว หวังว่าคราวหน้าตัวเองจะได้ดูเป็น \"ผู้วิเศษ\" ที่เก่งอยู่คนเดียว หรือสอนงานแบบกั๊กๆ', turbo: 'เขียนสรุปวิธีแก้ปัญหาหรืออัดคลิปหน้าจอแชร์ลงในช่องทางส่วนรวม (เช่น Slack/Teams) ยินดีสอนและให้คำแนะนำเพื่อนใหม่เสมอ' }, en: { def: '\"We always share techniques and knowledge, not keeping them to ourselves. Sharing makes the team and the company stronger. Creating documents, manuals, or teaching others helps everyone work smoothly.\"', trad: 'When solving difficult problems or finding a bug, keeping the solution to oneself to look like a \"wizard\" or teaching others half-heartedly.', turbo: 'Write short summaries of solutions or record screen clips to share in public channels (like Slack/Teams). Always be willing to teach and guide new colleagues.' } },
+                    { icon: 'fa-building-circle-arrow-right', subtopic: 'Blow Up Departments', th: { def: '\"ทลายกำแพงระหว่างแผนก เราคือทีมเดียวกัน (One Turbo) ทำงานข้ามสายงานได้อย่างไร้รอยต่อ ลดอีโก้ และยึดเป้าหมายของบริษัทเป็นหลัก\"', trad: 'ทำงานแบบไซโล (Silo) สนใจแต่ KPI ของแผนกตัวเอง ไม่สนว่าแผนกอื่นจะทำงานยากขึ้นแค่ไหน หรือตั้งป้อมจับผิดแผนกอื่น', turbo: 'มองเป้าหมายของบริษัทเป็นหลัก พร้อมปรับกระบวนการทำงานของแผนกตัวเองเพื่อให้แผนกอื่นทำงานได้ราบรื่นและเร็วขึ้น' }, en: { def: '\"Break down walls between departments. We are one team (One Turbo), working cross-functionally seamlessly, reducing ego, and focusing on the company\'s goals.\"', trad: 'Working in silos, caring only about one\'s own department\'s KPIs, ignoring if it makes it harder for others, or constantly fault-finding with other departments.', turbo: 'Focus on the company\'s goals primarily. Ready to adjust one\'s own department\'s processes to help other departments work more smoothly and faster.' } },
+                    { icon: 'fa-folder-open', subtopic: 'Open Information', th: { def: '\"โปร่งใส ข้อมูลที่จำเป็นต่อการทำงานต้องเข้าถึงได้ง่าย ไม่ปิดบังข้อมูลเพื่อสร้างอำนาจต่อรอง สื่อสารอย่างตรงไปตรงมา\"', trad: 'เก็บข้อมูลสำคัญไว้กับตัว ไม่ยอมแชร์ไฟล์กลาง (เช่น แอบทำในคอมตัวเอง) ทำให้คนอื่นต้องคอยตามทวงถามตลอดเวลา', turbo: 'จัดเก็บไฟล์และข้อมูลสำคัญไว้ใน Shared Drive หรือระบบกลางที่ทุกคนที่เกี่ยวข้องสามารถเข้าถึงและนำไปใช้งานต่อได้ทันที' }, en: { def: '\"Transparent. Information necessary for work must be easily accessible. Do not hide information to create bargaining power. Communicate straightforwardly.\"', trad: 'Keeping important information to oneself, refusing to share files centrally (e.g., hiding them on a personal computer), forcing others to constantly ask for them.', turbo: 'Store important files and data in a Shared Drive or central system that everyone involved can access and use immediately.' } }
+                ]
+            },
+            {
+                id: 2, color: '#6f2a81', th: { title: 'TRUTH AND TRUST' }, en: { title: 'TRUTH AND TRUST' },
+                cards: [
+                    { icon: 'fa-handshake', subtopic: 'Do What You Say', th: { def: '\"รักษาสัญญา พูดแล้วต้องทำได้ รับผิดชอบในคำพูดของตัวเอง ถ้ารับปากแล้วต้องทำให้สำเร็จ หากติดขัดต้องรีบแจ้ง\"', trad: 'รับปากส่งๆ ไปก่อนแล้วทำไม่ได้ ปล่อยให้เลยเดดไลน์โดยไม่บอกกล่าว หรือชอบรับปากเผื่อฟลุค', turbo: 'ประเมินตัวเองก่อนรับปาก ถ้ารับปากแล้วต้องจัดการให้สำเร็จ หากรู้ตัวว่าทำไม่ทันหรือติดปัญหา จะรีบแจ้งผู้เกี่ยวข้องล่วงหน้าทันที' }, en: { def: '\"Keep promises. Do what you say. Take responsibility for your words. If you promise, you must deliver. If stuck, notify early.\"', trad: 'Making empty promises and failing to deliver. Missing deadlines without notice, or making promises hoping for luck.', turbo: 'Evaluate yourself before promising. If promised, manage to succeed. If you realize you won\'t make it or face issues, notify stakeholders in advance immediately.' } },
+                    { icon: 'fa-comments', subtopic: 'Give Direct Feedback', th: { def: '\"สื่อสารตรงไปตรงมา ติเพื่อก่อ และเปิดใจรับฟัง ฟีดแบ็กทันทีแบบซึ่งหน้าด้วยความเคารพ เพื่อให้เกิดการพัฒนา\"', trad: 'เอาไปนินทาลับหลัง ไม่กล้าพูดตรงๆ ปล่อยให้เพื่อนทำผิดซ้ำๆ หรือเวลาตัวเองโดนฟีดแบ็กก็ตั้งป้อมเถียง ปิดใจรับฟัง', turbo: 'ให้และรับ Feedback ทันทีด้วยความจริงใจและสุภาพ โฟกัสที่ \"พฤติกรรม\" ไม่ใช่ตัวบุคคล และนำฟีดแบ็กนั้นไปพัฒนาตัวเองต่อ' }, en: { def: '\"Communicate directly and constructively. Be open to listening. Give immediate face-to-face feedback with respect to foster development.\"', trad: 'Gossiping behind backs. Not daring to speak directly. Letting colleagues repeat mistakes. Defensiveness and closed-mindedness when receiving feedback.', turbo: 'Give and receive feedback immediately with sincerity and politeness. Focus on \"behavior,\" not the person, and use that feedback to improve.' } },
+                    { icon: 'fa-circle-question', subtopic: '"I Don\'t Know" Shows Strength', th: { def: '\"กล้ายอมรับว่าไม่รู้ เพื่อนำไปสู่การเรียนรู้ การยอมรับความจริงคือจุดเริ่มต้นของการแก้ปัญหาและการเติบโต\"', trad: 'แกล้งทำเป็นรู้เพราะกลัวเสียหน้า หรือดำน้ำทำไปทั้งที่ไม่เข้าใจจนสุดท้ายงานพัง', turbo: 'กล้าพูดคำว่า \"ไม่รู้\" และถามทันทีเมื่อไม่เข้าใจ เพื่อขอคำแนะนำจากผู้รู้และนำไปศึกษาเพิ่มเติมจนเข้าใจอย่างแท้จริง' }, en: { def: '\"Dare to admit not knowing to lead to learning. Accepting the truth is the beginning of problem-solving and growth.\"', trad: 'Pretending to know out of fear of losing face, or winging it without understanding until the work is ruined.', turbo: 'Dare to say \"I don\'t know\" and ask immediately when you don\'t understand to get advice from experts and study further until truly understanding.' } },
+                    { icon: 'fa-circle-xmark', subtopic: 'It\'s OK to be Wrong', th: { def: '\"กล้ายอมรับผิด ทิ้งอีโก้ และหาทางแก้ไข ความผิดพลาดคือบทเรียน ไม่ใช่ตราบาป โฟกัสที่การแก้ปัญหามากกว่าหาคนผิด\"', trad: 'พยายามปกปิดความผิดพลาด โยนความผิดให้คนอื่น หรือซ้ำเติมเมื่อเพื่อนร่วมงานทำพลาด', turbo: 'ยอมรับผิดทันทีโดยไม่มีข้ออ้าง โฟกัสที่การแก้ไขสถานการณ์เฉพาะหน้า และวางระบบป้องกันไม่ให้เกิดความผิดพลาดซ้ำสอง' }, en: { def: '\"Dare to admit mistakes, drop ego, and find solutions. Mistakes are lessons, not stigmas. Focus on solving problems rather than finding culprits.\"', trad: 'Trying to hide mistakes, blaming others, or rubbing it in when colleagues make mistakes.', turbo: 'Admit mistakes immediately without excuses. Focus on solving the immediate situation and building a system to prevent repeating the mistake.' } },
+                    { icon: 'fa-scale-balanced', subtopic: 'Fairness, Always', th: { def: '\"ใช้มาตรฐานเดียวกันกับทุกคนอย่างเท่าเทียม โปร่งใส ไร้อคติ ไม่เลือกปฏิบัติ หรือมีสองมาตรฐาน\"', trad: 'มีมาตรฐานไม่เท่ากัน ให้อภิสิทธิ์คนสนิท หรือคนตำแหน่งสูงกว่า ทำผิดไม่เป็นไร แต่คนอื่นทำผิดโดนด่า', turbo: 'ยึดมาตรฐานเดียวกันอย่างเด็ดขาด สนใจที่ \"เนื้อหาและความถูกต้อง\" มากกว่า \"ตำแหน่งหรือความสนิทสนม\"' }, en: { def: '\"Apply the same standard to everyone equally, transparently, and without bias. No discrimination or double standards.\"', trad: 'Having unequal standards. Giving privileges to close friends or higher-ups. It\'s fine if they make a mistake, but others get scolded.', turbo: 'Strictly adhere to the same standard. Focus on \"content and correctness\" rather than \"position or closeness.\"' } }
+                ]
+            },
+            {
+                id: 3, color: '#00b0f0', th: { title: 'EFFECTIVE, SIMPLE AND PRACTICAL' }, en: { title: 'EFFECTIVE, SIMPLE AND PRACTICAL' },
+                cards: [
+                    { icon: 'fa-magnifying-glass', subtopic: 'First, Ask Why?', th: { def: '\"ถามหาเหตุผลและเป้าหมายก่อนลงมือทำเสมอ เพื่อให้แน่ใจว่างานที่ทำจะตอบโจทย์และไม่สูญเปล่า\"', trad: 'รับคำสั่งมาก็ทำแบบหุ่นยนต์ ไม่เคยถามหาเหตุผล พอผลลัพธ์ออกมาไม่ตรงเป้าก็บอกว่า \"ก็สั่งมาแบบนี้\"', turbo: 'ถามหาความชัดเจนว่า \"เป้าหมายของงานนี้คืออะไร?\" หรือ \"ทำไปทำไม?\" เพื่อให้สามารถเลือกวิธีทำงานที่ตรงจุดที่สุด' }, en: { def: '\"Always ask for reasons and goals before acting to ensure the work meets needs and isn\'t wasted.\"', trad: 'Following orders like a robot without asking why. When results miss the mark, saying, \"That\'s what was ordered.\"', turbo: 'Ask for clarity: \"What is the goal of this work?\" or \"Why are we doing this?\" to choose the most spot-on working method.' } },
+                    { icon: 'fa-bullseye', subtopic: 'Obsess on Effectiveness', th: { def: '\"โฟกัสผลลัพธ์ว่าต้องได้มาตรฐาน ตรวจงานละเอียดเสมือนลูกค้า เราจะไม่งานลวกหรือลดคุณภาพลงเด็ดขาด\"', trad: 'ทำงานลวกๆ อ้างว่าพยายามเต็มที่แล้ว ยอมลดคุณภาพงานเมื่อเวลาจำกัด หรือทำงานเสร็จแต่ใช้ไม่ได้จริง', turbo: 'รักษาคุณภาพงานให้ได้มาตรฐานแม้เวลาจำกัด ตรวจทานงานตัวเองเสมอ (Self-review) และวางระบบป้องกันไม่ให้พลาดซ้ำสอง' }, en: { def: '\"Focus on standard results, check details like a customer. We never do sloppy work or compromise on quality.\"', trad: 'Doing sloppy work and claiming \"I tried my best.\" Reducing quality when time is limited, or finishing work that isn\'t practical.', turbo: 'Maintain quality standards even when time is limited. Always self-review work and build systems to prevent repeating mistakes.' } },
+                    { icon: 'fa-scissors', subtopic: 'Delete, Then Simplify', th: { def: '\"ตัดขั้นตอนซ้ำซ้อนทิ้งก่อน แล้วค่อยทำให้สิ่งที่เหลือเข้าใจง่าย ลดความซับซ้อน (Red tape) เพื่อเพิ่มความเร็ว\"', trad: 'ปล่อยให้มีกฎเกณฑ์หยุมหยิม ทำงานหลายขั้นตอนโดยไม่จำเป็น เขียนอีเมลหรือพรีเซนต์เต็มไปด้วยศัพท์แสงและน้ำ', turbo: 'เสนอตัดขั้นตอนหรือกระบวนการที่ไม่จำเป็นออกเสมอ สรุปข้อมูลให้สั้น กระชับ เข้าใจง่ายภายใน 10 วินาที' }, en: { def: '\"Cut redundant steps first, then simplify the rest. Reduce red tape to increase speed.\"', trad: 'Allowing petty rules. Working through unnecessary steps. Writing emails or presentations full of jargon and fluff.', turbo: 'Always propose cutting unnecessary steps or processes. Summarize information concisely to be understood within 10 seconds.' } },
+                    { icon: 'fa-hammer', subtopic: 'Hands-On', th: { def: '\"ลงมือแก้ปัญหาหน้างานด้วยตัวเอง ไม่นั่งรอปาฏิหาริย์ ผู้นำต้องรู้ลึกถึงหน้างานและพร้อมลุย\"', trad: 'เป็นแค่นักทฤษฎี ดีแต่สั่ง นั่งรอคนมาป้อนคำตอบ หรือไม่ยอมลงไปดูปัญหาจริงๆ ที่หน้างาน', turbo: 'คุ้ย Data หรือลงหน้างานจริงเพื่อค้นหาต้นตอของปัญหาด้วยตัวเอง และสามารถอธิบายรายละเอียดของงานได้อย่างทะลุปรุโปร่ง' }, en: { def: '\"Solve problems hands-on. Don\'t wait for miracles. Leaders must know the front-line deeply and be ready to dive in.\"', trad: 'Being just a theorist. Only giving orders. Waiting for answers to be spoon-fed, or refusing to look at actual front-line problems.', turbo: 'Dig into data or go to the actual front-line to find the root cause of problems yourself. Be able to explain task details thoroughly.' } },
+                    { icon: 'fa-people-arrows', subtopic: 'Collaborate More, Meeting Less', th: { def: '\"ทำงานร่วมกันอย่างมีประสิทธิภาพ ลดการประชุมที่เยิ่นเย้อ ใช้การสื่อสารที่ตรงประเด็นและรวดเร็ว\"', trad: 'เอะอะก็นัดประชุมเป็นชั่วโมงกับเรื่องเล็กน้อย หรือเข้าประชุมโดยไม่มีวาระชัดเจน (Agenda) สุดท้ายไม่ได้ข้อสรุป', turbo: 'ยกหูโทรคุย 5 นาทีจบ หรือทักแชทเคาะข้อสรุปทันที หากต้องประชุมจะมีเป้าหมายชัดเจนและใช้เวลาสั้นที่สุด' }, en: { def: '\"Collaborate effectively, reduce lengthy meetings. Use direct and fast communication.\"', trad: 'Calling hour-long meetings for trivial matters, or attending meetings without a clear agenda, ending without conclusions.', turbo: 'Call for 5 minutes or chat to finalize immediately. If a meeting is needed, have a clear goal and keep it as short as possible.' } }
+                ]
+            },
+            {
+                id: 4, color: '#fbb245', th: { title: 'SPEED AND IMPACT' }, en: { title: 'SPEED AND IMPACT' },
+                cards: [
+                    { icon: 'fa-bolt', subtopic: 'Act Now, Fix Later', th: { def: '\"เน้นลงมือทำทันทีด้วยข้อมูล 80% ทำให้เสร็จสำคัญกว่าสมบูรณ์แบบ (Done is better than perfect) แก้ไขปัญหาเฉพาะหน้าไปก่อน\"', trad: 'มัวแต่นั่งถกเถียง รอแผนงานสมบูรณ์ 100% หรือรอข้อมูลครบถ้วนค่อยเริ่ม จนสุดท้ายเสียโอกาส', turbo: 'ทำ Prototype ขึ้นมาเทสต์ทันที หรือถ้าเจอปัญหาด่วน ให้หาวิธีแก้ขัด (Workaround) ไปก่อน แล้วค่อยหาทางแก้ถาวร (Permanent fix) ทีหลัง' }, en: { def: '\"Focus on acting immediately with 80% data. Done is better than perfect. Solve immediate problems first.\"', trad: 'Endlessly debating. Waiting for a 100% perfect plan or complete data before starting, ultimately losing opportunities.', turbo: 'Create a prototype and test immediately. If facing an urgent issue, find a workaround first, then find a permanent fix later.' } },
+                    { icon: 'fa-chart-line', subtopic: 'Outcome, Not Hours', th: { def: '\"ความสำเร็จวัดที่ผลลัพธ์ ไม่ใช่จำนวนชั่วโมงที่นั่งทำงาน ทำงานให้ฉลาดเพื่อสร้างผลงานที่จับต้องได้\"', trad: 'นั่งแช่ที่ออฟฟิศดึกๆ แกล้งยุ่งเพื่อให้ดูเป็นคนขยัน หรือพรีเซนต์ความเหนื่อยยากแทนที่จะโชว์ผลลัพธ์', turbo: 'ประเมินตัวเองจากชิ้นงานที่สำเร็จตามเป้าหมาย (Output/Outcome) บริหารเวลาอย่างมีประสิทธิภาพเพื่อให้งานเสร็จตรงเวลา' }, en: { def: '\"Success is measured by outcomes, not hours spent working. Work smartly to create tangible results.\"', trad: 'Staying late at the office to look busy and hardworking. Presenting exhaustion instead of showing results.', turbo: 'Evaluate yourself by completed outcomes/output. Manage time effectively to finish work on time.' } },
+                    { icon: 'fa-crosshairs', subtopic: 'Laser Focus on What Matters', th: { def: '\"จัดลำดับความสำคัญ ทำสิ่งที่สร้าง Impact ต่อเป้าหมายหลัก โฟกัสในสิ่งที่สำคัญที่สุดก่อนเสมอ\"', trad: 'พยายามทำทุกอย่างพร้อมกัน งานแทรกก็รับหมด ไม่กล้าปฏิเสธ จนสุดท้ายงานหลักไม่เสร็จ หรือเสร็จแต่ไม่ได้คุณภาพ', turbo: 'เลือกแก้ปัญหา 1-2 อย่างที่สร้าง Impact สูงสุดต่อบริษัทให้เสร็จก่อน กล้าพูด \"ไม่\" กับงานที่ไม่ตอบโจทย์เป้าหมายหลัก' }, en: { def: '\"Prioritize. Do things that create impact on main goals. Always focus on the most important things first.\"', trad: 'Trying to do everything at once. Accepting all interrupting tasks. Afraid to say no, resulting in unfinished main tasks or poor quality.', turbo: 'Choose 1-2 problems that create the highest impact for the company to solve first. Dare to say \"no\" to tasks that don\'t meet main goals.' } },
+                    { icon: 'fa-lightbulb', subtopic: 'Work Smart AND Hard', th: { def: '\"ขยันอย่างมีเป้าหมาย ใช้เครื่องมือทุ่นแรงให้ได้ผลดีที่สุด ไม่ใช่แค่ถึกทน แต่ต้องหาวิธีที่ฉลาดกว่าด้วย\"', trad: 'ก้มหน้าทำงานแบบ Manual ซ้ำๆ ถึกทนแบบไม่คิดหาวิธีที่ฉลาดขึ้น หรือภูมิใจที่ตัวเองทำงานหนักกว่าคนอื่นโดยไม่จำเป็น', turbo: 'หยุดคิดวิเคราะห์ หาวิธีหรือ Tools/Technology ใหม่ๆ มาช่วยทำงานอัตโนมัติ (Automate) เพื่อลดเวลาและแรงงาน' }, en: { def: '\"Work hard with purpose. Use tools effectively. It\'s not just about endurance; it\'s about finding smarter ways.\"', trad: 'Doing manual, repetitive work without thinking of smarter ways. Being proud of working unnecessarily harder than others.', turbo: 'Stop and analyze. Find new tools/technology to automate tasks to save time and effort.' } },
+                    { icon: 'fa-puzzle-piece', subtopic: 'Solve the Unsolvable', th: { def: '\"มองปัญหาซับซ้อนเป็นโอกาส ไม่ยอมแพ้คำว่าเป็นไปไม่ได้ หาวิธีพลิกแพลงและสร้างสรรค์\"', trad: 'พองานยาก หรือเจอข้อจำกัดก็ถอดใจยอมแพ้ หนีไปทำแต่งานง่ายๆ หรืออ้างว่า \"มันเป็นไปไม่ได้\"', turbo: 'กัดฟันลุย หาวิธีพลิกแพลง (Hacking) หรือมองมุมใหม่เพื่อแก้ปัญหาที่คนอื่นคิดว่าเป็นไปไม่ได้ให้สำเร็จ' }, en: { def: '\"See complex problems as opportunities. Never say impossible. Find workarounds and be creative.\"', trad: 'Giving up when tasks are hard or face limitations. Fleeing to easy tasks or claiming \"it\'s impossible.\"' , turbo: 'Grit your teeth and push through. Find workarounds (hacking) or look from new angles to successfully solve problems others think are impossible.' } }
+                ]
+            },
+            {
+                id: 5, color: '#80c41c', th: { title: 'GRIT AND GROW' }, en: { title: 'GRIT AND GROW' },
+                cards: [
+                    { icon: 'fa-mountain', subtopic: 'Grit Over Genius', th: { def: '\"ความมุ่งมั่นและกัดไม่ปล่อย สำคัญกว่าพรสวรรค์ ความสำเร็จเกิดจากความพยายามซ้ำๆ ไม่ถอดใจเมื่อเจออุปสรรค\"', trad: 'เจองานยาก หรือแก้ปัญหาไม่ได้ทันทีก็ถอดใจทิ้งงาน เพราะคิดว่าตัวเองไม่เก่ง หรือไม่มีพรสวรรค์', turbo: 'ทนจมอยู่กับปัญหาที่ซับซ้อน กัดฟันลุยและทดสอบวิธีแก้ต่างๆ จนกว่าจะเจอคำตอบ ไม่ยอมแพ้แม้มันจะยาก' }, en: { def: '\"Determination and perseverance are more important than talent. Success comes from repeated effort. Don\'t give up at obstacles.\"', trad: 'Giving up easily on hard tasks or immediate unsolved problems, thinking one is not smart or talented enough.', turbo: 'Endure complex problems. Grit your teeth and test solutions until finding the answer. Never give up even if it\'s hard.' } },
+                    { icon: 'fa-dumbbell', subtopic: 'Depth Through Practice', th: { def: '\"ความเชี่ยวชาญเกิดจากลงมือทำซ้ำจนชำนาญ ไม่ใช่อ่านทฤษฎีจบ ต้องฝึกฝนจนรู้ลึกและรู้จริง\"', trad: 'เรียนรู้แบบผิวเผิน เช่น ดูคลิปสอนจบครั้งเดียวก็เคลมว่า \"เข้าใจแล้ว ทำเป็นแล้ว\" โดยไม่เคยลองลงมือทำจริง', turbo: 'ฝึกฝนงานของตัวเองซ้ำๆ จนเกิดความเชี่ยวชาญและแม่นยำ เพื่อเปลี่ยนข้อมูลตื้นๆ ให้เป็นความรู้ฝังลึก' }, en: { def: '\"Expertise comes from repeated practice, not just reading theory. You must practice until you know deeply and truly.\"', trad: 'Learning superficially, like watching a tutorial once and claiming \"I understand and can do it\" without ever trying for real.', turbo: 'Practice your own work repeatedly until expertise and accuracy are achieved to turn shallow info into deep knowledge.' } },
+                    { icon: 'fa-arrow-trend-up', subtopic: 'Better Every Day', th: { def: '\"การเติบโตไม่ใช่วิธีคิดแบบข้ามคืน แต่คือการค่อยๆ พัฒนาและเก็บเล็กผสมน้อยทุกวัน การปรับปรุงแค่วันละนิดจะสร้างผลลัพธ์มหาศาล\"', trad: 'พยายามจะรื้อระบบหรือเปลี่ยนทุกอย่างให้ดีขึ้นภายในข้ามคืนจนสุดท้ายหมดไฟ หรือไม่เคยนำข้อผิดพลาดมาทบทวน', turbo: 'เก็บปัญหาเป็นบทเรียน ค่อยๆ ปรับปรุงกระบวนการทำงานให้เร็วขึ้นและดีขึ้นทีละจุดอย่างสม่ำเสมอทุกวัน' }, en: { def: '\"Growth is not an overnight mindset, but gradually developing and accumulating small wins every day. Improving just a little bit daily creates massive results.\"', trad: 'Trying to overhaul the system or change everything to be better overnight until burning out. Not reviewing mistakes.', turbo: 'Take problems as lessons. Regularly improve work processes point by point every day.' } },
+                    { icon: 'fa-person-digging', subtopic: 'Leaders Do the Work', th: { def: '\"ผู้นำที่แท้จริงต้องพร้อมลงไปคลุกฝุ่นและลุยงานหน้างานร่วมกับทีม ความเคารพเกิดจากความสามารถและการลงมือทำ ไม่ใช่แค่ตำแหน่ง\"', trad: 'ดีแต่นั่งสั่งงาน พอทีมต้องลุยงานดึกก็ซื้อแค่ขนมมาให้แล้วตัวเองกลับบ้านไปพักผ่อน ปล่อยให้ทีมเผชิญปัญหาลำพัง', turbo: 'ลงไปทำให้ดูเป็นตัวอย่าง (Lead by example) นั่งเทสต์ระบบ หรือช่วยตอบคำถามลูกค้าเคียงบ่าเคียงไหล่ไปพร้อมกับทีม' }, en: { def: '\"True leaders must be ready to \'get dirty\' and handle front-line work with the team. Respect comes from ability and action, not just position.\"', trad: 'Only giving orders. When the team works late, just buying snacks and going home to rest, leaving the team to face problems alone.', turbo: 'Lead by example. Test systems or help answer customer questions side-by-side with the team during difficult times.' } },
+                    { icon: 'fa-book-open-reader', subtopic: 'Learn Forever', th: { def: '\"โลกเปลี่ยนตลอดเวลา เราจึงต้องอยากรู้อยากเห็นและเรียนรู้สิ่งใหม่ๆ เพื่อพัฒนาตัวเองอยู่เสมอ\"', trad: 'ตื่นตระหนกและต่อต้านเมื่อมีเทคโนโลยีหรือเครื่องมือใหม่ๆ เข้ามา (เช่น AI) และพยายามปกป้องวิธีทำงานแบบเดิมๆ', turbo: 'ตั้งใจศึกษาและเปิดใจรับเครื่องมือใหม่ๆ (เช่น AI) รวมถึงศึกษาวิธีแก้ปัญหาจากอุตสาหกรรมอื่น เพื่ออัปสกิลตัวเอง' }, en: { def: '\"The world changes constantly, so we must be curious and always learn new things to develop ourselves continually.\"', trad: 'Panicking and resisting when new technology or tools arrive (like AI). Trying to protect old ways of working.', turbo: 'Study and open your mind to new tools (like AI) intentionally. Study solutions from other industries to upskill yourself.' } }
+                ]
+            }
+        ];
+
+        // --- 2. STATE ---
+        let lang = 'th';
+        let currentUser = null;
+        let unlockedModules = [1];
+        let completedModules = [];
+        let activeModuleId = null;
+        let cardIndex = 0;
+        let isCardFlipped = false;
+        let viewedCards = [];
+
+        function t(key) { return UI_TEXT[lang][key]; }
+
+        // --- 3. UI UPDATER ---
+        function toggleLanguage() {
+            lang = lang === 'th' ? 'en' : 'th';
+            document.getElementById('lang-text').innerText = lang === 'th' ? 'EN' : 'TH';
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (UI_TEXT[lang][key]) el.innerHTML = UI_TEXT[lang][key];
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (UI_TEXT[lang][key]) el.placeholder = UI_TEXT[lang][key];
+            });
+
+            const activeId = document.querySelector('.screen.active').id;
+            if (activeId === 'screen-dashboard') renderDashboard();
+            if (activeId === 'screen-flashcard') renderFlashcard();
+            if (activeId === 'screen-summary') showSummary();
+            if (activeId === 'screen-final') showFinalResult();
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            // Manage Navbar Items
+            if(id === 'screen-login' || id === 'screen-welcome') {
+                document.getElementById('user-badge').style.display = 'none';
+                document.getElementById('btn-logout').style.display = 'none';
+            } else {
+                document.getElementById('user-badge').style.display = 'flex';
+                document.getElementById('btn-logout').style.display = 'flex';
+            }
+            window.scrollTo(0,0);
+        }
+
+        // --- 4. ADMIN LOGIN ---
+        function openAdminModal() { document.getElementById('admin-modal').classList.add('active'); }
+        function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); document.getElementById('admin-alert').className = 'alert-box'; }
+        function adminLogin() {
+            const pwd = document.getElementById('admin-pwd').value;
+            const alertBox = document.getElementById('admin-alert');
+            if (pwd === 'turboway') {
+                alertBox.className = 'alert-box success';
+                alertBox.innerHTML = t('adminSuccess');
+                setTimeout(closeAdminModal, 1500);
+            } else {
+                alertBox.className = 'alert-box error';
+                alertBox.innerHTML = t('adminFail');
+            }
+        }
+
+        // --- 5. USER LOGIN ---
+        function login() {
+            const email = document.getElementById('in-email').value;
+            const empId = document.getElementById('in-id').value;
+            const alertBox = document.getElementById('login-alert');
+
+            if (!email || !empId) {
+                alertBox.className = 'alert-box error';
+                alertBox.innerHTML = t('emailError');
+                return;
+            }
+            if (email.endsWith('@turbo.co.th') && empId.length === 8 && !isNaN(empId)) {
+                alertBox.className = 'alert-box';
+                currentUser = { email, empId, name: email.split('@')[0] };
+                document.getElementById('user-name').innerText = currentUser.name.toUpperCase();
+                renderDashboard();
+                showScreen('screen-dashboard');
+            } else {
+                alertBox.className = 'alert-box error';
+                alertBox.innerHTML = t('emailInvalid');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('in-email').value = '';
+            document.getElementById('in-id').value = '';
+            unlockedModules = [1];
+            completedModules = [];
+            localStorage.removeItem('turbo_user_data'); // Clear session
+            showScreen('screen-login');
+        }
+
+        // --- 6. DASHBOARD ---
+        function renderDashboard() {
+            document.getElementById('dash-prog-text').innerText = `${completedModules.length} / 5 ${t('module')}`;
+            document.getElementById('dash-prog-fill').style.width = `${(completedModules.length/5)*100}%`;
+
+            const list = document.getElementById('dash-module-list');
+            list.innerHTML = '';
+
+            COURSE_DATA.forEach(mod => {
+                const isUn = unlockedModules.includes(mod.id);
+                const isCom = completedModules.includes(mod.id);
+                
+                let icon = '<i class="fa-solid fa-lock"></i>';
+                let cls = 'locked';
+                let color = '#ccc';
+                if (isCom) { icon = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i>`; cls = 'completed'; color = 'var(--success)'; }
+                else if (isUn) { icon = `<i class="fa-solid fa-circle-play" style="color:${mod.color};"></i>`; cls = 'unlocked'; color = mod.color; }
+
+                list.innerHTML += `
+                    <div class="module-card ${cls}" onclick="if(${isUn} || ${isCom}) startModule(${mod.id})" style="border-left-color: ${(isUn || isCom) ? mod.color : '#eaeaea'}">
+                        <div class="m-icon" style="background: ${color}">${mod.id}</div>
+                        <div class="m-info">
+                            <h3 style="color: ${(isUn || isCom) ? mod.color : '#888'}">${mod[lang].title}</h3>
+                            <p>${(isUn || isCom) ? `${mod.cards.length} ${t('subtopics')}` : t('locked')}</p>
+                        </div>
+                        <div class="m-status">${icon}</div>
+                    </div>
+                `;
+            });
+
+            // Show final action button when all 5 modules are complete
+            if (completedModules.length === 5) {
+                document.getElementById('dash-final-action').style.display = 'block';
+            } else {
+                document.getElementById('dash-final-action').style.display = 'none';
+            }
+        }
+
+        // --- 7. FLASHCARD ---
+        function startModule(id) {
+            activeModuleId = id; cardIndex = 0; viewedCards = []; isCardFlipped = false;
+            document.getElementById('flashcard').classList.remove('flipped');
+            renderFlashcard();
+            showScreen('screen-flashcard');
+        }
+
+        function renderFlashcard() {
+            const mod = COURSE_DATA.find(m => m.id === activeModuleId);
+            const cData = mod.cards[cardIndex];
+
+            // Setup Header & Colors
+            document.getElementById('fc-main-title').innerText = `${mod.id}. ${mod[lang].title}`;
+            document.getElementById('fc-main-title').style.color = mod.color;
+            document.getElementById('fc-counter').innerText = `${t('topic')} ${cardIndex + 1} / ${mod.cards.length}`;
+            
+            document.getElementById('fc-front').style.borderColor = mod.color;
+            document.getElementById('fc-front').style.background = `linear-gradient(135deg, ${mod.color} 0%, var(--primary) 100%)`;
+            document.getElementById('fc-back').style.borderColor = mod.color;
+
+            // Setup Locked Title (Top Bar)
+            document.getElementById('fc-sub-f').innerText = cData.subtopic;
+            document.getElementById('fc-sub-b').innerText = cData.subtopic;
+            document.getElementById('fc-sub-f').style.color = 'white';
+            document.getElementById('fc-sub-b').style.color = mod.color;
+            
+            // Set Icons
+            document.getElementById('fc-icon-f').className = `fa-solid ${cData.icon}`;
+            document.getElementById('fc-icon-b').className = `fa-solid ${cData.icon}`;
+            document.getElementById('fc-icon-main').className = `fa-solid ${cData.icon}`;
+            document.getElementById('fc-icon-b').style.color = mod.color;
+
+            // Set Content
+            document.getElementById('fc-def').innerText = cData[lang].def;
+            document.getElementById('fc-trad').innerText = cData[lang].trad;
+            document.getElementById('fc-turbo').innerText = cData[lang].turbo;
+
+            document.getElementById('btn-fc-prev').disabled = cardIndex === 0;
+            checkFCProgress();
+        }
+
+        function flipCard() {
+            isCardFlipped = !isCardFlipped;
+            document.getElementById('flashcard').classList.toggle('flipped');
+            if (isCardFlipped && !viewedCards.includes(cardIndex)) {
+                viewedCards.push(cardIndex);
+                checkFCProgress();
+            }
+        }
+
+        function changeCard(dir) {
+            isCardFlipped = false;
+            document.getElementById('flashcard').classList.remove('flipped');
+            setTimeout(() => { cardIndex += dir; renderFlashcard(); }, 300);
+        }
+
+        function checkFCProgress() {
+            const mod = COURSE_DATA.find(m => m.id === activeModuleId);
+            const btnNext = document.getElementById('btn-fc-next');
+            const btnSum = document.getElementById('btn-go-summary');
+            const isViewed = viewedCards.includes(cardIndex);
+            
+            if (cardIndex < mod.cards.length - 1) {
+                btnNext.style.display = 'flex'; btnSum.style.display = 'none';
+                btnNext.disabled = !isViewed;
+            } else {
+                btnNext.style.display = 'none'; btnSum.style.display = 'flex';
+                if (viewedCards.length === mod.cards.length) {
+                    btnSum.disabled = false; btnSum.style.background = mod.color;
+                    document.getElementById('icon-summary-lock').className = 'fa-solid fa-check-circle';
+                    document.getElementById('fc-warning').innerText = t('flipSuccess');
+                    document.getElementById('fc-warning').style.color = 'var(--text-light)';
+                } else {
+                    btnSum.disabled = true; btnSum.style.background = '#ccc';
+                    document.getElementById('icon-summary-lock').className = 'fa-solid fa-lock';
+                    document.getElementById('fc-warning').innerText = t('flipWarning');
+                    document.getElementById('fc-warning').style.color = 'var(--danger)';
+                }
+            }
+        }
+
+        // --- 8. SUMMARY (HORIZONTAL) ---
+        function showSummary() {
+            const mod = COURSE_DATA.find(m => m.id === activeModuleId);
+            document.getElementById('sum-icon').style.color = mod.color;
+            document.getElementById('sum-icon').style.background = `${mod.color}20`;
+            document.getElementById('sum-icon').style.padding = '25px';
+            document.getElementById('sum-icon').style.borderRadius = '50%';
+            
+            document.getElementById('sum-title').innerText = `${t('summaryTitle')}: ${mod[lang].title}`;
+            document.getElementById('sum-title').style.color = mod.color;
+            document.getElementById('btn-finish-module').style.background = mod.color;
+
+            const list = document.getElementById('sum-list');
+            list.innerHTML = '';
+            
+            // Build Horizontal Cards
+            mod.cards.forEach((c, idx) => {
+                list.innerHTML += `
+                    <div class="summary-item" style="border-top: 8px solid ${mod.color}">
+                        <div class="summary-header-row">
+                            <div class="summary-icon-cir" style="background: ${mod.color}"><i class="fa-solid ${c.icon}"></i></div>
+                            <h4>${c.subtopic}</h4>
+                        </div>
+                        <p>${c[lang].def}</p>
+                    </div>
+                `;
+            });
+            showScreen('screen-summary');
+        }
+
+        function completeModule() {
+            if (!completedModules.includes(activeModuleId)) completedModules.push(activeModuleId);
+            
+            // ปลดล็อคบทที่ 2-5 ทันทีเมื่อจบ One Turbo (id=1)
+            if (completedModules.includes(1)) {
+                [2, 3, 4, 5].forEach(id => {
+                    if (!unlockedModules.includes(id)) unlockedModules.push(id);
+                });
+            }
+            
+            renderDashboard(); 
+            showScreen('screen-dashboard');
+        }
+
+        // --- 10. FINAL RESULT (5 COLUMNS) ---
+        function showFinalResult() {
+            const grid = document.getElementById('final-grid');
+            grid.innerHTML = '';
+            COURSE_DATA.forEach(mod => {
+                let lis = '';
+                mod.cards.forEach(c => lis += `<li><i class="fa-solid fa-check-circle" style="color:${mod.color};"></i> <span>${c.subtopic}</span></li>`);
+                grid.innerHTML += `
+                    <div class="final-card" style="border-color:${mod.color}">
+                        <h3 style="color:${mod.color}">${mod.id}. ${mod[lang].title}</h3>
+                        <ul>${lis}</ul>
+                    </div>
+                `;
+            });
+            showScreen('screen-final');
+        }
+
+        // --- 11. WELCOME TO NTB FAMILY (REDIRECT TO EXTERNAL FINAL ASSESSMENT) ---
+        function goToWelcome() {
+            showScreen('screen-welcome');
+        }
+
+        // เปลี่ยนโค้ดตรงนี้เพื่อส่งต่อไปยังไฟล์ exam.html
+        function goToFinalQuizPlatform() {
+            // แอบเซฟข้อมูลพนักงานลงความจำเบราว์เซอร์ เพื่อให้ไปโผล่ใน exam.html ได้ทันที
+            if (currentUser) {
+                localStorage.setItem('turbo_user_data', JSON.stringify(currentUser));
+            }
+
+            // สร้าง Loading Overlay 
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.inset = '0';
+            overlay.style.background = 'rgba(0, 29, 72, 0.95)';
+            overlay.style.display = 'flex';
+            overlay.style.justifyContent = 'center';
+            overlay.style.alignItems = 'center';
+            overlay.style.zIndex = '9999';
+            overlay.style.color = 'white';
+            overlay.style.fontSize = '2rem';
+            overlay.style.fontWeight = 'bold';
+            overlay.style.flexDirection = 'column';
+            overlay.style.gap = '25px';
+            overlay.style.fontFamily = "'Sarabun', sans-serif";
+            overlay.style.animation = "fadeIn 0.3s ease";
+            
+            const spinner = document.createElement('i');
+            spinner.className = 'fa-solid fa-spinner fa-spin';
+            spinner.style.fontSize = '4.5rem';
+            spinner.style.color = 'var(--accent)';
+            
+            const text = document.createElement('div');
+            text.style.textAlign = 'center';
+            text.style.lineHeight = '1.6';
+            text.innerHTML = lang === 'th' 
+                ? "กำลังนำคุณเข้าสู่ระบบทำแบบทดสอบรวม (Post-Test)...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>กรุณารอสักครู่ ระบบกำลังจัดเตรียมข้อสอบ 25 ข้อจากเนื้อหาทั้ง 5 บท</span>" 
+                : "Redirecting you to the final Post-Test assessment...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>Please wait, preparing 25 questions from all 5 modules.</span>";
+            
+            overlay.appendChild(spinner);
+            overlay.appendChild(text);
+            document.body.appendChild(overlay);
+            
+            // รอ 2 วินาที แล้วทำการเปลี่ยน URL ในหน้าต่างเดิมไปที่ไฟล์ exam.html
+            setTimeout(() => {
+                document.body.removeChild(overlay);
+                window.location.href = 'exam.html'; // กระโดดไปไฟล์ข้อสอบ
+            }, 2000);
+        }
+
+        // Init language translations on load
+        toggleLanguage(); // Trigger default to TH
+        toggleLanguage(); 
+    </script>
+</body>
+</html>
