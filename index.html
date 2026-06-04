@@ -33,8 +33,20 @@
             color: #333;
             min-height: 100vh;
         }
+
+        /* ป้องกันจอซ้อนทับกันอย่างเด็ดขาด */
+        .screen {
+            display: none !important;
+            width: 100%;
+        }
+        .screen.active {
+            display: flex !important;
+        }
+
         /* Custom flip animation styles */
-        .flashcard-wrapper { perspective: 2000px; }
+        .flashcard-wrapper {
+            perspective: 2000px;
+        }
         .flashcard {
             position: relative;
             width: 100%;
@@ -42,7 +54,9 @@
             transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
             transform-style: preserve-3d;
         }
-        .flashcard.flipped { transform: rotateY(180deg); }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
         .card-face {
             position: absolute;
             width: 100%;
@@ -55,7 +69,10 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
-        .card-back { transform: rotateY(180deg); background: white; }
+        .card-back {
+            transform: rotateY(180deg);
+            background: white;
+        }
         
         /* Custom buttons styling */
         .btn-nav-fc {
@@ -67,8 +84,13 @@
             color: #555;
             transition: 0.2s;
         }
-        .btn-nav-fc:hover:not(:disabled) { background: #d0d0d0; }
-        .btn-nav-fc:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-nav-fc:hover:not(:disabled) {
+            background: #d0d0d0;
+        }
+        .btn-nav-fc:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
 
         /* General choice buttons styling */
         .choice-btn-practice {
@@ -88,15 +110,43 @@
             gap: 15px;
             width: 100%;
         }
-        .choice-btn-practice:hover:not(:disabled) { border-color: #002D72; background: #f8fafc; }
-        .choice-btn-practice.correct { border-color: #22c55e !important; background: #f0fdf4 !important; color: #15803d !important; font-weight: 600; }
-        .choice-btn-practice.wrong { border-color: #ef4444 !important; background: #fff1f0 !important; color: #b91c1c !important; animation: shake 0.4s; }
-        .choice-btn-practice:disabled { cursor: not-allowed; }
+        .choice-btn-practice:hover:not(:disabled) {
+            border-color: #002D72;
+            background: #f8fafc;
+        }
+        .choice-btn-practice.correct {
+            border-color: #22c55e !important;
+            background: #f0fdf4 !important;
+            color: #15803d !important;
+            font-weight: 600;
+        }
+        .choice-btn-practice.wrong {
+            border-color: #ef4444 !important;
+            background: #fff1f0 !important;
+            color: #b91c1c !important;
+            animation: shake 0.4s;
+        }
+        .choice-btn-practice:disabled {
+            cursor: not-allowed;
+        }
 
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body class="flex justify-center items-start min-h-screen">
@@ -340,13 +390,13 @@
                         icon: 'fa-users', subtopic: 'Work Together', 
                         th: { 
                             def: 'ที่นี่ไม่มีคำว่า "ไม่ใช่หน้าที่ฉัน" เราลุยแก้ปัญหาไปด้วยกันแบบไม่ชี้นิ้วหาคนผิด ถ้ารู้ตัวว่างานช้าจะรีบยกมือบอกล่วงหน้า ไม่รอจนถึงเดดไลน์ และคอยอัปเดตงานให้ทีมรู้อยู่เสมอ', 
-                            trad: ['ต่างคนต่างทำ โยนงานผ่านอีเมลแบบไม่เคลียร์', 'เมื่อเกิดปัญหาขึ้นก็มัวแต่โบ้ยความรับผิดชอบไปมา', 'เมินเฉยปัญหาเพื่อน ซุกซ่อนปัญหาตัวเองไว้จนวินาทีสุดท้าย'], 
+                            trad: ['ต่างคนต่างทำ โยนงานผ่านอีเมลแบบไม่เคลียร์', 'เมื่อเกิดปัญหาขึ้นก็มัวแต่โบ้ยความรับผิดชอบไปมา', 'เมินชี้นิ้วหาปัญหาเพื่อน ซุกซ่อนปัญหาตัวเองไว้จนวินาทีสุดท้าย'], 
                             turbo: ['ลงมือลุยงานและสอดประสานเข้ากันเป็นหนึ่งเดียว', 'หมั่นอัปเดตสถานะงาน และรีบยกมือบอกทีมหากเสร็จไม่ทัน', 'จับมือเรียกรวมทีมเพื่อโฟกัสแก้ปัญหาด่วนโดยไม่ชี้นิ้วโทษใคร'] 
                         }, 
                         en: { 
                             def: 'Here, "it\'s not my job" doesn\'t exist. We solve problems together without pointing fingers. If we know we\'ll be late, we raise our hands in advance and keep the team updated.', 
                             trad: ['Working in silos, throwing unclear briefs via email.', 'Blaming others when things go wrong.', 'Ignoring teammates\' problems and staying silent about delays until the deadline.'], 
-                            turbo: ['Work together as a unified force to create solutions.', 'Notify the team immediately when a deadline will be missed.', 'Focus intensely on "how to fix" rather than finding culprits.'] 
+                            turbo: ['Work together as a unified force to create solutions.', 'Notify the team immediately when a deadline will be missed.', 'Focus intensely on \"how to fix\" rather than finding culprits.'] 
                         },
                         practices: [
                             {
@@ -460,7 +510,7 @@
                         icon: 'fa-handshake', subtopic: 'Do What You Say', 
                         th: { 
                             def: 'รักษาสัญญา พูดแล้วต้องทำได้ รับผิดชอบในคำพูดของตัวเอง ถ้ารับปากแล้วต้องทำให้สำเร็จ หากติดขัดต้องรีบแจ้ง', 
-                            trad: ['รับปากส่งๆ ไปก่อนตัดรำคาญแล้วทำไม่ได้จริง', 'ปล่อยงานล่าช้าเลยกำหนดเดดไลน์โดยไม่แจ้งบอกล่วงหน้า', 'รับปากแบบหวังพึ่งโชคชะตาโดยไม่ประเมินความสามารถงาน'], 
+                            trad: ['รับปากส่งๆ ไปก่อนแล้วทำไม่ได้จริง', 'ปล่อยงานล่าช้าเลยกำหนดเดดไลน์โดยไม่แจ้งบอกล่วงหน้า', 'รับปากแบบหวังพึ่งโชคชะตาโดยไม่ประเมินความสามารถงาน'], 
                             turbo: ['ประเมินศักยภาพงานอย่างแม่นยำก่อนเริ่มตกลง', 'รักษาคำมั่นสัญญา ส่งงานตรงเวลาตามที่รับปาก', 'หากเกิดเหตุสุดวิสัยจะรีบยกมือแจ้งล่วงหน้าทันทีเพื่อหาแผนสำรอง'] 
                         }, 
                         en: { 
@@ -483,7 +533,7 @@
                         icon: 'fa-comments', subtopic: 'Give Direct Feedback', 
                         th: { 
                             def: 'สื่อสารตรงไปตรงมา ติเพื่อก่อ และเปิดใจรับฟัง ฟีดแบ็กทันทีแบบซึ่งหน้าด้วยความเคารพ เพื่อให้เกิดการพัฒนา', 
-                            trad: ['เอาเรื่องติดขัดไปนินทาระบายลับหลัง', 'ปล่อยเบลอให้คนทำผิดซ้ำๆ เพราะไม่อยากมีปัญหากัน', 'เวลารับฟีดแบ็กก็เอาแต่แก้ตัว ตั้งป้อมปฏิเสธฟังความเห็น'], 
+                            trad: ['เอาเรื่องติดขัดไปนินทาลับหลัง', 'ปล่อยเบลอให้คนทำผิดซ้ำๆ เพราะไม่อยากมีปัญหากัน', 'เวลารับฟีดแบ็กก็เอาแต่แก้ตัว ตั้งป้อมปฏิเสธฟังความเห็น'], 
                             turbo: ['ติติงจุดผิดและให้คอมเมนต์ตรงๆ อย่างสุภาพด้วยความหวังดี', 'เสนอทิศทางการแก้ไขหรือพัฒนาต่ออย่างสร้างสรรค์', 'รับฟังคำติชมอย่างเปิดกว้าง และนำไปลงมือปรับปรุงทันที'] 
                         }, 
                         en: { 
@@ -506,7 +556,7 @@
                         icon: 'fa-circle-question', subtopic: '"I Don\'t Know" Shows Strength', 
                         th: { 
                             def: 'กล้ายอมรับว่าไม่รู้ เพื่อนำไปสู่การเรียนรู้ การยอมรับความจริงคือจุดเริ่มต้นของการแก้ปัญหาและการเติบโต', 
-                            trad: ['แกล้งทำเป็นพยักหน้าเข้าใจเพื่อรักษาหน้า', 'เดาข้อมูลตัวเลขสุ่มๆ เพราะกลัวโดนมองว่าไร้ความสามารถ', 'เงียบสะกดอารมณ์ไม่ยอมถาม แอบไปสางงานผิดๆ จนบานปลาย'], 
+                            trad: ['แกล้งทำเป็นรู้เพื่อรักษาหน้า', 'เดาข้อมูลตัวเลขสุ่มๆ เพราะกลัวโดนมองว่าไร้ความสามารถ', 'เงียบสะกดอารมณ์ไม่ยอมถาม แอบไปสางงานผิดๆ จนบานปลาย'], 
                             turbo: ['กล้าเอ่ยปากยอมรับว่า "ไม่รู้เรื่องนี้" อย่างเปิดเผย', 'ถามคำถามตรงประเด็นทันทีเมื่อเจอจุดที่ไม่มั่นใจ', 'กะตือรือร้นแสวงหาข้อมูลและพร้อมเรียนรู้จากผู้มีทักษะ'] 
                         }, 
                         en: { 
@@ -584,7 +634,7 @@
                             turbo: ['ถามหาเป้าหมายความกระจ่างเสมอว่า \"ทำสิ่งนี้ไปทำไม?\"', 'พร้อมปรับวิธีการทำงานให้เรียบง่ายตรงเป้าสูงสุด', 'ยกเลิกกระบวนการที่พิสูจน์แล้วว่าไม่ได้สร้าง Value'] 
                         }, 
                         en: { 
-                            def: 'First, Ask Why? Purpose precedes action. Before starting any project, we ask Why: Why are we doing this? What problem does this solve? What impact will it create?', 
+                            def: 'First, Ask Why? Purpose precedes action. Before starting any project, we ask Why: Why are we doing this? What problem does this solve? What impact will it create? If it doesn\'t provide any good, it\'s eliminated.', 
                             trad: ['Blindly executing legacy reports every single week without checking if anyone reads them.', 'Working like a robot under directions with no clear target context.', 'Refusing to challenge outdated processes.'], 
                             turbo: ['Always ask: "What decision or business impact is made based on this?"', 'Proactively propose eliminating workflows that create zero value.', 'Prioritize goal alignment over strict, repetitive steps.'] 
                         },
@@ -607,13 +657,13 @@
                             turbo: ['ตรวจทานชิ้นงานละเอียดเปรียบเหมือนเป็นลูกค้าคนสำคัญ', 'หมกมุ่นรักษามาตรฐานงานสูงสุดให้ดีเยี่ยมอย่างแท้จริง', 'หาสาเหตุ Root Cause เพื่อวางระบบป้องกันปัญหาระยะยาว'] 
                         }, 
                         en: { 
-                            def: 'Obsess on Effectiveness. Always ensure things are effective before looking to improve their efficiency. First ensure that the work is effective, then optimize for efficiency.', 
+                            def: 'Obsess on Effectiveness. Always ensure things are effective before looking to improve their efficiency. First ensure that the work is effective, then optimize for efficiency. Don\'t automate what should be eliminated.', 
                             trad: ['Spending weeks building an automated bot to send out spam emails customers hate.', 'Perfecting pointless, poorly designed processes to make them faster.', 'Prioritizing efficiency of delivery over the actual utility of the output.'], 
                             turbo: ['Analyze if the core content is effective and useful first before automating.', 'Rewrite and redesign the underlying content to maximize quality.', 'Do not automate what should be completely eliminated.'] 
                         },
                         practices: [
                             {
-                                th: { q: "ทีมพยายามสร้างปุ่มคำสั่งสั้นๆ เพื่อให้ส่งจดหมายแจ้งเตือนดอกเบี้ยที่ลูกค้ามักจะร้องเรียนด่วน ได้เร็วขึ้น คุณจะทำอย่างไร?", choices: [{ text: "A. รีบเขียนระบบบอทไอทีให้ส่งจดหมายฉบับหน่วงนั้นออกไปหาลูกค้าอย่างรวดเร็วที่สุด", isCorrect: false }, { text: "B. ดึงเบรกวิเคราะห์เนื้อหาจดหมายก่อน ปรับคำให้อ่านง่ายขึ้นเสมือนเราเป็นลูกค้า เมื่อจดหมายดีแล้วค่อยรันออโตเมต", isCorrect: true }] },
+                                th: { q: "ระบบอัตโนมัติส่งคำเตือนใบแจ้งหนี้กำลังถูกสร้าง แต่วิเคราะห์แล้วพบว่าเนื้อความเมลหยาบและทำร้ายความรู้สึกของลูกค้า คุณควรทำอย่างไร?", choices: [{ text: "A. รีบเขียนระบบบอทไอทีให้ส่งจดหมายฉบับหน่วงนั้นออกไปหาลูกค้าอย่างรวดเร็วที่สุด", isCorrect: false }, { text: "B. ดึงเบรกวิเคราะห์เนื้อหาจดหมายก่อน ปรับคำให้อ่านง่ายขึ้นเสมือนเราเป็นลูกค้า เมื่อจดหมายดีแล้วค่อยรันออโตเมต", isCorrect: true }] },
                                 en: { q: "Your team is trying to automate a system generated follow-up email that customers frequently complain about. How do you proceed?", choices: [{ text: "A. Code an automation script to blast out the poorly received emails even faster.", isCorrect: false }, { text: "B. Analyze the email content first, rewrite it to be useful and clear, then automate the flow.", isCorrect: true }] }
                             },
                             {
@@ -630,7 +680,7 @@
                             turbo: ['ตัดขั้นตอนที่ไม่สร้างมูลค่าหรือเอกสารซ้ำซ้อนออกไปให้หมดก่อน', 'กะเทาะขั้นตอนที่เหลือให้เรียบง่าย กระชับ เข้าใจทันที', 'สรุปเนื้อหาสำคัญสั้นกระชับ สู่เนื้อหาเน้นๆ ที่สื่อสารได้ชัดเจน'] 
                         }, 
                         en: { 
-                            def: 'Delete, Then Simplify. It is pointless to spend time simplifying things that should not exist in the first place. Only after we delete things enough then we start to simplify.', 
+                            def: 'Delete, Then Simplify. It is pointless to spend time simplifying things that should not exist in the first place. Only after we delete things enough then we start to simplify. Complex systems conceal flaws and break easily—simplify them. Repeatedly ask "Can we delete this?" and "Can this be simpler?" until nothing unnecessary and complicated remains.', 
                             trad: ['Trying to make each of the 20 redundant onboarding steps slightly faster.', 'Keeping legacy red tape intact while introducing digital signature overlays.', 'Writing long operational documents filled with confusing procedures.'], 
                             turbo: ['Audit the process and completely delete legacy steps that are not legally required.', 'Simplify the remaining essential steps to make them intuitive.', 'Consistently ask "Can we delete this?" to eliminate deadweight.'] 
                         },
@@ -653,7 +703,7 @@
                             turbo: ['ลงหน้างานไปดูข้อขัดข้อง สัมผัสปัญหาร่วมกับพนักงานสาขา', 'คุย Data ตรวจสอบข้อมูลดิบด้วยตัวเองเพื่อหาเบาะแสแท้จริง', 'ทดลองสวมบทบาทลงมือแพ็คของ ตอบแชท หรือลุยระบบเอง'] 
                         }, 
                         en: { 
-                            def: 'Hands-On. True insights and effective solutions arise from direct, hands-on experience rather than detached observation or theoretical models. By actively testing products, leaders and teams uncover realities.', 
+                            def: 'Hands-On. True insights and effective solutions arise from direct, hands-on experience rather than detached observation or theoretical models. By actively testing products, interviewing users, and fixing problems personally, leaders and teams uncover realities that reports alone cannot reveal.', 
                             trad: ['Managing packaging errors strictly by reading spreadsheets and ticket trends.', 'Waiting for a steering committee to assign a solution designer.', 'Delegating troubleshooting to others without validating the root issue.'], 
                             turbo: ['Go directly to the warehouse or front-line branch to experience the workflow.', 'Pack a box personally, test the tools, and uncover the real root cause.', 'Rely on personal experience over third-party reports.'] 
                         },
@@ -676,7 +726,7 @@
                             turbo: ['ยกหูโทรคุยหรือทักแชทสั้นด่วนเพื่อให้ได้ข้อสรุปใน 5 นาที', 'เข้าประชุมเมื่อต้องการระดมสมองเคาะแผนงานที่ซับซ้อนจริงๆ เท่านั้น', 'กางคู่มือสถิติและเป้าหมายที่ชัดเจน และสรุปสเต็ปงานทันที'] 
                         }, 
                         en: { 
-                            def: 'Collaborate More, Meeting Less. Meetings are last resorts—small, infrequent, and focused. Limit attendance to 10 people maximum. Use asynchronous communication for updates.', 
+                            def: 'Collaborate More, Meeting Less. Meetings are last resorts—small, infrequent, and focused. Limit attendance to 10 people maximum, consuming no more than 20% of anyone\'s time in a week. Use asynchronous communication for updates. If you\'re not contributing to or benefiting from the meeting, leave.', 
                             trad: ['Scheduling a recurring 1-hour weekly alignment meeting just to hear verbal updates.', 'Inviting 15 people to a meeting where only 3 actually contribute.', 'Staying in a meeting when you have zero inputs or takeaways.'], 
                             turbo: ['Use shared documents or Slack threads for asynchronous weekly updates.', 'Keep meetings focused strictly on critical decisions with key contributors.', 'Politely leave a meeting if you are not contributing or benefiting.'] 
                         },
@@ -704,7 +754,7 @@
                             turbo: ['ทำตัว Prototype แบบสเกลเล็กๆ มาทดสอบใช้งานหน้างานทันที', 'ลุยลงมือทำเพื่อสะสมข้อมูลจริง (Iterate) รวดเร็ว', 'กล้าตัดสินใจหาวิธีแก้ขัด (Workaround) สางงานก่อนแล้วแก้ถาวรทีหลัง'] 
                         }, 
                         en: { 
-                            def: 'Act Now, Fix Later. Don\'t overly analyze. Proceed with 80% of the information, trusting instincts and experience. Momentum is critical—adjust course later.', 
+                            def: 'Act Now, Fix Later. Don\'t overly analyze things. Proceed with 80% of the information, trusting your instincts and experience. Make decisions, get results, and think about what to do next. Momentum is critical—adjust course later if needed. Perfect information is rare, and waiting too long leads to missed opportunities.', 
                             trad: ['Delaying a website launch for weeks to debate minor visual design tweaks.', 'Waiting for absolute 100% complete data before making a market decision.', 'Stalling project deployment due to minor fears.'], 
                             turbo: ['Launch the web page today with essential layouts.', 'Gather real user data and feedback immediately after launch.', 'Fix the font size or visual issues tomorrow based on live data.'] 
                         },
@@ -714,7 +764,7 @@
                                 en: { q: "You want to launch a new useful landing page, but you're worried the styling isn't completely perfect.", choices: [{ text: "A. Delay the launch for 3 days to debate minor responsive spacing tweaks.", isCorrect: false }, { text: "B. Launch it today, collect traffic stats, and optimize the spacing tomorrow.", isCorrect: true }] }
                             },
                             {
-                                th: { q: "ระบบคีย์สถิติชำรุดกะทันหันช่วงบ่ายที่มีคิวการทำสัญญาสินเชื่อรถยนต์รถยนต์จำลองแน่นหนา คุณจะแก้ไขหน้างานอย่างไร?", choices: [{ text: "A. ตัดสินใจเขียนข้อมูลดิบลงกระดาษและบันทึกภาพถ่ายสัญญาส่งไลน์กลั่นกรองเฉพาะหน้าไปก่อน เพื่อรักษาสัญญากับลูกค้า", isCorrect: true }, { text: "B. ปิดประตูและยกเลิกเคสชั่วคราว แจ้งให้ลูกค้ากลับมาใหม่พรุ่งนี้เพราะระบบขัดข้อง", isCorrect: false }] },
+                                th: { q: "ระบบคีย์สถิติชำรุดกะทันหันช่วงบ่ายที่มีคิวการทำสัญญาสินเชื่อรถยนต์จำลองแน่นหนา คุณจะแก้ไขหน้างานอย่างไร?", choices: [{ text: "A. ตัดสินใจเขียนข้อมูลดิบลงกระดาษและบันทึกภาพถ่ายสัญญาส่งไลน์กลั่นกรองเฉพาะหน้าไปก่อน เพื่อรักษาสัญญากับลูกค้า", isCorrect: true }, { text: "B. ปิดประตูและยกเลิกเคสชั่วคราว แจ้งให้ลูกค้ากลับมาใหม่พรุ่งนี้เพราะระบบขัดข้อง", isCorrect: false }] },
                                 en: { q: "An integration API fails during peak customer traffic hour at a branch. How do you handle it?", choices: [{ text: "A. Implement a secure workaround to record requests on a temporary sheet, keeping the queue moving.", isCorrect: true }, { text: "B. Tell customers the system is down, ask them to return tomorrow, and wait for IT to fix it.", isCorrect: false }] }
                             }
                         ]
@@ -727,7 +777,7 @@
                             turbo: ['บริหารจัดการเวลาทำงานของตัวเองอย่างฉลาดและตรงประเด็น', 'เน้นส่งมอบชิ้นงานที่เสร็จสมบูรณ์รวดเร็วและตรงเป้าทางธุรกิจ', 'ภูมิใจกับการปิดโปรเจกต์ยากๆ ทันกำหนดโดยไม่ต้องนั่งแช่ออฟฟิศ'] 
                         }, 
                         en: { 
-                            def: 'Outcome, Not Hours. Value concrete outcomes over time invested. Shipped products, resolved issues, and measurable impact define success—not hours worked.', 
+                            def: 'Outcome, Not Hours. Value concrete outcomes over time invested. Shipped products, resolved issues, and measurable impact define success—not hours worked or meetings attended. Keep meetings minimal and decision-focused, and evaluate performance based on deliverables, not activity metrics.', 
                             trad: ['Staying at your desk pretending to type until 7 PM because leaving early looks bad.', 'Presenting your exhaustion and late hours in status reports.', 'Focusing on the volume of tasks done rather than their actual business value.'], 
                             turbo: ['Deliver high-quality tasks efficiently and leave early to recharge.', 'Evaluate performance strictly based on milestones hit and value created.', 'Manage time intelligently to maximize output, not seat time.'] 
                         },
@@ -750,7 +800,7 @@
                             turbo: ['เลือกปัญหาที่สร้าง Impact สูงสุดต่อองค์กรมาทำเป็นอันดับแรกก่อน', 'กล้าเอ่ยปากปฏิเสธ (Say No) กับงานแทรกที่พาทุกคนหลงทาง', 'ทุ่มเทความพยายาม 100% สางงานหลักให้จบก่อนขยับไปหัวข้ออื่น'] 
                         }, 
                         en: { 
-                            def: 'Laser Focus on What Matters. We can\'t do everything. Concentrate intensely on critical priorities—doing everything guarantees failure. Be strategic about what to pursue.', 
+                            def: 'Laser Focus on What Matters. We can\'t do everything. Concentrate intensely on critical priorities—doing everything guarantees failure. Ensure clarity about what matters most and sort work accordingly. Be strategic about what to pursue and what not to do, maximizing impact where it counts.', 
                             trad: ['Trying to execute a little bit of 10 tasks at once, finishing none.', 'Accepting every incoming minor request because you are afraid to say no.', 'Focusing heavily on easy, low-value administrative tasks first.'], 
                             turbo: ['Pick the top 2 tasks that actually drive customer growth or revenue.', 'Ignore or postpone the other 8 tasks until the top 2 are 100% complete.', 'Boldly decline non-essential distractions.'] 
                         },
@@ -773,7 +823,7 @@
                             turbo: ['หยุด คิด วิเคราะห์ ก่อนลงมือกระโจนลุยงานถึก', 'แสวงหา Tools, เทคโนโลยี หรือสร้าง Automation มาช่วยผ่อนแรง', 'เปลี่ยนพลังงานรูทีนเดิมๆ ให้กลายเป็นระบบที่กดสางงานได้ในคลิกเดียว'] 
                         }, 
                         en: { 
-                            def: 'Work Smart AND Hard. Work with purpose—effort without direction achieves nothing. Direction without effort also won\'t go far. Make every task outcome-oriented: engineers debug until systems are bulletproof, marketers refine until campaigns are irresistible.', 
+                            def: 'Work Smart AND Hard. Work with purpose—effort without direction achieves nothing. Direction without effort also won\'t go far. Make every task outcome-oriented: engineers debug until systems are bulletproof, marketers refine until campaigns are irresistible. Yield skills and victories with no shortcuts, balancing intensity with sustainability to avoid burnout.', 
                             trad: ['Yelling at the sales team to \'Make double the calls!\' tomorrow without analyzing lead quality.', 'Doing manual database cleaning for days instead of writing a short script.', 'Confusing pure exhaustion with professional output.'], 
                             turbo: ['Audit cold call quality first, isolating the actual buying demographic.', 'Train callers to pitch the precise target, closing more deals with fewer calls.', 'Implement software systems to automate redundant operations.'] 
                         },
@@ -796,7 +846,7 @@
                             turbo: ['กัดฟันสู้ ไม่ยอมแพ้ต่อกำแพงเทคโนโลยีและพฤติกรรมเดิม', 'มองมุมใหม่ พลิกแพลง และใช้วิธี Hacking ปลดล็อกข้อขัดข้อง', 'หาทางแกะรอยระบบของคู่แข่งเพื่อสร้างทางเลือกที่ฉลาดกว่ากลับไปสู้'] 
                         }, 
                         en: { 
-                            def: 'Solve the Unsolvable. Thrive on complex challenges that others avoid. Easy work won\'t last because competitors can replicate it quickly. Pursue difficult assignments to create sustainable advantages.', 
+                            def: 'Solve the Unsolvable. Thrive on complex challenges that others avoid. Easy work won\'t last because competitors can replicate it quickly. Pursue difficult assignments to create sustainable advantages. View failures as data for improvement, not reasons to surrender. Transform obstacles into opportunities for innovation.', 
                             trad: ['Sighing \'we just can\'t compete with that\' when a competitor launches an amazing loan tracking app.', 'Accepting defeat without looking deep into implementation paths.', 'Avoiding hard, complex system integrations.'], 
                             turbo: ['Reverse engineer how the competitor designed the app flow.', 'Identify the specific flaws in their checkout, and design a simplified, smarter experience.', 'Build a sustainable competitive advantage by tackling the hardest problems.'] 
                         },
@@ -824,7 +874,7 @@
                             turbo: ['ทนจมอยู่กับปัญหาระบบที่ขัดข้อง คุ้ยหาสาเหตุสู้ไม่ถอย', 'กัดฟันลุยทดสอบกระบวนงาน คัดสรรทางเลือกแก้อย่างตั้งใจ', 'ยึดมั่นความอดทนและการลงมือทำซ้ำๆ เป็นคีย์หลักปลดล็อกความก้าวหน้า'] 
                         }, 
                         en: { 
-                            def: 'Grit Over Genius. Talent is overrated. Grit—the stubborn drive to push through setbacks—beats raw ability every time.', 
+                            def: 'Grit Over Genius. Talent is overrated. Grit—the stubborn drive to push through setbacks—beats raw ability every time. You don\'t learn by dreaming or skimming books; you learn by grinding it out, failing, and trying again. The greatest successes come from those who outwork, not outthink.', 
                             trad: ['An engineer giving up on a complex backend bug because the solution wasn\'t obvious.', 'Assuming you are not smart enough to solve data-science problems, returning the task.', 'Expecting fast answers without clocking in the research hours.'], 
                             turbo: ['Spend the weekend reading raw system documentation and testing fail-cases.', 'Persist through 50 trial runs until a working script is discovered.', 'Outwork the obstacles with sheer stubborn drive.'] 
                         },
@@ -870,9 +920,9 @@
                             turbo: ['เก็บปัญหาหน้างานประจำวันมาเขียนเป็น Checklist พัฒนา', 'ค่อยๆ ปรับปรุงจุดบกพร่องของเอกสารทีละจุดอย่างสม่ำเสมอทุกวัน', 'สะสมการปรับปรุงวันละนิดเพื่อพลิกโฉมบริการกู้ให้เร็วขึ้นมหาศาลในหกเดือน'] 
                         }, 
                         en: { 
-                            def: 'Better Every Day. Growth is not an overnight mindset, but gradually developing and accumulating small wins every day.', 
-                            trad: ['Trying to revolutionize the entire credit operations pipeline overnight, burning out the team.', 'Failing to log minor complaints, keeping the same friction points alive.', 'Executing tasks in the exact same repetitive, inefficient way forever.'], 
-                            turbo: ['Log everyday client complaints, picking just one specific friction point to solve this week.', 'Solve another issue next week, compounding incremental efficiency over months.', 'Turn lessons from minor failures into clear workflow checklist fixes.'] 
+                            def: 'Better Every Day. Growth is not an overnight mindset, but gradually developing and accumulating small wins every day. Improving just a little bit daily creates massive results.', 
+                            trad: ['Trying to overhaul the system or change everything to be better overnight until burning out. Not reviewing mistakes.', 'Executing tasks in the exact same repetitive, inefficient way forever.'], 
+                            turbo: ['Take problems as lessons. Regularly improve work processes point by point every day.', 'Solve another issue next week, compounding incremental efficiency over months.', 'Turn lessons from minor failures into clear workflow checklist fixes.'] 
                         },
                         practices: [
                             {
@@ -893,7 +943,7 @@
                             turbo: ['ลงหน้างานไปช่วยทีมอนุมัติเคส สลัดสูทช่วยตอบแชทลูกค้าด่วนเคียงข้างทีม', 'ทำให้ดูเป็นตัวอย่าง (Lead by example) นั่งพิจารณาสัญญาร่วมหัวจมท้าย', 'กอดคอร่วมแก้บั๊ก ลุยทดสอบระบบพังเคียงบ่าเคียงไหล่ยามวิกฤต'] 
                         }, 
                         en: { 
-                            def: 'Leaders Do the Work. True leaders must be ready to \'get dirty\' and handle front-line work with the team.', 
+                            def: 'Leaders Do the Work. True leaders must be ready to \'get dirty\' and handle front-line work with the team. Respect comes from ability and action, not just position.', 
                             trad: ['The manager ordering pizza for the team working late on a crash, then leaving immediately to watch TV.', 'Expecting team members to take on manual grinds while you strictly review summary charts.', 'Shielding yourself from front-line realities behind dashboard metrics.'], 
                             turbo: ['Stay on-site side-by-side with your team, helping answer tickets or log bug reports.', 'Lead by example. Execute critical files, troubleshoot directly, and absorb the crisis pressure.', 'Earn the respect of your division through hands-on technical competence.'] 
                         },
@@ -916,7 +966,7 @@
                             turbo: ['เปิดใจกว้าง ศึกษาหาทักษะ Tool ใหม่ๆ คีย์หลักประยุกต์ใช้เช่น AI', 'ดึงความรู้เรื่องวิธีย่อกระบวนงานพิจารณาเอกสารจากอุตสาหกรรมอื่นมาปรับใช้', 'ตื่นตัวแสวงหาความเชี่ยวชาญ ค้นพบทักษะใหม่ๆ อัปเกรดตัวเองให้เก่งและมี Value เสมอ'] 
                         }, 
                         en: { 
-                            def: 'Learn Forever. Curiosity provides our competitive edge—nurture it relentlessly.', 
+                            def: 'Learn Forever. Curiosity provides our competitive edge—nurture it relentlessly. Dedicate time to acquire new skills, explore alternate approaches, investigate diverse disciplines like physics or psychology—adopt whatever proves useful. Future challenges will render current solutions obsolete; adaptation is survival.', 
                             trad: ['Panicking and resisting when a new automated data-matching framework (like AI) is introduced.', 'Sticking strictly to slow manual tasks because learning the new flow is too troublesome.', 'Believing your current operational framework is permanent and perfect.'], 
                             turbo: ['Set aside time in the evening to learn and master the new system/tools.', 'Use new technology to augment your performance and become a high-value expert.', 'Actively study successful workflows from other industries to improve ours.'] 
                         },
@@ -1162,7 +1212,7 @@
             }
         }
 
-        // --- 11. OVERVIEW SCREEN ---
+        // --- 10.5 MODULE OVERVIEW ---
         function enterOverview(moduleId) {
             activeModuleId = moduleId;
             const modData = COURSE_DATA.find(m => m.id === moduleId);
@@ -1186,7 +1236,7 @@
             showScreen('screen-flashcard');
         }
 
-        // --- 12. FLASHCARDS SYSTEM ---
+        // --- 11. FLASHCARDS SYSTEM ---
         function renderFlashcard() {
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
             const cData = mod.cards[cardIndex];
@@ -1285,43 +1335,34 @@
             }
         }
 
-        // --- 13. FORMATIVE PRACTICE QUIZ SYSTEM (JIGSAW 2.5) ---
+        // --- 11.5 FORMATIVE PRACTICE QUIZ SYSTEM ---
         function renderPracticeQuestion() {
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
             const subtopicData = mod.cards[cardIndex];
             const qItem = subtopicData.practices[practiceIndex];
             const currentLangQ = qItem[lang];
             
-            // Set Quiz Layout header colors
             document.getElementById('practice-header-title').style.color = mod.color;
             document.getElementById('practice-header-title').innerText = `${subtopicData.subtopic} - Practice`;
-            document.getElementById('practice-counter-text').innerText = `Question ${practiceIndex + 1} / 2`;
-            
-            document.getElementById('quiz-prog-fill').style.backgroundColor = mod.color;
-            document.getElementById('quiz-prog-fill').style.width = `${((practiceIndex) / 2) * 100}%`;
+            document.getElementById('practice-counter-text').innerText = `Practice ${practiceIndex + 1} / 2`;
 
-            // Display scenario
             document.getElementById('practice-q-text').innerText = currentLangQ.q;
 
             const banner = document.getElementById('practice-feedback-banner');
             banner.style.display = 'none';
-            banner.className = 'quiz-feedback-banner';
 
-            // Build Choices A. B.
             const choicesWrapper = document.getElementById('practice-choices');
             choicesWrapper.innerHTML = '';
-            const letters = ['A.', 'B.', 'C.', 'D.'];
-
-            currentLangQ.choices.forEach((choice, idx) => {
+            currentLangQ.choices.forEach(choice => {
                 const btn = document.createElement('button');
                 btn.className = 'choice-btn-practice';
-                btn.innerHTML = `<span class="font-bold mr-2 text-primary">${letters[idx]}</span> <span>${choice.text}</span>`;
+                btn.innerText = choice.text;
                 btn.onclick = () => verifyPracticeAnswer(choice.isCorrect, btn, qItem);
                 choicesWrapper.appendChild(btn);
             });
         }
 
-        function verifyPracticeAnswer(isCorrect, btn, qItem) {
+        async function verifyPracticeAnswer(isCorrect, btn, qItem) {
             const banner = document.getElementById('practice-feedback-banner');
             const allBtns = document.querySelectorAll('.choice-btn-practice');
             const qId = qItem.id || `mod${activeModuleId}_card${cardIndex}_q${practiceIndex}`;
@@ -1331,7 +1372,6 @@
             }
 
             if (!isCorrect) {
-                // Incorrect attempt
                 btn.classList.add('wrong');
                 btn.disabled = true;
                 trackingWrongAttempts[qId] += 1;
@@ -1340,14 +1380,12 @@
                 banner.className = 'quiz-feedback-banner wrong-banner';
                 banner.style.display = 'block';
                 
-                // Allow selecting other choices
                 setTimeout(() => {
                     allBtns.forEach(b => {
                         if (!b.classList.contains('wrong')) b.disabled = false;
                     });
                 }, 800);
             } else {
-                // Correct answer
                 btn.classList.add('correct');
                 allBtns.forEach(b => b.disabled = true);
                 
@@ -1355,26 +1393,22 @@
                 banner.className = 'quiz-feedback-banner correct-banner';
                 banner.style.display = 'block';
 
-                // Save if correctly answered on first click
                 if (trackingWrongAttempts[qId] === 0) {
                     trackingFirstAttemptSuccess[qId] = true;
                     answeredPracticesCount += 1;
                 }
 
-                // Auto-advance after 1.5 seconds
                 setTimeout(() => {
                     if (practiceIndex < 1) {
                         practiceIndex++;
                         renderPracticeQuestion();
                     } else {
-                        // All 2 practices for current subtopic complete, advance cardIndex
                         const mod = COURSE_DATA.find(m => m.id === activeModuleId);
                         if (cardIndex < mod.cards.length - 1) {
                             cardIndex++;
                             renderFlashcard();
                             showScreen('screen-flashcard');
                         } else {
-                            // Render final summary screen
                             showSummary();
                         }
                     }
@@ -1382,7 +1416,7 @@
             }
         }
 
-        // --- 14. SUMMARY SCREEN ---
+        // --- 12. SUMMARY (HORIZONTAL GRID Layout) ---
         function showSummary() {
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
             document.getElementById('sum-icon').style.color = mod.color;
@@ -1397,7 +1431,6 @@
             const list = document.getElementById('sum-list');
             list.innerHTML = '';
             
-            // Build Horizontal Grid (5 columns alignment on widescreen notebook)
             mod.cards.forEach((c, idx) => {
                 list.innerHTML += `
                     <div class="summary-item" style="border-top: 8px solid ${mod.color}">
@@ -1415,32 +1448,28 @@
         async function completeModule() {
             if (!completedModules.includes(activeModuleId)) completedModules.push(activeModuleId);
             
-            // Unlock modules 2-5 simultaneously once module 1 (ONE TURBO) is completed
             if (completedModules.includes(1)) {
                 [2, 3, 4, 5].forEach(id => {
                     if (!unlockedModules.includes(id)) unlockedModules.push(id);
                 });
             }
             
-            // Save state inside real Firebase DB
             await saveUserProgressToFirebase();
             
             renderDashboard(); 
             showScreen('screen-dashboard');
         }
 
-        // --- 15. FINAL PERFORMANCE RESULTS ---
+        // --- 13. FINAL RESULT (HORIZONTAL GRID Layout) ---
         function showFinalResult() {
             const grid = document.getElementById('final-grid');
             grid.innerHTML = '';
             COURSE_DATA.forEach(mod => {
                 let lis = '';
-                mod.cards.forEach(c => {
-                    lis += `<li class="flex items-start gap-2"><i class="fa-solid fa-check-circle mt-1 text-lg" style="color:${mod.color};"></i> <span>${c.subtopic}</span></li>`;
-                });
+                mod.cards.forEach(c => lis += `<li><i class="fa-solid fa-check-circle" style="color:${mod.color};"></i> <span>${c.subtopic}</span></li>`);
                 grid.innerHTML += `
-                    <div class="final-card" style="border-top-color: ${mod.color}">
-                        <h3 class="font-bold text-gray-800" style="color: ${mod.color}">${mod.id}. ${mod[lang].title}</h3>
+                    <div class="final-card" style="border-color:${mod.color}">
+                        <h3 style="color:${mod.color}">${mod.id}. ${mod[lang].title}</h3>
                         <ul>${lis}</ul>
                     </div>
                 `;
@@ -1452,9 +1481,9 @@
             showScreen('screen-welcome');
         }
 
-        // --- 16. REDIRECTING & LOGOUTS ---
+        // --- 14. REDIRECTING & LOGOUTS ---
         async function goToFinalQuizPlatform() {
-            const SF_EXAM_URL = "https://example.com/pending-sf-link"; // Customizable URL config
+            const SF_EXAM_URL = "https://example.com/pending-sf-link"; 
             
             const overlay = document.createElement('div');
             overlay.style.position = 'fixed';
@@ -1488,7 +1517,7 @@
             overlay.appendChild(text);
             document.body.appendChild(overlay);
 
-            // Save completion log record to Firebase DB
+            // [FIREBASE] Save final learning logs into database
             try {
                 if (currentUser) {
                     await addDoc(collection(db, "learning_completions"), {
@@ -1512,7 +1541,7 @@
             }, 2500);
         }
 
-        // Map global variables so they function perfectly inside inline HTML
+        // Bind global window functions
         window.toggleLanguage = toggleLanguage;
         window.showScreen = showScreen;
         window.openAdminModal = openAdminModal;
@@ -1528,6 +1557,8 @@
         window.showFinalResult = showFinalResult;
         window.goToWelcome = goToWelcome;
         window.goToFinalQuizPlatform = goToFinalQuizPlatform;
+        window.enterOverview = enterOverview;
+        window.enterFlashcards = enterFlashcards;
 
     </script>
 </body>
