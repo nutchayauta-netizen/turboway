@@ -6,7 +6,7 @@
     <title>TURBO WAYS Learning Portal</title>
     
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Tailwind CSS for Modern Responsive Widescreen UI -->
@@ -27,14 +27,22 @@
     </script>
 
     <style>
+        :root {
+            --primary: #002D72;
+            --accent: #FA4786;
+            --bgSoft: #f0f4f8;
+            --success: #22c55e;
+            --danger: #ef4444;
+        }
+
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f0f4f8;
+            background-color: var(--bgSoft);
             color: #333;
             min-height: 100vh;
         }
 
-        /* ป้องกันจอซ้อนทับกันอย่างเด็ดขาด */
+        /* Prevent screens from overlapping */
         .screen {
             display: none !important;
             width: 100%;
@@ -46,6 +54,11 @@
         /* Custom flip animation styles */
         .flashcard-wrapper {
             perspective: 2000px;
+            width: 100%;
+            max-width: 800px;
+            height: 520px;
+            margin: 0 auto;
+            cursor: pointer;
         }
         .flashcard {
             position: relative;
@@ -69,27 +82,137 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
+        
+        .card-front {
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
         .card-back {
             transform: rotateY(180deg);
             background: white;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-top-bar {
+            padding: 16px 24px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .card-back .card-body {
+            flex-direction: row;
+            gap: 20px;
+            align-items: stretch;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .flashcard-wrapper {
+                height: 560px;
+            }
+            .card-back .card-body {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+        }
+        
+        /* Custom list style inside flashcard back for bullet points */
+        .way-box ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+        .way-box li {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 8px;
         }
         
         /* Custom buttons styling */
-        .btn-nav-fc {
-            padding: 12px 25px;
+        .btn-main {
+            background: var(--primary);
+            color: white;
+            padding: 16px 32px;
             font-size: 1.25rem;
+            font-weight: 700;
+            border-radius: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 45, 114, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .btn-main:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 45, 114, 0.35);
+            filter: brightness(110%);
+        }
+        .btn-main:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-back {
+            color: #64748b;
+            font-size: 1.1rem;
             font-weight: 600;
-            border-radius: 12px;
-            background: #e0e0e0;
-            color: #555;
-            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: color 0.2s;
         }
-        .btn-nav-fc:hover:not(:disabled) {
-            background: #d0d0d0;
+        .btn-back:hover {
+            color: var(--primary);
         }
-        .btn-nav-fc:disabled {
+
+        .btn-nav {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-nav:hover:not(:disabled) {
+            background: #e2e8f0;
+            color: var(--primary);
+        }
+        .btn-nav:disabled {
             opacity: 0.4;
             cursor: not-allowed;
+        }
+
+        .card-nav {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+            width: 100%;
         }
 
         /* General choice buttons styling */
@@ -98,7 +221,7 @@
             border: 2px solid #ddd;
             padding: 18px 25px;
             border-radius: 16px;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             text-align: left;
             cursor: pointer;
             transition: 0.2s;
@@ -130,6 +253,199 @@
             cursor: not-allowed;
         }
 
+        /* Dashboard Module Cards */
+        .module-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+        .module-card {
+            display: flex;
+            align-items: center;
+            padding: 18px 25px;
+            border-radius: 20px;
+            border: 2px solid #eaeaea;
+            border-left-width: 12px;
+            background: white;
+            transition: 0.3s;
+        }
+        .module-card.unlocked {
+            cursor: pointer;
+        }
+        .module-card.unlocked:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .module-card.completed {
+            cursor: pointer;
+            background: #f8fafc;
+        }
+        .module-card.completed:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        .module-card.locked {
+            opacity: 0.5;
+            filter: grayscale(100%);
+            cursor: not-allowed;
+            background: #fafafa;
+        }
+
+        .m-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .m-info {
+            flex-grow: 1;
+            margin-left: 16px;
+        }
+        .m-info h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .m-info p {
+            color: #64748b;
+            font-size: 1.05rem;
+        }
+        .m-status {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Alerts Styling */
+        .alert-box {
+            display: none;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 1.05rem;
+        }
+        .alert-box.active {
+            display: block;
+        }
+        .alert-box.error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fee2e2;
+        }
+        .alert-box.success {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #dcfce7;
+        }
+
+        /* Front Icon Container */
+        .front-icon-wrapper {
+            background: rgba(255, 255, 255, 0.15);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        /* Summary Grid */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            width: 100%;
+            margin-top: 16px;
+        }
+        .summary-item {
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid #f1f5f9;
+            transition: transform 0.2s;
+        }
+        .summary-item:hover {
+            transform: translateY(-2px);
+        }
+        .summary-header-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .summary-header-row h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .summary-icon-cir {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Final Result Column Grid */
+        .final-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            width: 100%;
+        }
+        @media (max-width: 1200px) {
+            .final-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 640px) {
+            .final-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .final-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+        }
+        .final-card h3 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+        .final-card ul {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .final-card li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: #475569;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-6px); }
@@ -143,9 +459,8 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.6; }
         }
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+        .hint-pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -155,35 +470,35 @@
         
         <!-- Admin Login Modal -->
         <div class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm hidden justify-center items-center z-[1000]" id="admin-modal">
-            <div class="modal-box bg-white p-10 rounded-2xl w-full max-w-[400px] text-center relative shadow-2xl">
+            <div class="modal-box bg-white p-10 rounded-2xl w-full max-w-[400px] text-center relative shadow-2xl m-4">
                 <button class="absolute top-4 right-5 text-2xl text-gray-400 hover:text-red-500" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
                 <h2 class="text-2xl font-bold text-primary mb-6"><i class="fa-solid fa-key"></i> <span data-i18n="adminAccess">Admin Setup</span></h2>
-                <div id="admin-alert" class="hidden p-3 rounded-lg text-center font-medium mb-4"></div>
+                <div id="admin-alert" class="alert-box"></div>
                 <input type="password" id="admin-pwd" class="w-full p-3 border-2 border-gray-300 rounded-lg text-center mb-6 outline-none focus:border-primary" data-i18n-placeholder="pwdPlaceholder" placeholder="Password">
                 <button class="w-full bg-primary text-white py-3 rounded-full font-semibold hover:bg-[#001D4B] transition" onclick="adminLogin()" data-i18n="accessBtn">Log in</button>
             </div>
         </div>
 
         <!-- TOP NAVBAR -->
-        <nav class="top-navbar bg-primary text-white px-10 py-4 justify-between items-center sticky top-0 z-50 shadow-md" id="top-navbar" style="display: none;">
-            <div class="nav-logo text-2xl font-bold tracking-wide"><span>TURBO</span> WAYS</div>
-            <div class="nav-actions flex items-center gap-6">
-                <button class="btn-admin bg-white/10 hover:bg-white/20 border border-white/30 text-white px-4 py-2 rounded-full cursor-pointer transition text-base font-semibold" onclick="openAdminModal()" title="Admin Setup"><i class="fa-solid fa-folder-open"></i></button>
-                <button class="btn-lang" onclick="toggleLanguage()">
-                    <i class="fa-solid fa-globe"></i> <span id="lang-text">EN</span>
+        <nav class="top-navbar bg-primary text-white px-6 md:px-10 py-4 justify-between items-center sticky top-0 z-50 shadow-md" id="top-navbar" style="display: none;">
+            <div class="nav-logo text-xl md:text-2xl font-bold tracking-wide"><span>TURBO</span> WAYS</div>
+            <div class="nav-actions flex items-center gap-3 md:gap-6">
+                <button class="btn-admin bg-white/10 hover:bg-white/20 border border-white/30 text-white px-3 py-2 rounded-full cursor-pointer transition text-base font-semibold" onclick="openAdminModal()" title="Admin Setup"><i class="fa-solid fa-folder-open"></i></button>
+                <button class="btn-lang bg-white/15 px-3 py-2 rounded-full hover:bg-white/25 transition font-semibold" onclick="toggleLanguage()">
+                    <i class="fa-solid fa-globe"></i> <span id="lang-text">TH</span>
                 </button>
-                <div class="user-badge flex items-center gap-2 bg-black/25 px-5 py-2 rounded-full font-medium text-base hidden" id="user-badge">
+                <div class="user-badge flex items-center gap-2 bg-black/25 px-4 py-2 rounded-full font-medium text-sm md:text-base hidden" id="user-badge">
                     <i class="fa-solid fa-circle-user"></i> <span id="user-name">User</span>
                 </div>
-                <button class="btn-logout bg-none border-none text-white opacity-80 hover:opacity-100 cursor-pointer text-base font-medium flex items-center gap-1.5 transition hidden" id="btn-logout" onclick="logout()">
+                <button class="btn-logout bg-none border-none text-white opacity-80 hover:opacity-100 cursor-pointer text-sm md:text-base font-medium flex items-center gap-1.5 transition hidden" id="btn-logout" onclick="logout()">
                     <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Log out</span>
                 </button>
             </div>
         </nav>
 
         <!-- ==================== 0. LOGIN ==================== -->
-        <div id="screen-login" class="screen active flex justify-center items-center">
-            <div class="login-box bg-white p-12 rounded-3xl shadow-2xl border-t-8 border-accent w-full max-w-[500px] m-auto">
+        <div id="screen-login" class="screen active flex justify-center items-center py-10 px-4">
+            <div class="login-box bg-white p-8 md:p-12 rounded-3xl shadow-2xl border-t-8 border-accent w-full max-w-[500px] m-auto">
                 <h1 class="text-4xl font-extrabold text-center text-primary mb-2">TURBO WAYS</h1>
                 <h2 class="text-2xl font-semibold text-center text-accent mb-6" data-i18n="loginTitle">E-Learning Portal</h2>
                 <p class="text-center text-gray-500 mb-8" data-i18n="loginSubtitle">Log in to start learning</p>
@@ -203,43 +518,43 @@
         </div>
 
         <!-- ==================== 1. DASHBOARD ==================== -->
-        <div id="screen-dashboard" class="screen">
-            <div class="dash-header class w-full text-center mb-10">
-                <h1 class="text-5xl font-extrabold text-primary mb-4">WELCOME TO TURBO!</h1>
-                <div class="progress-bar-container max-w-[800px] mx-auto">
-                    <div class="flex justify-between text-xl font-semibold text-gray-600 mb-2">
+        <div id="screen-dashboard" class="screen flex-col items-center py-10 px-4 md:px-10">
+            <div class="dash-header w-full text-center mb-10">
+                <h1 class="text-3xl md:text-5xl font-extrabold text-primary mb-4">WELCOME TO TURBO!</h1>
+                <div class="progress-bar-container w-full max-w-[800px] mx-auto">
+                    <div class="flex justify-between text-base md:text-xl font-semibold text-gray-600 mb-2">
                         <span data-i18n="progress">Your Progress</span>
                         <span class="text-accent" id="dash-prog-text">0 / 5 Modules</span>
                     </div>
                     <div class="progress-track w-full bg-gray-200 h-4 rounded-full overflow-hidden">
-                        <div class="progress-fill" id="dash-prog-fill"></div>
+                        <div class="progress-fill h-full transition-all duration-500" id="dash-prog-fill"></div>
                     </div>
                 </div>
             </div>
             
-            <div class="module-list w-full max-w-[900px]" id="dash-module-list"></div>
+            <div class="module-list w-full max-w-[900px] mx-auto" id="dash-module-list"></div>
 
-            <div id="dash-final-action" class="dash-final-action mt-8 p-8 bg-green-50 border-2 border-dashed border-success rounded-3xl w-full max-w-[900px] hidden">
-                <h2 class="text-2xl font-bold text-success mb-4" data-i18n="readyForSummary">You have completed all 5 modules! Ready to view final summary?</h2>
-                <button class="bg-success text-white py-4 px-10 rounded-full font-bold text-xl hover:brightness-110 transition shadow-md" onclick="showFinalResult()">
+            <div id="dash-final-action" class="dash-final-action mt-8 p-6 md:p-8 bg-green-50 border-2 border-dashed border-green-500 rounded-3xl w-full max-w-[900px] text-center hidden">
+                <h2 class="text-xl md:text-2xl font-bold text-green-700 mb-4" data-i18n="readyForSummary">You have completed all 5 modules! Ready to view final summary?</h2>
+                <button class="btn-main bg-green-600 hover:bg-green-700" onclick="showFinalResult()">
                     <span data-i18n="viewFinalSummaryBtn">View Final Summary</span> <i class="fa-solid fa-file-invoice ml-2"></i>
                 </button>
             </div>
         </div>
 
         <!-- ==================== 1.5 MODULE OVERVIEW ==================== -->
-        <div id="screen-overview" class="screen">
-            <div class="w-full max-w-[1000px] bg-white p-12 rounded-3xl shadow-xl border-t-8 flex flex-col justify-between" id="overview-card" style="min-height: 500px;">
+        <div id="screen-overview" class="screen flex-col items-center py-10 px-4">
+            <div class="w-full max-w-[1000px] bg-white p-8 md:p-12 rounded-3xl shadow-xl border-t-8 flex flex-col justify-between" id="overview-card" style="min-height: 500px;">
                 <div class="text-center mb-10">
-                    <h1 class="text-5xl font-extrabold mb-4" id="overview-title">Module Title</h1>
+                    <h1 class="text-3xl md:text-5xl font-extrabold mb-4" id="overview-title">Module Title</h1>
                     <div class="w-24 h-1 mx-auto my-6" id="overview-divider"></div>
-                    <p class="text-2xl text-gray-600 leading-relaxed max-w-[800px] mx-auto font-medium" id="overview-description">Module general explanation goes here.</p>
+                    <p class="text-lg md:text-2xl text-gray-600 leading-relaxed max-w-[800px] mx-auto font-medium" id="overview-description">Module general explanation goes here.</p>
                 </div>
                 <div class="flex justify-between items-center w-full mt-10">
-                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-8 py-4 rounded-xl text-lg flex items-center gap-2 transition" onclick="showScreen('screen-dashboard')">
+                    <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold px-6 py-3 md:px-8 md:py-4 rounded-xl text-base md:text-lg flex items-center gap-2 transition" onclick="showScreen('screen-dashboard')">
                         <i class="fa-solid fa-chevron-left"></i> <span data-i18n="back">Back</span>
                     </button>
-                    <button class="text-white font-bold px-10 py-4 rounded-xl text-lg flex items-center gap-2 transition shadow-md" id="btn-overview-next" onclick="enterFlashcards()">
+                    <button class="text-white font-bold px-8 py-3 md:px-10 md:py-4 rounded-xl text-base md:text-lg flex items-center gap-2 transition shadow-md" id="btn-overview-next" onclick="enterFlashcards()">
                         <span data-i18n="next">Next</span> <i class="fa-solid fa-chevron-right"></i>
                     </button>
                 </div>
@@ -247,37 +562,43 @@
         </div>
 
         <!-- ==================== 2. FLASHCARD ==================== -->
-        <div id="screen-flashcard" class="screen">
+        <div id="screen-flashcard" class="screen flex-col items-center py-10 px-4">
             <div class="fc-header w-full max-w-[1100px] flex justify-between items-center mb-8 border-b-2 border-gray-100 pb-4">
                 <button class="btn-back" onclick="showScreen('screen-dashboard')"><i class="fa-solid fa-chevron-left"></i> <span data-i18n="back">Back</span></button>
                 <div class="fc-title-group">
-                    <h2 id="fc-main-title" class="text-3xl font-extrabold">TITLE</h2>
+                    <h2 id="fc-main-title" class="text-xl md:text-3xl font-extrabold text-center">TITLE</h2>
                 </div>
-                <div class="fc-counter" id="fc-counter">1 / 5</div>
+                <div class="fc-counter text-base font-bold text-gray-500" id="fc-counter">1 / 5</div>
             </div>
 
             <div class="flashcard-wrapper" onclick="flipCard()">
                 <div class="flashcard" id="flashcard">
                     <!-- หน้าการ์ด (FRONT) -->
                     <div class="card-face card-front" id="fc-front">
-                        <div class="card-top-bar bg-white/10 border-b border-white/20 text-white"><h3 id="fc-sub-f" class="text-2xl font-bold">Subtopic</h3></div>
+                        <div class="card-top-bar bg-white/10 border-b border-white/20 text-white flex justify-between items-center px-6 py-4">
+                            <h3 id="fc-sub-f" class="text-xl md:text-2xl font-bold">Subtopic</h3>
+                            <i id="fc-icon-f" class="text-2xl"></i>
+                        </div>
                         <div class="card-body">
                             <div class="front-icon-wrapper"><i id="fc-icon-main" class="text-white text-5xl"></i></div>
-                            <p id="fc-def" class="text-white text-2xl font-medium leading-relaxed px-6">Definition</p>
-                            <div class="hint-pulse text-white text-base"><i class="fa-solid fa-hand-pointer mr-2"></i> <span data-i18n="cardHint">Click to see the TURBO Way</span></div>
+                            <p id="fc-def" class="text-white text-xl md:text-2xl font-medium leading-relaxed px-6">Definition</p>
+                            <div class="hint-pulse text-white text-base mt-6"><i class="fa-solid fa-hand-pointer mr-2"></i> <span data-i18n="cardHint">Click to see the TURBO Way</span></div>
                         </div>
                     </div>
                     <!-- หลังการ์ด (BACK) -->
                     <div class="card-face card-back" id="fc-back">
-                        <div class="card-top-bar border-b border-gray-100"><h3 id="fc-sub-b" class="text-2xl font-bold text-primary">Subtopic</h3></div>
+                        <div class="card-top-bar border-b border-gray-100 flex justify-between items-center px-6 py-4">
+                            <h3 id="fc-sub-b" class="text-xl md:text-2xl font-bold text-primary">Subtopic</h3>
+                            <i id="fc-icon-b" class="text-2xl"></i>
+                        </div>
                         <div class="card-body">
-                            <div class="way-box trad-box bg-red-50 border-l-8 border-danger p-6 rounded-2xl flex flex-col justify-start">
-                                <h4 class="text-danger text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-xmark"></i> <span data-i18n="tradWay">The Traditional Way</span></h4>
-                                <ul id="fc-trad-bullets" class="list-disc list-inside text-gray-700 text-lg space-y-2"></ul>
+                            <div class="way-box trad-box bg-red-50 border-l-8 border-red-500 p-5 rounded-2xl flex flex-col justify-start w-full">
+                                <h4 class="text-red-600 text-lg md:text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-xmark"></i> <span data-i18n="tradWay">The Traditional Way</span></h4>
+                                <ul id="fc-trad-bullets" class="list-disc list-inside text-gray-700 text-base md:text-lg space-y-2"></ul>
                             </div>
-                            <div class="way-box turbo-box bg-green-50 border-l-8 border-success p-6 rounded-2xl flex flex-col justify-start">
-                                <h4 class="text-success text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-check-circle"></i> <span data-i18n="turboWay">The TURBO Way</span></h4>
-                                <ul id="fc-turbo-bullets" class="list-disc list-inside text-green-900 text-lg font-semibold space-y-2"></ul>
+                            <div class="way-box turbo-box bg-green-50 border-l-8 border-green-500 p-5 rounded-2xl flex flex-col justify-start w-full">
+                                <h4 class="text-green-600 text-lg md:text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-check-circle"></i> <span data-i18n="turboWay">The TURBO Way</span></h4>
+                                <ul id="fc-turbo-bullets" class="list-disc list-inside text-green-900 text-base md:text-lg font-semibold space-y-2"></ul>
                             </div>
                         </div>
                     </div>
@@ -285,71 +606,71 @@
             </div>
 
             <div class="card-nav">
-                <button class="btn-nav" id="btn-fc-prev" onclick="changeCard(-1)"><i class="fa-solid fa-chevron-left"></i> <span data-i18n="prev"></span></button>
-                <button class="btn-nav" id="btn-fc-next" onclick="changeCard(1)"><span data-i18n="next"></span> <i class="fa-solid fa-chevron-right"></i></button>
+                <button class="btn-nav" id="btn-fc-prev" onclick="changeCard(-1)"><i class="fa-solid fa-chevron-left"></i> <span data-i18n="prev">Prev</span></button>
+                <button class="btn-nav" id="btn-fc-next" onclick="changeCard(1)"><span data-i18n="next">Next</span> <i class="fa-solid fa-chevron-right"></i></button>
             </div>
 
             <button class="btn-main mt-6" id="btn-go-summary" onclick="showSummary()" disabled>
                 <i class="fa-solid fa-lock" id="icon-summary-lock"></i> <span data-i18n="summaryBtn">Module Summary</span>
             </button>
-            <div class="flip-warning text-lg text-center mt-3" id="fc-warning" data-i18n="flipWarning">* Please click to read both sides of all cards.</div>
+            <div class="flip-warning text-base md:text-lg text-center mt-3 font-semibold text-red-500" id="fc-warning" data-i18n="flipWarning">* Please click to read both sides of all cards.</div>
         </div>
 
         <!-- ==================== 2.5 PRACTICE QUIZ ==================== -->
-        <div id="screen-practice" class="screen">
-            <div class="quiz-container w-full max-w-[1000px] flex flex-col items-center">
+        <div id="screen-practice" class="screen flex-col items-center py-10 px-4">
+            <div class="quiz-container w-full max-w-[1000px] flex flex-col items-center mx-auto">
                 <div class="quiz-header text-center mb-8 w-full border-b-2 border-gray-100 pb-4">
-                    <h1 class="text-3xl font-bold text-primary" id="practice-header-title">Topic Practice</h1>
-                    <div class="text-lg text-gray-500 font-medium mt-2" id="practice-counter-text">Practice 1 / 2</div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-primary" id="practice-header-title">Topic Practice</h1>
+                    <div class="text-base md:text-lg text-gray-500 font-medium mt-2" id="practice-counter-text">Practice 1 / 2</div>
                 </div>
 
-                <div class="scenario-box class w-full mb-8">
-                    <div class="text-lg font-bold opacity-80 mb-2 flex items-center gap-2"><i class="fa-solid fa-comment-dots text-primary"></i> <span data-i18n="scenario">Scenario</span>:</div>
-                    <p id="practice-q-text" class="text-xl text-primary font-semibold leading-relaxed">Scenario description</p>
+                <div class="scenario-box w-full mb-8 bg-slate-50 p-6 rounded-2xl border-l-8 border-primary">
+                    <div class="text-base md:text-lg font-bold text-slate-500 mb-2 flex items-center gap-2"><i class="fa-solid fa-comment-dots text-primary"></i> <span data-i18n="scenario">Scenario</span>:</div>
+                    <p id="practice-q-text" class="text-lg md:text-xl text-primary font-bold leading-relaxed">Scenario description</p>
                 </div>
 
                 <div class="choices-container w-full grid grid-cols-1 md:grid-cols-2 gap-5" id="practice-choices"></div>
 
-                <div id="practice-feedback-banner" class="quiz-feedback-banner w-full p-4 rounded-xl text-xl font-bold text-center mt-6 hidden"></div>
+                <div id="practice-feedback-banner" class="w-full p-4 rounded-xl text-lg md:text-xl font-bold text-center mt-6 hidden"></div>
             </div>
         </div>
 
         <!-- ==================== 3. MODULE SUMMARY (HORIZONTAL) ==================== -->
-        <div id="screen-summary" class="screen">
-            <div style="text-align: center; margin-bottom: 40px;">
-                <i class="fa-solid fa-book-open" id="sum-icon" style="font-size: 3.5rem; margin-bottom: 10px;"></i>
-                <h1 id="sum-title" class="text-4xl font-extrabold mb-2">Title</h1>
-                <p class="text-xl text-gray-500" data-i18n="reviewDef">Review key definitions</p>
+        <div id="screen-summary" class="screen flex-col items-center py-10 px-4 md:px-10">
+            <div class="text-center mb-8">
+                <i class="fa-solid fa-book-open" id="sum-icon" style="font-size: 2.5rem; margin-bottom: 15px;"></i>
+                <h1 id="sum-title" class="text-3xl md:text-4xl font-extrabold mb-2">Title</h1>
+                <p class="text-lg md:text-xl text-gray-500" data-i18n="reviewDef">Review key definitions</p>
             </div>
             
-            <div class="summary-grid w-full max-w-[1300px]" id="sum-list"></div>
+            <div class="summary-grid w-full max-w-[1300px] mx-auto" id="sum-list"></div>
             
-            <button class="btn-main mt-8 px-12 py-5 rounded-full text-xl font-bold hover:scale-105 transition shadow-lg" id="btn-finish-module" onclick="completeModule()">
+            <button class="btn-main mt-10 px-12 py-5 rounded-full text-xl font-bold hover:scale-105 transition shadow-lg mx-auto block" id="btn-finish-module" onclick="completeModule()">
                 <span data-i18n="finishModule">Finish Module (Back to Dashboard)</span> <i class="fa-solid fa-arrow-right ml-2"></i>
             </button>
         </div>
 
         <!-- ==================== 5. FINAL RESULT ==================== -->
-        <div id="screen-final" class="screen">
-            <div style="text-align: center; margin-bottom: 40px;">
-                <i class="fa-solid fa-flag-checkered" style="font-size: 5rem; color: var(--accent); margin-bottom: 15px;"></i>
-                <h1 class="text-5xl font-extrabold text-primary mb-2">Congratulations!</h1>
-                <p class="text-2xl text-gray-600" data-i18n="finalSubtitle">You have completed all 5 modules of the TURBO WAYS.</p>
+        <div id="screen-final" class="screen flex-col items-center py-10 px-4 md:px-10">
+            <div class="text-center mb-8">
+                <i class="fa-solid fa-flag-checkered text-accent mb-4 block" style="font-size: 5rem;"></i>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-primary mb-2">Congratulations!</h1>
+                <p class="text-xl md:text-2xl text-gray-600" data-i18n="finalSubtitle">You have completed all 5 modules of the TURBO WAYS.</p>
             </div>
             
-            <div class="final-grid w-full max-w-[1400px]" id="final-grid"></div>
+            <div class="final-grid w-full max-w-[1400px] mx-auto" id="final-grid"></div>
             
-            <button class="btn-main mt-10 px-12 py-5 rounded-full text-xl font-bold hover:scale-105 transition shadow-lg bg-primary" onclick="goToWelcome()">
+            <button class="btn-main mt-10 px-12 py-5 rounded-full text-xl font-bold hover:scale-105 transition shadow-lg bg-primary mx-auto" onclick="goToWelcome()">
                 <i class="fa-solid fa-check-double mr-2"></i> <span data-i18n="finishBtn">Complete Learning</span>
             </button>
         </div>
 
         <!-- ==================== 6. WELCOME FAMILY ==================== -->
-        <div id="screen-welcome" class="screen" style="justify-content: center;">
-            <div class="welcome-family-box text-center">
-                <i class="fa-solid fa-crown crown-icon text-yellow-400 text-8xl mb-6 inline-block"></i>
-                <h1 class="text-5xl font-extrabold text-primary mb-4" data-i18n="finalWelcome">Welcome to the Ngern Turbo Family!</h1>
-                <h2 class="text-3xl font-semibold text-accent mb-12">"Welcome to the Ngern Turbo Family!"</h2>
+        <div id="screen-welcome" class="screen flex-col justify-center items-center py-20 px-4">
+            <div class="welcome-family-box text-center max-w-[800px] bg-white p-8 md:p-12 rounded-3xl shadow-xl border-2 border-slate-100">
+                <i class="fa-solid fa-crown text-yellow-400 text-8xl mb-6 inline-block animate-bounce"></i>
+                <h1 class="text-3xl md:text-5xl font-extrabold text-primary mb-4" data-i18n="finalWelcome">Welcome to the T๊URBO Family!</h1>
+                <h2 class="text-xl md:text-2xl font-semibold text-accent mb-12">"Integrity, Speed, Simple, Synergy, Mastery"</h2>
                 
                 <button class="btn-main px-12 py-5 rounded-full text-xl font-bold bg-accent hover:brightness-110 transition shadow-lg" onclick="goToFinalQuizPlatform()">
                     <i class="fa-solid fa-file-signature mr-2"></i> <span data-i18n="goToFinalQuizBtn">Go to Assessment</span>
@@ -359,13 +680,12 @@
 
     </div>
 
-    <!-- ================================================== -->
-    <!-- JAVASCRIPT LOGIC (WITH FIREBASE INTEGRATION)       -->
-    <!-- ================================================== -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDoc, setDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- Firebase v10.8.0 Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
+    <script>
         // Real Firebase config provided by client
         const firebaseConfig = {
             apiKey: "AIzaSyDb7mitiY1A560hdtuvzHPAX2XEjuFMfnI",
@@ -377,26 +697,30 @@
             measurementId: "G-7580NX4XS0"
         };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        // Initialize Firebase Compat
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const appId = "turboway-a2d65";
 
-        // Course Data parsed from Sheets with flat colors, bullet points, and 2 practices per subtopic (total 50 practices)
+        // Course Data
         const COURSE_DATA = [
             {
-                id: 1, color: '#f57878', th: { title: 'ONE TURBO', overview: 'การทำงานร่วมกันเป็นทีมเป็นสิ่งจำเป็น ไม่มีผู้ใดก้าวสู่ความสำเร็จได้เพียงลำพัง เมื่อผสานพลัง ความคิด และความมุ่งมั่น จะทำให้เรื่องเป็นไปไม่ได้ให้เกิดขึ้นจริง' }, en: { title: 'ONE TURBO', overview: 'Teamwork isn\'t optional. No single person, no matter how talented, has ever achieved greatness alone. When we combine our diverse skills, we make the impossible possible.' },
+                id: 1, color: '#f57878', 
+                th: { title: 'ONE TURBO', overview: 'การทำงานร่วมกันเป็นทีมเป็นสิ่งจำเป็น ไม่มีผู้ใดก้าวสู่ความสำเร็จได้เพียงลำพัง เมื่อผสานพลัง ความคิด และความมุ่งมั่น จะทำให้เรื่องเป็นไปไม่ได้ให้เกิดขึ้นจริง' }, 
+                en: { title: 'ONE TURBO', overview: 'Teamwork isn\'t optional. No single person, no matter how talented, has ever achieved greatness alone. When we combine our diverse skills, innovative ideas, and perseverance, we make the impossible possible.' },
                 cards: [
                     { 
                         icon: 'fa-users', subtopic: 'Work Together', 
                         th: { 
-                            def: 'ที่นี่ไม่มีคำว่า "ไม่ใช่หน้าที่ฉัน" เราลุยแก้ปัญหาไปด้วยกันแบบไม่ชี้นิ้วหาคนผิด ถ้ารู้ตัวว่างานช้าจะรีบยกมือบอกล่วงหน้า ไม่รอจนถึงเดดไลน์ และคอยอัปเดตงานให้ทีมรู้อยู่เสมอ', 
-                            trad: ['ต่างคนต่างทำ โยนงานผ่านอีเมลแบบไม่เคลียร์', 'เมื่อเกิดปัญหาขึ้นก็มัวแต่โบ้ยความรับผิดชอบไปมา', 'เมินชี้นิ้วหาปัญหาเพื่อน ซุกซ่อนปัญหาตัวเองไว้จนวินาทีสุดท้าย'], 
-                            turbo: ['ลงมือลุยงานและสอดประสานเข้ากันเป็นหนึ่งเดียว', 'หมั่นอัปเดตสถานะงาน และรีบยกมือบอกทีมหากเสร็จไม่ทัน', 'จับมือเรียกรวมทีมเพื่อโฟกัสแก้ปัญหาด่วนโดยไม่ชี้นิ้วโทษใคร'] 
+                            def: 'ที่นี่ไม่มีคำว่า "ไม่ใช่หน้าที่ฉัน" เราลุยแก้ปัญหาไปด้วยกันแบบไม่ชี้นิ้วหาคนผิด เพื่อนติดขัดพร้อมช่วยทันทีโดยไม่ต้องรอให้เอ่ยปากขอ', 
+                            trad: ['ทำงานแยกส่วน ส่งบรีฟงานคลุมเครือไม่ชัดเจน', 'โยนความผิด เมื่อเกิดปัญหา และเพิกเฉยต่อความเดือดร้อนของเพื่อนร่วมทีม', 'เวลางานมีปัญหาหรือเสร็จไม่ทัน มักจะเงียบไว้จนถึงวินาทีสุดท้ายแล้วค่อยบอก'], 
+                            turbo: ['ร่วมมือทำงานตั้งแต่แรก (Co-create) ร่วมกันออกแบบและแก้ปัญหา', 'ถ้างานเสร็จไม่ทันจะแจ้งทีมทันที อัปเดตงานสม่ำเสมอ', 'โฟกัสที่ทางออก (Solution-focused) รีบปรึกษาทีมเพื่อแก้ไข ไม่มุ่งหาคนผิด'] 
                         }, 
                         en: { 
-                            def: 'Here, "it\'s not my job" doesn\'t exist. We solve problems together without pointing fingers. If we know we\'ll be late, we raise our hands in advance and keep the team updated.', 
-                            trad: ['Working in silos, throwing unclear briefs via email.', 'Blaming others when things go wrong.', 'Ignoring teammates\' problems and staying silent about delays until the deadline.'], 
-                            turbo: ['Work together as a unified force to create solutions.', 'Notify the team immediately when a deadline will be missed.', 'Focus intensely on \"how to fix\" rather than finding culprits.'] 
+                            def: '"This is not my job" doesn\'t exist. We solve problems together without pointing fingers. If someone is stuck, we step in to help without being asked.', 
+                            trad: ['Working in silos, throwing unclear briefs.', 'Blaming others when things go wrong. Ignoring teammates\' problems.', 'Staying silent about delays until the last minute.'], 
+                            turbo: ['Work together (Co-create).', 'Notify the team immediately if a deadline will be missed. Update progress regularly.', 'If a project stalls, call the team to find a solution immediately. Focus on "how to fix" rather than "who to blame."'] 
                         },
                         practices: [
                             {
@@ -414,12 +738,12 @@
                         th: { 
                             def: 'ความสำเร็จคือผลงานของ "ทีม" ไม่ใช่ผลงานส่วนตัว เรายินดีกับชัยชนะของกันและกัน พร้อมให้เครดิตทุกคนที่ร่วมหัวจมท้าย และไม่เอาหน้าคนเดียว', 
                             trad: ['พอทำยอดสำเร็จก็เคลมผลงานฉลองกันอยู่แผนกเดียว', 'มองว่าผลงานทั้งหมดมาจากความขยันของฝั่งตนเท่านั้น', 'มองข้ามและลืมขอบคุณทีมหลังบ้านที่ร่วมสนับสนุนเบื้องหลัง'], 
-                            turbo: ['ส่งต่อคำชมและยกย่องทุกคนที่ร่วมลุยงานมาด้วยกัน', 'ให้เครดิตอย่างเปิดเผยทั้งทีมหน้าบ้านและทีมซัพพอร์ต', 'มองว่าความสำเร็จคือผลลัพธ์ร่วมกันของทั้งองค์กร'] 
+                            turbo: ['ส่งต่อคำชมและให้เครดิตทุกคนเสมอ ทั้งทีมหน้าบ้านและทีมซัพพอร์ตหลังบ้านทุกทีม ว่านี่คือผลงานร่วมกัน'] 
                         }, 
                         en: { 
-                            def: 'Success belongs to the "team," not any individual. We celebrate each other\'s wins, give credit to everyone who worked hard, and don\'t take sole credit.', 
-                            trad: ['Celebrating sales success solely in one silo, claiming they "carried" the company.', 'Forgetting about the extensive backend operations that supported the target.', 'Focusing strictly on self-promotion when receiving positive feedback.'], 
-                            turbo: ['Always pass on praise and give clear credit to support teams.', 'Publicly state that victories are an output of joint efforts.', 'Build mutual trust by highlighting everyone\'s contributions.'] 
+                            def: 'When we win, we win together. Success belongs to the "team," not any individual. We celebrate each other\'s successes, give credit to everyone who worked hard, and don\'t seek the spotlight for yourself.', 
+                            trad: ['Celebrating only within the team when hitting targets, claiming the team "carried" the company.', 'Forgetting the support teams behind the scenes.', 'Focusing strictly on self-promotion when receiving positive feedback.'], 
+                            turbo: ['Pass on praise and always give credit to everyone, both front-end and back-end support teams, acknowledging it as a collective achievement.'] 
                         },
                         practices: [
                             {
@@ -427,7 +751,7 @@
                                 en: { q: "The Sales Team smashes their quarterly revenue targets. How should they announce this victory?", choices: [{ text: "A. Claim that the sales department carried the firm this month, ignoring internal support.", isCorrect: false }, { text: "B. Share the win while explicitly giving credit to Marketing for the pipeline and Risk for fast approvals.", isCorrect: true }] }
                             },
                             {
-                                th: { q: "คุณได้รับรางวัลผลงานยอดเยี่ยมระดับบุคคลในโปรเจกต์หนึ่ง คุณควรตอบรับสปอตไลท์นี้อย่างไร?", choices: [{ text: "A. รับรางวัลแบบภูมิใจและบอกว่าที่งานเสร็จได้เพราะความอัจฉริยะและการนำของคุณคนเดียว", isCorrect: false }, { text: "B. กล่าวขอบคุณและส่งต่อคำชมให้ผู้ร่วมโปรเจกต์ทีมเบื้องหลังทุกคนที่ร่วมหัวจมท้ายแก้บั๊กกันมาตลอดทาง", isCorrect: true }] },
+                                th: { q: "คุณได้รับรางวัลผลงานยอดเยี่ยมระดับบุคคลในโปรเจกต์หนึ่ง คุณควรตอบรับสปอตไลท์นี้อย่างไร?", choices: [{ text: "A. : รับรางวัลแบบภูมิใจและบอกว่าที่งานเสร็จได้เพราะความอัจฉริยะและการนำของคุณคนเดียว", isCorrect: false }, { text: "B. กล่าวขอบคุณและส่งต่อคำชมให้ผู้ร่วมโปรเจกต์ทีมเบื้องหลังทุกคนที่ร่วมหัวจมท้ายแก้บั๊กกันมาตลอดทาง", isCorrect: true }] },
                                 en: { q: "You receive individual praise for successful deployment of a major feature. How do you respond?", choices: [{ text: "A. Take full personal credit, reinforcing that your coding brilliance single-handedly saved the project.", isCorrect: false }, { text: "B. Thank the team, redirecting the praise to the backend engineers and QA who worked tirelessly beside you.", isCorrect: true }] }
                             }
                         ]
@@ -435,14 +759,14 @@
                     { 
                         icon: 'fa-share-nodes', subtopic: 'Share Knowledge Always', 
                         th: { 
-                            def: 'เราแชร์เทคนิคและความรู้กันเสมอ ไม่กั๊กไว้คนเดียว เพราะยิ่งแชร์ ทีมและบริษัทก็ยิ่งเก่งขึ้น การสร้างเอกสาร คู่มือ หรือสอนงานคนอื่น ช่วยให้ทุกคนทำงานได้ราบรื่น', 
-                            trad: ['เก็บงำเทคนิคดีๆ หรือวิธีรันงานไว้เพื่อสร้างอำนาจเงียบ', 'มองข้ามความยากลำบากของพนักงานใหม่ที่เข้ามางมงาน', 'กั๊กเอกสารคู่มือเพราะกลัวโดนคนอื่นเก่งทับหรือข้ามหน้า'], 
-                            turbo: ['เขียนสรุปแนวทางแก้ปัญหาและอัดคลิปแบ่งปันให้เปิดเผย', 'ยินดีสละเวลาสอนงาน อธิบายระบบ และให้คำแนะนำพนักงานใหม่', 'สร้างคู่มือที่ทุกคนในทีมเข้าถึงได้รวดเร็วตลอดเวลา'] 
+                            def: 'แบ่งปันความรู้รอบตัวเสมอ อย่าเก็บไว้คนเดียวเพราะความรู้เป็นของกลาง ยิ่งแบ่งปันกันมากเท่าไหร่ ทีมและบริษัทก็ก็จะยิ่งก้าวหน้าเร็วขึ้นเท่านั้น การสร้างเอกสาร คู่มือ หรือสอนงานคนอื่น คือการลดปัญหาการพึ่งพาตัวบุคคล', 
+                            trad: ['พอแก้ปัญยากๆ หรือเจอบั๊กได้ ก็เก็บวิธีแก้ไว้กับตัว หวังว่าคราวหน้าตัวเองจะได้ดูเป็น "ผู้วิเศษ" ที่เก่งอยู่คนเดียว หรือสอนงานแบบกั๊กๆ'], 
+                            turbo: ['เขียนสรุปวิธีแก้ปัญหาแบบสั้นๆ หรืออัดคลิปหน้าจอแชร์ลงในช่องทางส่วนรวม (เช่น Slack/Teams)', 'ยินดีสอนและให้คำแนะนำเพื่อนใหม่เสมอ'] 
                         }, 
                         en: { 
-                            def: 'We always share techniques and knowledge, not keeping them to ourselves. Sharing makes the team and the company stronger. Creating documents, manuals, or teaching others helps everyone work smoothly.', 
-                            trad: ['Hoarding critical technical workarounds to make oneself look indispensable.', 'Refusing to document regular workflows, making handovers painful.', 'Teaching newcomers half-heartedly or with critical knowledge left out.'], 
-                            turbo: ['Record a quick screen clip to share workarounds in open team channels.', 'Regularly build manuals so peers don\'t have to start solving from scratch.', 'Intentionally guide and onboard newly joined team members.'] 
+                            def: 'We share knowledge freely, because knowledge is power only when shared. The more we teach each other, the faster we grow. Building clear manuals, wiki pages, or doing short peer trainings reduces the risk of relying on a single person.', 
+                            trad: ['When solving difficult problems or finding a bug, keeping the solution to oneself to look like a "wizard" or teaching others half-heartedly.'], 
+                            turbo: ['Write short summaries of solutions or record screen clips to share in public channels (like Slack/Teams).', 'Always be willing to teach and guide new colleagues.'] 
                         },
                         practices: [
                             {
@@ -458,14 +782,14 @@
                     { 
                         icon: 'fa-building-circle-arrow-right', subtopic: 'Blow Up Departments', 
                         th: { 
-                            def: 'ทลายกำแพงระหว่างแผนก เราคือทีมเดียวกัน (One Turbo) ทำงานข้ามสายงานได้อย่างไร้รอยต่อ ลดอีโก้ และยึดเป้าหมายของบริษัทเป็นหลัก', 
-                            trad: ['ยึดเป้าหมายตัวชี้วัด (KPI) ของแผนกตัวเองเป็นหลักไม่สนทีมอื่น', 'ไม่เปิดใจยอมสื่อสารคุยกันตรงๆ กับฝ่ายที่เกี่ยวข้องข้ามสาย', 'ทำกระบวนงานให้ยุ่งยากเพื่อปกป้องตัวเอง (Red Tape)'], 
-                            turbo: ['รวมตัวตั้ง Mission Squad หรือดึงคนข้ามสายมาลุยแบบสั้นๆ', 'คุ้ยตรงเป้าข้ามแผนกได้ทันทีโดยไม่ต้องผ่านกระบวนการยืดยาว', 'พร้อมปรับความสมดุลงานแผนกตัวเองเพื่อให้บริษัทเติบโตเร็วขึ้น'] 
+                            def: 'ทลายกำแพงแผนกและลดอัตรา (Ego) เราคือทีมเดียวกัน ทำงานข้ามฝ่ายอย่างสมบูรณ์แบบโดยยึดเป้าหมายสูงสุดของเงินเทอร์โบเป็นหลัก โดยไม่ปล่อยให้ KPI แผนกมาขัดขวางการเติบโตขององค์กร', 
+                            trad: ['ทำงานแบบไซโล (Silo) สนใจแต่ KPI ของแผนกตัวเอง ไม่สนว่าแผนกอื่นจะทำงานยากขึ้นแค่ไหน หรือตั้งป้อมจับผิดแผนกอื่น'], 
+                            turbo: ['มองเป้าหมายของบริษัทเป็นหลัก พร้อมปรับกระบวนการทำงานของแผนกตัวเองเพื่อให้แผนกอื่นทำงานได้ราบรื่นและเร็วขึ้น'] 
                         }, 
                         en: { 
-                            def: 'Break down walls between departments. We are one team (One Turbo), working cross-functionally seamlessly, reducing ego, and focusing on the company\'s goals.', 
-                            trad: ['Caring strictly about departmental KPIs while ignoring overall bottleneck impacts.', 'Insisting on formal memos and manager-to-manager permissions for tiny requests.', 'Building protective silos and rejecting collaborative changes.'], 
-                            turbo: ['Set up cross-functional "Mission Squads" with actual workers to execute daily.', 'Communicate directly across intersecting domains without middle layers.', 'Align work priorities with ultimate corporate goals rather than individual silos.'] 
+                            def: 'Break down walls between teams. We are one. We collaborate across boundaries without ego, prioritizing overall corporate success over local metrics. Don\'t let departmental KPIs block enterprise speed.', 
+                            trad: ['Working in silos, caring only about one\'s own department\'s KPIs, ignoring if it makes it harder for others, or constantly fault-finding with other departments.'], 
+                            turbo: ['Focus on the company\'s goals primarily. Ready to adjust one\'s own department\'s processes to help other departments work more smoothly and faster.'] 
                         },
                         practices: [
                             {
@@ -481,14 +805,14 @@
                     { 
                         icon: 'fa-folder-open', subtopic: 'Open Information', 
                         th: { 
-                            def: 'โปร่งใส ข้อมูลที่จำเป็นต่อการทำงานต้องเข้าถึงได้ง่าย ไม่ปิดบังข้อมูลเพื่อสร้างอำนาจต่อรอง สื่อสารอย่างตรงไปตรงมา', 
-                            trad: ['ซุกซ่อนปัญหาหรือข่าวร้ายไว้เพราะกลัวถูกติติง', 'แอบแก้ปัญหาเงียบๆ คนเดียวจนข้อมูลสถิติไม่โปร่งใส', 'ปิดบังข้อมูลสำคัญหรือสูตรการคำนวณไว้เพื่อสร้างความได้เปรียบ'], 
-                            turbo: ['รายงานข้อมูลและอัปเดตสถานะงานลงในระบบให้เห็นภาพรวม', 'แชร์เหตุผล (Why) ในการตัดสินใจ กาง Data ให้ตรวจสอบได้', 'สื่อสารทั้งข่าวดีและข่าวร้ายด้วยความเร็วที่เท่ากันเสมอ'] 
+                            def: 'สื่อสารข้อมูลที่เกี่ยวข้องอย่างโปร่งใส เข้าถึงได้ง่าย ข้อมูลคือพลังเมื่อทุกคนรู้เท่ากัน สื่อสารข้อมูลทั้งข่าวดีและข่าวร้ายด้วยความเร็วที่เท่ากันเสมอเพื่อความน่าเชื่อถือ', 
+                            trad: ['เก็บข้อมูลสำคัญไว้กับตัว ไม่ยอมแชร์ไฟล์กลาง (เช่น แอบทำในคอมตัวเอง) ทำให้คนอื่นต้องคอยตามทวงถามตลอดเวลา'], 
+                            turbo: ['จัดเก็บไฟล์และข้อมูลสำคัญไว้ใน Shared Drive หรือระบบกลางที่ทุกคนที่เกี่ยวข้องสามารถเข้าถึงและนำไปใช้งานต่อได้ทันที'] 
                         }, 
                         en: { 
-                            def: 'Transparent. Information necessary for work must be easily accessible. Do not hide information to create bargaining power. Communicate straightforwardly.', 
-                            trad: ['Hiding project blockers or bad news from teammates and managers.', 'Refusing to share data centrally, forcing others to chase you down.', 'Issuing change directives without sharing background reasoning.'], 
-                            turbo: ['Publish project status transparently on central dashboards.', 'Always share the "Why" (market shifts, data metrics) behind strategic pivots.', 'Communicate both good and bad news with equal speed.'] 
+                            def: 'Access to info is equal for all. Transparency creates alignment. Always broadcast both good and bad news with identical speed to build absolute credibility.', 
+                            trad: ['Keeping important information to oneself, refusing to share files centrally (e.g., hiding them on a personal computer), forcing others to constantly ask for them.'], 
+                            turbo: ['Store important files and data in a Shared Drive or central system that everyone involved can access and use immediately.'] 
                         },
                         practices: [
                             {
@@ -504,42 +828,44 @@
                 ]
             },
             {
-                id: 2, color: '#6f2a81', th: { title: 'TRUTH AND TRUST', overview: 'ความน่าเชื่อถือและความโปร่งใสคือรากฐานของการเติบโต การคุยกันด้วยความจริงและรับฟังฟีดแบ็กตรงประเด็น จะทำให้ทำงานได้ราบรื่นและมีประสิทธิภาพสูงสุด' }, en: { title: 'TRUTH AND TRUST', overview: 'Trust makes everything faster and stronger. Honesty eliminates waste, speeds decisions, and prevents catastrophic failures.' },
+                id: 2, color: '#6f2a81',
+                th: { title: 'TRUTH AND TRUST', overview: 'ความน่าเชื่อถือและความโปร่งใสคือรากฐานของการเติบโต การคุยกันด้วยความจริงและรับฟังฟีดแบ็กตรงประเด็น จะทำให้ทำงานได้ราบรื่นและมีประสิทธิภาพสูงสุด' },
+                en: { title: 'TRUTH AND TRUST', overview: 'Trust makes everything faster and stronger. Honesty eliminates waste, speeds decisions, and prevents catastrophic failures. It\'s about direct communication and respect.' },
                 cards: [
-                    { 
-                        icon: 'fa-handshake', subtopic: 'Do What You Say', 
-                        th: { 
-                            def: 'รักษาสัญญา พูดแล้วต้องทำได้ รับผิดชอบในคำพูดของตัวเอง ถ้ารับปากแล้วต้องทำให้สำเร็จ หากติดขัดต้องรีบแจ้ง', 
-                            trad: ['รับปากส่งๆ ไปก่อนแล้วทำไม่ได้จริง', 'ปล่อยงานล่าช้าเลยกำหนดเดดไลน์โดยไม่แจ้งบอกล่วงหน้า', 'รับปากแบบหวังพึ่งโชคชะตาโดยไม่ประเมินความสามารถงาน'], 
-                            turbo: ['ประเมินศักยภาพงานอย่างแม่นยำก่อนเริ่มตกลง', 'รักษาคำมั่นสัญญา ส่งงานตรงเวลาตามที่รับปาก', 'หากเกิดเหตุสุดวิสัยจะรีบยกมือแจ้งล่วงหน้าทันทีเพื่อหาแผนสำรอง'] 
-                        }, 
-                        en: { 
-                            def: 'Keep promises. Do what you say. Take responsibility for your words. If you promise, you must deliver. If stuck, notify early.', 
-                            trad: ['Agreeing to tight deadlines instantly just to avoid immediate friction.', 'Letting timelines lapse without any prior notification.', 'Making casual, vague promises without planning to fulfill them.'], 
-                            turbo: ['Evaluate your actual capacity before saying "yes."', 'Strictly deliver outputs on agreed timelines.', 'Proactively raise an alarm the moment an blocker endangers the schedule.'] 
+                    {
+                        icon: 'fa-handshake', subtopic: 'Do What You Say',
+                        th: {
+                            def: 'รักษาคำสัญญาและเป็นคนที่พึ่งพาได้ คำพูดของคุณต้องมีน้ำหนัก ถ้ารับปากแล้วต้องทำให้สำเร็จสุดความสามารถ หากเกิดเหตุสุดวิสัย ต้องส่งสัญญาณเตือนภัยทันทีและขอแผนรับมือสำรอง',
+                            trad: ['รับปากส่งเดช เพื่อเอาตัวรอด แล้วปล่อยเลยกำหนดโดยไม่แจ้งล่วงหน้า'],
+                            turbo: ['ประเมินตนเองก่อนตกลง หากพบปัญหาให้รีบส่งสัญญาณเตือนและแจ้งผู้เกี่ยวข้องทันที']
+                        },
+                        en: {
+                            def: 'Deliver on your commitments. Your word is your bond. Once promised, do everything to execute. If a blocker appears, raise a flag immediately and propose backup scenarios.',
+                            trad: ['Making empty promises and failing to deliver. Missing deadlines without notice, or making promises hoping for luck.'],
+                            turbo: ['Evaluate yourself before promising. If promised, manage to succeed. If you realize you won\'t make it or face issues, notify stakeholders in advance immediately.']
                         },
                         practices: [
                             {
-                                th: { q: "ลูกค้าสินเชื่อต้องการระบบอัปเดตดอกเบี้ยภายในวันศุกร์ แต่คุณรู้แน่ๆ ว่าต้องพึ่งไอทีและน่าจะเสร็จได้เร็วที่สุดวันจันทร์ คุณจะบอกอย่างไร?", choices: [{ text: "A. บอกว่า 'ได้แน่นอนวันศุกร์นี้!' เพื่อให้ลูกค้าดีใจ แล้ววันศุกร์ค่อยบอกปัดเป็นวันจันทร์", isCorrect: false }, { text: "B. ชี้แจงตามตรงว่าคุณภาพงานต้องเสร็จวันจันทร์ตอนเที่ยง เพื่อรักษาความถูกต้องของตัวเลขและไม่ให้ลูกค้าผิดหวัง", isCorrect: true }] },
-                                en: { q: "A client asks for an interest rate update by Friday, but you know your team can only deliver it by Monday noon. What do you say?", choices: [{ text: "A. Say 'Sure, Friday works!' to avoid conflict, hoping a miracle happens.", isCorrect: false }, { text: "B. Say 'To ensure high quality, we will ship on Monday at noon.' Prioritize reliability.", isCorrect: true }] }
+                                th: { q: "คุณรับปากหัวหน้าว่าจะสรุปวิจัยตลาดคู่สัญญาให้เสร็จก่อนกลับบ้านเย็นนี้ แต่พบว่ามีงานเร่งด่วนอื่นแทรกเข้ามา คุณควรทำอย่างไร?", choices: [{ text: "A. รีบแจ้งหัวหน้าทันที ชี้แจงขอบเขตงานสะดุด และกำหนดส่งงานรอบใหม่วันพรุ่งนี้ก่อนเที่ยง", isCorrect: true }, { text: "B. แอบส่งเลทเช้าวันรุ่งขึ้นเงียบๆ โดยไม่แจ้งล่วงหน้า", isCorrect: false }] },
+                                en: { q: "You promised your manager to finish a research brief before EOD, but urgent requests arise. What do you do?", choices: [{ text: "A. Notify your manager immediately, explain the bottleneck, and provide a clear new target of tomorrow noon", isCorrect: true }, { text: "B. Submit it late tomorrow morning quietly without any prior notice.", isCorrect: false }] }
                             },
                             {
-                                th: { q: "คุณรับปากหัวหน้าว่าจะแก้ไขสเปกงานชิ้นหนึ่งให้เสร็จภายในวันเย็นนี้ แต่มีปัญหาระบบไอทีล่มกะทันหัน คุณควรทำอย่างไร?", choices: [{ text: "A. รีบแจ้งสถานะหัวหน้าทันทีอธิบายข้อจำกัดไอทีล่ม และเสนอเวลาอัปเกรดแผนงานใหม่", isCorrect: true }, { text: "B. เงียบหายไปก่อนและปิดเครื่องกลับบ้าน พรุ่งนี้เช้าหัวหน้ามาทวงค่อยอ้างว่าไฟดับ", isCorrect: false }] },
-                                en: { q: "You promised your manager to finalize a contract revision by 5 PM, but a system crash prevents you from accessing the file. What to do?", choices: [{ text: "A. Alert your manager immediately, explain the crash, and offer a clear new completion target.", isCorrect: true }, { text: "B. Leave the office silently. If asked tomorrow, blame the IT system.", isCorrect: false }] }
+                                th: { q: "ลูกค้าต้องการให้ออกใบประเมินดอกเบี้ยใหม่ภายในวันศุกร์นี้ แต่คุณประเมินแล้วว่าขั้นตอนอนุมัติข้ามแผนกน่าจะเสร็จวันจันทร์หน้า คุณจะบอกอย่างไร?", choices: [{ text: "A. รับปากส่งเดชไปก่อนเพื่อให้ลูกค้าสบายใจในวันนี้ แล้ววันศุกร์ค่อยโทรขอเลื่อน", isCorrect: false }, { text: "B. ชี้แจงความเป็นจริงอย่างชัดเจนว่าระบบใช้เวลากลั่นกรองและพร้อมส่งมอบวันจันทร์ตอนสิบโมงเช้า", isCorrect: true }] },
+                                en: { q: "A client wants their interest evaluation by Friday, but you estimate cross-functional approval will finish by Monday. How do you communicate?", choices: [{ text: "A. Agree blindly to make them happy today, then call Friday to postpone", isCorrect: false }, { text: "B. Clarify the realistic process transparently, setting Monday 10 AM as the committed delivery", isCorrect: true }] }
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-comments', subtopic: 'Give Direct Feedback', 
-                        th: { 
-                            def: 'สื่อสารตรงไปตรงมา ติเพื่อก่อ และเปิดใจรับฟัง ฟีดแบ็กทันทีแบบซึ่งหน้าด้วยความเคารพ เพื่อให้เกิดการพัฒนา', 
-                            trad: ['เอาเรื่องติดขัดไปนินทาลับหลัง', 'ปล่อยเบลอให้คนทำผิดซ้ำๆ เพราะไม่อยากมีปัญหากัน', 'เวลารับฟีดแบ็กก็เอาแต่แก้ตัว ตั้งป้อมปฏิเสธฟังความเห็น'], 
-                            turbo: ['ติติงจุดผิดและให้คอมเมนต์ตรงๆ อย่างสุภาพด้วยความหวังดี', 'เสนอทิศทางการแก้ไขหรือพัฒนาต่ออย่างสร้างสรรค์', 'รับฟังคำติชมอย่างเปิดกว้าง และนำไปลงมือปรับปรุงทันที'] 
-                        }, 
-                        en: { 
-                            def: 'Communicate directly and constructively. Be open to listening. Give immediate face-to-face feedback with respect to foster development.', 
-                            trad: ['Say "great job!" in public, but complaining to others at lunch.', 'Letting colleagues repeatedly make the same error to avoid awkward talks.', 'Getting defensive or making excuses when receiving feedback.'], 
-                            turbo: ['Deliver face-to-face feedback objectively and respectfully.', 'Focus on observable facts and behaviors, not personal attacks.', 'Actively seek areas to improve and implement adjustments immediately.'] 
+                    {
+                        icon: 'fa-comments', subtopic: 'Give Direct Feedback',
+                        th: {
+                            def: 'สื่อสารแบบตรงไปตรงมา ติเพื่อก่อ และเปิดใจกว้าง รับฟังฟีดแบ็กทันทีแบบซึ่งหน้าด้วยความเคารพ เพื่อการปรับปรุงพัฒนาตนเองโดยไม่มีข้ออ้างและอีโก้',
+                            trad: ['เอาไปนินทาลับหลัง ไม่กล้าพูดตรงๆ ปล่อยให้เพื่อนทำผิดซ้ำๆ หรือเวลาตัวเองโดนฟีดแบ็กก็ตั้งป้อมเถียง ปิดใจรับฟัง'],
+                            turbo: ['ให้และรับ Feedback ทันทีด้วยความจริงใจและสุภาพ โฟกัสที่ \"พฤติกรรม\" ไม่ใช่ตัวบุคคล และนำฟีดแบ็กนั้นไปพัฒนาตัวเองต่อ']
+                        },
+                        en: {
+                            def: 'Give direct and constructive feedback immediately, face-to-face and respectfully. Receive criticism as data to grow, dropping excuses and ego.',
+                            trad: ['Gossiping behind backs. Not daring to speak directly. Letting colleagues repeat mistakes. Defensiveness and closed-mindedness when receiving feedback.'],
+                            turbo: ['Give and receive feedback immediately with sincerity and politeness. Focus on "behavior," not the person, and use that feedback to improve.']
                         },
                         practices: [
                             {
@@ -547,22 +873,22 @@
                                 en: { q: "A teammate gives a presentation that is very confusing and runs way over time. How do you feed back?", choices: [{ text: "A. Say 'Great job!' then complain to another friend at lunch that it was a waste of time.", isCorrect: false }, { text: "B. Pull them aside later: 'Your data was solid, but the pacing was slow. Try leading with the conclusion next time.'", isCorrect: true }] }
                             },
                             {
-                                th: { q: "หัวหน้าให้ฟีดแบ็กว่าสไตล์การเขียนรายงานของคุณอธิบายน้ำเยอะเกินไป จับใจความสำคัญยาก คุณจะตอบสนองอย่างไร?", choices: [{ text: "A. นำไปสร้างคู่มือ Checklist และพยายามตัดข้อมูลที่ไม่จำเป็นทิ้งในงานชิ้นถัดไปให้กระชับขึ้น", isCorrect: true }, { text: "B. รู้สึกโกรธ มองว่าหัวหน้าจับผิด และพยายามส่งงานแบบเดิมต่อไปเพื่อแสดงจุดยืน", isCorrect: false }] },
+                                th: { q: "หัวหน้าให้ฟีดแบ็กว่าสไตล์การเขียนรายงานของคุณอธิบายน้ำเยอะเกินไป จับใจความสำคัญยาก คุณจะตอบสนองอย่างไร?", choices: [{ text: "A. นำไปสร้างคู่มือ Checklist และพยายามตัดข้อมูลที่ไม่จำเป็นทิ้งในงานชิ้นถัดไปให้กระชับขึ้น", isCorrect: true }, { text: "B. รู้สึกโกรธและคิดว่าผู้จัดการไม่เห็นค่าในความพยายามของตนเอง", isCorrect: false }] },
                                 en: { q: "Your manager tells you that your project brief is confusing and hard to parse. How do you respond?", choices: [{ text: "A. Listen with an open mind, ask for specific examples, and adjust your style for the next brief.", isCorrect: true }, { text: "B. Get defensive, ignore the advice, and continue submitting briefs in the exact same format.", isCorrect: false }] }
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-circle-question', subtopic: '"I Don\'t Know" Shows Strength', 
-                        th: { 
-                            def: 'กล้ายอมรับว่าไม่รู้ เพื่อนำไปสู่การเรียนรู้ การยอมรับความจริงคือจุดเริ่มต้นของการแก้ปัญหาและการเติบโต', 
-                            trad: ['แกล้งทำเป็นรู้เพื่อรักษาหน้า', 'เดาข้อมูลตัวเลขสุ่มๆ เพราะกลัวโดนมองว่าไร้ความสามารถ', 'เงียบสะกดอารมณ์ไม่ยอมถาม แอบไปสางงานผิดๆ จนบานปลาย'], 
-                            turbo: ['กล้าเอ่ยปากยอมรับว่า \"ไม่รู้เรื่องนี้\" อย่างเปิดเผย', 'ถามคำถามตรงประเด็นทันทีเมื่อเจอจุดที่ไม่มั่นใจ', 'กะตือรือร้นแสวงหาข้อมูลและพร้อมเรียนรู้จากผู้มีทักษะ'] 
-                        }, 
-                        en: { 
-                            def: 'Dare to admit not knowing to lead to learning. Accepting the truth is the beginning of problem-solving and growth.', 
-                            trad: ['Pretending to understand unfamiliar terms because you fear looking foolish.', 'Guessing critical numbers in a meeting just to appear knowledgeable.', 'Winging the execution on guessworks, leading to expensive failures.'], 
-                            turbo: ['Clearly declare "I don\'t know the exact figure right now."', 'Follow up promptly with the actual numbers within a defined timeframe.', 'Ask clarifying questions instead of hiding behind a nod.'] 
+                    {
+                        icon: 'fa-circle-question', subtopic: '"I Don\'t Know" Shows Strength',
+                        th: {
+                            def: 'กล้ายอมรับว่าไม่รู้เมื่อไม่ทราบความจริง เพื่อนำไปสู่การหาคำตอบที่แท้จริงแทนการเดาสุ่ม การยอมรับความจริงแบบตรงไปตรงมาคือจุดเริ่มต้นของการแก้ปัญหา',
+                            trad: ['แกล้งทำเป็นรู้เพราะกลัวเสียหน้า หรือดำน้ำทำไปทั้งที่ไม่เข้าใจจนสุดท้ายงานพัง'],
+                            turbo: ['กล้าพูดคำว่า \"ไม่รู้\" และถามทันทีเมื่อไม่เข้าใจ เพื่อขอคำแนะนำจากผู้รู้และนำไปศึกษาเพิ่มเติมจนเข้าใจอย่างแท้จริง']
+                        },
+                        en: {
+                            def: 'Dare to say \'I don\'t know\' rather than guessing. Honesty builds trust. Admitting limitations is the starting block of true learning and problem-solving.',
+                            trad: ['Pretending to know out of fear of losing face, or winging it without understanding until the work is ruined.'],
+                            turbo: ['Dare to say "I don\'t know" and ask immediately when you don\'t understand to get advice from experts and study further until truly understanding.']
                         },
                         practices: [
                             {
@@ -575,17 +901,17 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-circle-xmark', subtopic: 'It\'s OK to be Wrong', 
-                        th: { 
-                            def: 'กล้ายอมรับผิด ทิ้งอีโก้ และหาทางแก้ไข ความผิดพลาดคือบทเรียน ไม่ใช่ตราบาป โฟกัสที่การแก้ปัญหามากกว่าหาคนผิด', 
-                            trad: ['แก้ตัวและปกปิดเพื่อไม่ให้ใครเห็นจุดบกพร่อง', 'กอดอีโก้เหนียวแน่นคิดว่าสิ่งที่ตนเสนอต้องถูกเสมอ', 'โยนความผิดให้ระบบ หรือพยายามหาแพะมาบดบัง'], 
-                            turbo: ['ยอมรับความจริงอย่างซื่อสัตย์เมื่อแผนงานที่เสนอพัง', 'กล้าอัปเดตสเตตัสปัญหาเป็นสีแดงอย่างรวดเร็วเพื่อให้ทีมช่วย', 'ทิ้งวิธีเดิมๆ ทันทีและเปลี่ยนทิศทางลุยแผนสำรองรวดเร็ว'] 
-                        }, 
-                        en: { 
-                            def: 'Dare to admit mistakes, drop ego, and find solutions. Mistakes are lessons, not stigmas. Focus on solving problems rather than finding culprits.', 
-                            trad: ['Deflecting failure by blaming the market, competitors, or other departments.', 'Refusing to pivot from a failing strategy because you want to be right.', 'Hiding bad results or delay indicators from the team.'], 
-                            turbo: ['Own the failure openly and share analysis on why the strategy crashed.', 'Quickly flag critical issues as Red Status so the team can align on a pivot plan.', 'Drop the ego, adapt to new evidence, and switch to backups immediately.'] 
+                    {
+                        icon: 'fa-circle-xmark', subtopic: 'It\'s OK to be Wrong',
+                        th: {
+                            def: 'ยอมรับความผิดพลาด ทิ้งอีโก้ และเร่งหาหนทางแก้ไข ความผิดพลาดไม่ใช่ตราบาปแต่คือข้อมูลชั้นดีในการอุดรอยรั่ว รีบแจ้งปัญหาด้วยความจริงใจก่อนที่มันจะบานปลาย',
+                            trad: ['พยายามปกปิดความผิดพลาด โยนความผิดให้คนอื่น หรือซ้ำเติมเมื่อเพื่อนร่วมงานทำพลาด'],
+                            turbo: ['ยอมรับผิดทันทีโดยไม่มีข้ออ้าง โฟกัสที่การแก้ไขสถานการณ์เฉพาะหน้า และวางระบบป้องกันไม่ให้เกิดความผิดพลาดซ้ำสอง']
+                        },
+                        en: {
+                            def: 'Own your mistakes, drop the ego, and resolve them. Failure is not a crime, but hiding it is. Proactively report errors with full transparency before they cascade.',
+                            trad: ['Trying to hide mistakes, blaming others, or rubbing it in when colleagues make mistakes.'],
+                            turbo: ['Admit mistakes immediately without excuses. Focus on solving the immediate situation and building a system to prevent repeating the mistake.']
                         },
                         practices: [
                             {
@@ -598,25 +924,25 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-scale-balanced', subtopic: 'Fairness, Always', 
-                        th: { 
-                            def: 'ใช้มาตรฐานเดียวกันกับทุกคนอย่างเท่าเทียม โปร่งใส ไร้อคติ ไม่เลือกปฏิบัติ หรือมีสองมาตรฐาน', 
-                            trad: ['มีมาตรฐานคู่ขนาน เลือกปฏิบัติกับคนใกล้ชิด', 'หัวหน้าทำผิดปล่อยผ่าน แต่จูเนียร์ทำผิดกลับโดนว่ารุนแรง', 'พิจารณาข้อดีของไอเดียจากระดับตำแหน่งงานมากกว่าความถูกต้อง'], 
-                            turbo: ['ยึดเกณฑ์การประเมินมาตรฐานเดียวกันเด็ดขาด', 'ใส่ใจเนื้อหาและความถูกต้องของฟีดแบ็กเป็นสำคัญ', 'ไม่มีระบอบพรีวิลเลจ ลูกรัก หรือระบบอาวุโสในการตัดสินงาน'] 
-                        }, 
-                        en: { 
-                            def: 'Apply the same standard to everyone equally, transparently, and without bias. No discrimination or double standards.', 
-                            trad: ['Scolding a junior for arriving late while letting a department head slip by with no comments.', 'Evaluating feedback quality based solely on the tenure or rank of the speaker.', 'Creating custom, favorable evaluation loops for \'favorites\' or close friends.'], 
-                            turbo: ['Enforce uniform core standards (like punctuality) across all organizational layers.', 'Value the objective content of feedback over the seniority of the speaker.', 'Maintain strict fairness, ensuring status buys zero exemptions from core values.'] 
+                    {
+                        icon: 'fa-scale-balanced', subtopic: 'Fairness, Always',
+                        th: {
+                            def: 'ยึดมั่นความเที่ยงธรรมและมาตรฐานเดียวกันอย่างจริงจัง ปราศจากลูกรัก ระบบอาวุโส หรือพรีวิลเลจ ทุกคนต้องได้รับการปฏิบัติด้วยความเคารพอย่างโปร่งใสภายใต้หลักเกณฑ์เดียวกัน',
+                            trad: ['มีมาตรฐานไม่เท่ากัน ให้อภิสิทธิ์คนสนิท หรือคนตำแหน่งสูงกว่า ทำผิดไม่เป็นไร แต่คนอื่นทำผิดโดนด่า'],
+                            turbo: ['ยึดมาตรฐานเดียวกันอย่างเด็ดขาด สนใจที่ "เนื้อหาและความถูกต้อง" มากกว่า "ตำแหน่งหรือความสนิทสนม"']
+                        },
+                        en: {
+                            def: 'Apply core rules uniformly without exceptions. No favorites, no privileges. Everyone stands equal under corporate values, regardless of rank or closeness.',
+                            trad: ['Having unequal standards. Giving privileges to close friends or higher-ups. It\'s fine if they make a mistake, but others get scolded.'],
+                            turbo: ['Strictly adhere to the same standard. Focus on "content and correctness" rather than "position or closeness."']
                         },
                         practices: [
                             {
-                                th: { q: "ในแผงกมีนัดหารือเช้า แต่ทั้งจูเนียร์พนักงานใหม่และผู้จัดการมาสายพร้อมกัน ควรจัดกระบวนการอย่างไร?", choices: [{ text: "A. กล่าวติติงจูเนียร์อย่างเป็นทางการ ส่วนผู้จัดการปล่อยเบลอเพราะเกรงใจตำแหน่งอาวุโส", isCorrect: false }, { text: "B. ยึดมาตรฐานการเคารพเวลากลางเดียวกันกับทุกคนอย่างเท่าเทียมและตรงไปตรงมา", isCorrect: true }] },
+                                th: { q: "ในแผนกมีนัดหารือเช้า แต่ทั้งจูเนียร์พนักงานใหม่และผู้จัดการมาสายพร้อมกัน ควรจัดกระบวนการอย่างไร?", choices: [{ text: "A. กล่าวติติงจูเนียร์อย่างเป็นทางการ ส่วนผู้จัดการปล่อยเบลอเพราะเกรงใจตำแหน่งอาวุโส", isCorrect: false }, { text: "B. ยึดมาตรฐานการเคารพเวลากลางเดียวกันกับทุกคนอย่างเท่าเทียมและตรงไปตรงมา", isCorrect: true }] },
                                 en: { q: "A junior employee and a Head of Department both arrive late to a critical meeting. How is this addressed?", choices: [{ text: "A. Scold the junior for lack of respect, but let the department head slide silently.", isCorrect: false }, { text: "B. Hold both to the exact same standard, as... punctuality respects everyone's time equally.", isCorrect: true }] }
                             },
                             {
-                                th: { q: "คุณได้รับเอกสารวิจารณ์ระบบงานชิ้นสำคัญจากพนักงานฝึกงานจูเนียร์ คุณจะทำอย่างไร?", choices: [{ text: "A. โยนทิ้งไม่เปิดอ่านเพราะคิดว่าพนักงานเด็กใหม่ไม่น่าจะมีความเห็นลึกซึ้งพอ", isCorrect: false }, { text: "B. เปิดใจกว้าง ตรวจสอบ 'เนื้อหา' ของคำติชมว่าตรงจุดและสอดคล้องกับความจริงหน้างานหรือไม่", isCorrect: true }] },
+                                th: { q: "คุณได้รับเอกสารวิจารณ์ระบบงานชิ้นสำคัญจากพนักงานฝึกงานจูเนียร์ คุณจะทำอย่างไร?", choices: [{ text: "A. โยนทิ้งไม่เปิดอ่านเพราะคิดว่าพนักงานเด็กใหม่ไม่น่าจะมีความเห็นลึกซึ้งพอ", isCorrect: false }, { text: "B. เปิดใจกว้าง ตรวจสอบ \'เนื้อหา\' ของคำติชมว่าตรงจุดและสอดคล้องกับความจริงหน้างานหรือไม่", isCorrect: true }] },
                                 en: { q: "A newly joined intern submits a list of suggested improvements for your database system. What do you do?", choices: [{ text: "A. Dismiss the document, believing a trainee doesn't have the context to suggest structural changes.", isCorrect: false }, { text: "B. Review the actual content of the suggestions objectively, valuing good ideas regardless of rank.", isCorrect: true }] }
                             }
                         ]
@@ -624,19 +950,21 @@
                 ]
             },
             {
-                id: 3, color: '#00b0f0', th: { title: 'EFFECTIVE, SIMPLE AND PRACTICAL', overview: 'เน้นลงมือปฏิบัติเพื่อผลลัพธ์ที่มีประสิทธิภาพอย่างเรียบง่าย ลดความเยิ่นเย้อและขั้นตอนซ้ำซ้อน และมุ่งแก้ไขปัญหาหน้างานจริงอย่างรวดเร็ว' }, en: { title: 'EFFECTIVE, SIMPLE AND PRACTICAL', overview: 'Only do things that matter. Eliminate unnecessary complexity. Focus on what matters, execute precisely, and simplify ruthlessly.' },
+                id: 3, color: '#00b0f0',
+                th: { title: 'EFFECTIVE, SIMPLE AND PRACTICAL', overview: 'เน้นลงมือปฏิบัติเพื่อผลลัพธ์ที่มีประสิทธิภาพอย่างเรียบง่าย ลดความเยิ่นเย้อและขั้นตอนซ้ำซ้อน และมุ่งแก้ไขปัญหาหน้างานจริงอย่างรวดเร็ว' },
+                en: { title: 'EFFECTIVE, SIMPLE AND PRACTICAL', overview: 'Only do things that matter. Eliminate unnecessary complexity. Focus on what matters, execute precisely, and simplify ruthlessly.' },
                 cards: [
-                    { 
-                        icon: 'fa-magnifying-glass', subtopic: 'First, Ask Why?', 
-                        th: { 
-                            def: 'ถามหาเหตุผลและเป้าหมายก่อนลงมือทำเสมอ เพื่อให้แน่ใจว่างานที่ทำจะตอบโจทย์และไม่สูญเปล่า', 
-                            trad: ['รับคำสั่งมาแล้วทำตามทิศทางเดิมทันทีแบบหุ่นยนต์', 'ทนกล้ำกลืนทำกระบวนการซ้ำซากที่คนเก่าๆ ออกกฎไว้', 'ไม่เคยทวงถามว่าทำไปแล้วลูกค้าเกิดความสะดวกขึ้นไหม'], 
-                            turbo: ['ถามหาเป้าหมายความกระจ่างเสมอว่า \"ทำสิ่งนี้ไปทำไม?\"', 'พร้อมปรับวิธีการทำงานให้เรียบง่ายตรงเป้าสูงสุด', 'ยกเลิกกระบวนการที่พิสูจน์แล้วว่าไม่ได้สร้าง Value'] 
-                        }, 
-                        en: { 
-                            def: 'First, Ask Why? Purpose precedes action. Before starting any project, we ask Why: Why are we doing this? What problem does this solve? What impact will it create? If it doesn\'t provide any good, it\'s eliminated.', 
-                            trad: ['Blindly executing legacy reports every single week without checking if anyone reads them.', 'Working like a robot under directions with no clear target context.', 'Refusing to challenge outdated processes.'], 
-                            turbo: ['Always ask: "What decision or business impact is made based on this?"', 'Proactively propose eliminating workflows that create zero value.', 'Prioritize goal alignment over strict, repetitive steps.'] 
+                    {
+                        icon: 'fa-magnifying-glass', subtopic: 'First, Ask Why?',
+                        th: {
+                            def: 'ถามหาเหตุผลและเป้าหมายที่แท้จริงก่อนลงมือทำงานเสมอ หากขั้นตอนหรืองานนั้นไม่ได้สร้างผลลัพธ์หรือคุณค่าที่แท้จริง (Value) ต่อลูกค้าและองค์กร ให้กล้าทักท้วงและเสนอตัดทิ้ง',
+                            trad: ['รับคำสั่งมาก็ทำแบบหุ่นยนต์ ไม่เคยถามหาเหตุผล พอผลลัพธ์ออกมาไม่ตรงเป้าก็บอกว่า "ก็สั่งมาแบบนี้"'],
+                            turbo: ['ถามหาความชัดเจนว่า "เป้าหมายของงานนี้คืออะไร?" หรือ "ทำไปทำไม?" เพื่อให้สามารถเลือกวิธีทำงานที่ตรงจุดที่สุด']
+                        },
+                        en: {
+                            def: 'Always ask \'Why\' before starting. If a workflow doesn\'t add tangible value to customers or enterprise growth, boldly suggest deleting it.',
+                            trad: ['Following orders like a robot without asking why. When results miss the mark, saying, "That\'s what was ordered."'],
+                            turbo: ['Ask for clarity: "What is the goal of this work?" or "Why are we doing this?" to choose the most spot-on working method.']
                         },
                         practices: [
                             {
@@ -649,22 +977,22 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-bullseye', subtopic: 'Obsess on Effectiveness', 
-                        th: { 
-                            def: 'โฟกัสผลลัพธ์ว่าต้องได้มาตรฐาน ตรวจงานละเอียดเสมือนลูกค้า เราจะไม่งานลวกหรือลดคุณภาพลงเด็ดขาด', 
-                            trad: ['เน้นแต่กระบวนการทำงานให้เร็วโดยแลกกับคุณภาพลวกๆ', 'เวลางานมีจุดผิดพลาดก็อ้างว่า \"ก็พยายามทำเต็มที่แล้ว\"', 'ยอมลดมาตรฐานคุณภาพงานทันทีเมื่อถูกเร่งด้วยเวลา'], 
-                            turbo: ['ตรวจทานชิ้นงานละเอียดเปรียบเหมือนเป็นลูกค้าคนสำคัญ', 'หมกมุ่นรักษามาตรฐานงานสูงสุดให้ดีเยี่ยมอย่างแท้จริง', 'หาสาเหตุ Root Cause เพื่อวางระบบป้องกันปัญหาระยะยาว'] 
-                        }, 
-                        en: { 
-                            def: 'Obsess on Effectiveness. Always ensure things are effective before looking to improve their efficiency. First ensure that the work is effective, then optimize for efficiency. Don\'t automate what should be eliminated.', 
-                            trad: ['Spending weeks building an automated bot to send out spam emails customers hate.', 'Perfecting pointless, poorly designed processes to make them faster.', 'Prioritizing efficiency of delivery over the actual utility of the output.'], 
-                            turbo: ['Analyze if the core content is effective and useful first before automating.', 'Rewrite and redesign the underlying content to maximize quality.', 'Do not automate what should be completely eliminated.'] 
+                    {
+                        icon: 'fa-bullseye', subtopic: 'Obsess on Effectiveness',
+                        th: {
+                            def: 'หมกมุ่นกับความสมบูรณ์เชิงผลลัพธ์ ตรวจงานของตนอย่างละเอียดประณีตเสมือนเราเป็นลูกค้าผู้ใช้งานจริง และไม่ยอมให้ออโตเมชันรันงานที่ไม่มีประสิทธิภาพและควรถูกกำจัด',
+                            trad: ['ทำงานลวกๆ อ้างว่าพยายามเต็มที่แล้ว ยอมลดคุณภาพงานเมื่อเวลาจำกัด หรือทำงานเสร็จแต่ใช้ไม่ได้จริง'],
+                            turbo: ['รักษาคุณภาพงานให้ได้มาตรฐานแม้เวลาจำกัด ตรวจทานงานตัวเองเสมอ (Self-review) และวางระบบป้องกันไม่ให้พลาดซ้ำสอง']
+                        },
+                        en: {
+                            def: 'Obsess over actual effectiveness first. Self-review your output as if you were the customer. Never automate a broken process—delete it instead.',
+                            trad: ['Doing sloppy work and claiming "I tried my best." Reducing quality when time is limited, or finishing work that isn\'t practical.'],
+                            turbo: ['Maintain quality standards even when time is limited. Always self-review work and build systems to prevent repeating mistakes.']
                         },
                         practices: [
                             {
                                 th: { q: "ระบบอัตโนมัติส่งคำเตือนใบแจ้งหนี้กำลังถูกสร้าง แต่วิเคราะห์แล้วพบว่าเนื้อความเมลหยาบและทำร้ายความรู้สึกของลูกค้า คุณควรทำอย่างไร?", choices: [{ text: "A. รีบเขียนระบบบอทไอทีให้ส่งจดหมายฉบับหน่วงนั้นออกไปหาลูกค้าอย่างรวดเร็วที่สุด", isCorrect: false }, { text: "B. ดึงเบรกวิเคราะห์เนื้อหาจดหมายก่อน ปรับคำให้อ่านง่ายขึ้นเสมือนเราเป็นลูกค้า เมื่อจดหมายดีแล้วค่อยรันออโตเมต", isCorrect: true }] },
-                                en: { q: "Your team is trying to automate a system generated follow-up email that customers frequently complain about. How do you proceed?", choices: [{ text: "A. Code an automation script to blast out the poorly received emails even faster.", isCorrect: false }, { text: "B. Analyze the email content first, rewrite it to be useful and clear, then automate the flow.", isCorrect: true }] }
+                                en: { q: "Your team is trying to automate a system generated follow-up email that customers frequently complain about. How do you proceed?", choices: [{ text: "A. Code an automation script to blast out the poorly received emails even faster.", isCorrect: false }, { text: "B. Analyze the email content first, rewrite it to be useful and call out automation, then automate the flow.", isCorrect: true }] }
                             },
                             {
                                 th: { q: "คุณต้องการตรวจตราโค้ดของแอปพลิเคชันเวอร์ชันใหม่ที่ไอทีเตรียมปล่อยส่งสัปดาห์หน้า คุณจะจัดการอย่างไร?", choices: [{ text: "A. ตรวจสอบทานอย่างละเอียดทุกบรรทัด เสมือนว่าคุณคือผู้ใช้งานจริงหน้างานและพร้อมสกัดบั๊ก", isCorrect: true }, { text: "B. ปล่อยผ่านไปก่อน ไอทีรันมาคงไม่มีบั๊กอะไรหรอก จะได้รีบส่งงานเสร็จ", isCorrect: false }] },
@@ -672,17 +1000,17 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-scissors', subtopic: 'Delete, Then Simplify', 
-                        th: { 
-                            def: 'ตัดขั้นตอนซ้ำซ้อนทิ้งก่อน แล้วค่อยทำให้สิ่งที่เหลือเข้าใจง่าย ลดความซับซ้อน เพื่อเพิ่มความเร็ว', 
-                            trad: ['พยายามประนีประนอมเก็บทุกขั้นตอนซ้ำซ้อนแล้วค่อยทำคู่มือ', 'ปล่อยให้มีกฎระเบียบเยอะเพราะกลัวความผิดพลาด', 'เขียนอธิบายงานด้วยน้ำเสียงยืดยาวใส่ศัพท์เทคนิคเยอะ'], 
-                            turbo: ['ตัดขั้นตอนที่ไม่สร้างมูลค่าหรือเอกสารซ้ำซ้อนออกไปให้หมดก่อน', 'กะเทาะขั้นตอนที่เหลือให้เรียบง่าย กระชับ เข้าใจทันที', 'สรุปเนื้อหาสำคัญสั้นกระชับ สู่เนื้อหาเน้นๆ ที่สื่อสารได้ชัดเจน'] 
-                        }, 
-                        en: { 
-                            def: 'Delete, Then Simplify. It is pointless to spend time simplifying things that should not exist in the first place. Only after we delete things enough then we start to simplify. Complex systems conceal flaws and break easily—simplify them. Repeatedly ask "Can we delete this?" and "Can this be simpler?" until nothing unnecessary and complicated remains.', 
-                            trad: ['Trying to make each of the 20 redundant onboarding steps slightly faster.', 'Keeping legacy red tape intact while introducing digital signature overlays.', 'Writing long operational documents filled with confusing procedures.'], 
-                            turbo: ['Audit the process and completely delete legacy steps that are not legally required.', 'Simplify the remaining essential steps to make them intuitive.', 'Consistently ask "Can we delete this?" to eliminate deadweight.'] 
+                    {
+                        icon: 'fa-scissors', subtopic: 'Delete, Then Simplify',
+                        th: {
+                            def: 'ตัดขั้นตอนที่ซับซ้อนและส่วนเกินออกไปก่อน แล้วค่อยจัดกระบวนการที่เหลือให้เรียบง่าย เข้าใจได้ภายใน 10 วินาที ระบบที่ซับซ้อนมักจะพังง่ายและซุกซ่อนรอยรั่วไว้',
+                            trad: ['สร้างขั้นตอนยุ่งยาก ยึดติดกับกฎเกณฑ์หยุมหยิม และนำเสนอเยิ่นเย้อไร้แก่นสาร'],
+                            turbo: ['มุ่งตัดทอนสิ่งไม่จำเป็น (Rethink & Delete) และสรุปเนื้อหาให้เข้าใจได้ภายใน 10 วินาที']
+                        },
+                        en: {
+                            def: 'Delete first, then simplify. Complex systems hide flaws and break easily. Condense workflows until they are clear and understandable in 10 seconds.',
+                            trad: ['Allowing petty rules. Working through unnecessary steps. Writing emails or presentations full of jargon and fluff.'],
+                            turbo: ['Always propose cutting unnecessary steps or processes. Summarize information concisely to be understood within 10 seconds.']
                         },
                         practices: [
                             {
@@ -691,21 +1019,21 @@
                             },
                             {
                                 th: { q: "คุณต้องการทำคู่มือวิธีการอนุมัติสัญญาเงินกู้ประจำแผนก คุณจะเรียบเรียงข้อมูลอย่างไร?", choices: [{ text: "A. เรียบเรียงเฉพาะหัวข้อสำคัญที่ใช้งานจริงเป็น Bullet Point สั้นกระชับ เพื่อให้อ่านเข้าใจความต้องการใน 10 วินาที", isCorrect: true }, { text: "B. บันทึกทุกคำพูดและกฎหมายยาวสิบหน้าเพื่อความปลอดภัยของแผนก", isCorrect: false }] },
-                                en: { q: "You need to update the operational routing guide for credit approvals. How do you format it?", choices: [{ text: "A. Condense the guide into bullet points, leaving only key action items understandable in 10 seconds.", isCorrect: true }, { text: "B. Copy-paste entire sections of legal and policy texts to make the guide look official.", isCorrect: false }] }
+                                en: { q: "You need to update the operational routing guide for credit approvals. How do you format it?", choices: [{ text: "A. Condense the guide into bullet points, leaving only key action items understandable in 10 seconds", isCorrect: true }, { text: "B. Copy-paste entire sections of legal and policy texts to make the guide look official.", isCorrect: false }] }
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-hammer', subtopic: 'Hands-On', 
-                        th: { 
-                            def: 'ลงมือแก้ปัญหาหน้างานด้วยตัวเอง ไม่นั่งรอปาฏิหาริย์ ผู้นำต้องรู้ลึกถึงหน้างานและพร้อมลุย', 
-                            trad: ['วิเคราะห์ปัญหาผ่านตัวเลขบนกระดาษอย่างเดียว', 'นั่งรอบอร์ดบริหารส่งทีมเข้ามาช่วยป้อนวิธีการแก้ปัญหา', 'ดีแต่สั่งงานอยู่บนโต๊ะทำงาน ไม่เคยเดินลงไปดูข้อขัดข้องจริง'], 
-                            turbo: ['ลงหน้างานไปดูข้อขัดข้อง สัมผัสปัญหาร่วมกับพนักงานสาขา', 'คุย Data ตรวจสอบข้อมูลดิบด้วยตัวเองเพื่อหาเบาะแสแท้จริง', 'ทดลองสวมบทบาทลงมือแพ็คของ ตอบแชท หรือลุยระบบเอง'] 
-                        }, 
-                        en: { 
-                            def: 'Hands-On. True insights and effective solutions arise from direct, hands-on experience rather than detached observation or theoretical models. By actively testing products, interviewing users, and fixing problems personally, leaders and teams uncover realities that reports alone cannot reveal.', 
-                            trad: ['Managing packaging errors strictly by reading spreadsheets and ticket trends.', 'Waiting for a steering committee to assign a solution designer.', 'Delegating troubleshooting to others without validating the root issue.'], 
-                            turbo: ['Go directly to the warehouse or front-line branch to experience the workflow.', 'Pack a box personally, test the tools, and uncover the real root cause.', 'Rely on personal experience over third-party reports.'] 
+                    {
+                        icon: 'fa-hammer', subtopic: 'Hands-On',
+                        th: {
+                            def: 'ลงสัมผัสหน้างานจริงด้วยตัวเองเพื่อจับต้องต้นตอของปัญหา การเข้าใจปัญหาแบบลอยๆ ผ่านกระดาษรายงานจะทำให้การออกแบบแนวทางการแก้ไขพังและไม่สมจริง',
+                            trad: ['เป็นแค่นักทฤษฎี ดีแต่สั่ง นั่งรอคนมาป้อนคำตอบ หรือไม่ยอมลงไปดูปัญหาจริงๆ ที่หน้างาน'],
+                            turbo: ['คุ้ย Data หรือลงหน้างานจริงเพื่อค้นหาต้นตอของปัญหาด้วยตัวเอง และสามารถอธิบายรายละเอียดของงานได้อย่างทะลุปรุโปร่ง']
+                        },
+                        en: {
+                            def: 'Go to the front-line to experience real problems first-hand. Detached metrics and remote reports hide the real operational leaks.',
+                            trad: ['Being just a theorist. Only giving orders. Waiting for answers to be spoon-fed, or refusing to look at actual front-line problems.'],
+                            turbo: ['Dig into data or go to the actual front-line to find the root cause of problems yourself. Be able to explain task details thoroughly.']
                         },
                         practices: [
                             {
@@ -713,22 +1041,22 @@
                                 en: { q: "Branch managers complain about packing dispenser bottlenecks. How does the operations manager solve this?", choices: [{ text: "A. Read a weekly summary report of dispenser tickets in the corporate office.", isCorrect: false }, { text: "B. Go to the warehouse, unpack and pack a box personally, find that the tape is faulty, and fix it.", isCorrect: true }] }
                             },
                             {
-                                th: { q: "คุณต้องการสางปัญหายอดคลิปวิดีโอประชาสัมพันธ์บนติ๊กต็อกตกหล่นกะทันหัน คุณควรเริ่มต้นอย่างไร?", choices: [{ text: "A. เปิดคุ้ย Data เจาะลึกสถิติคอมเมนต์และคลิปด้วยตัวเองเพื่อตรวจหาสัญญาณผิดพลาดทันที", isCorrect: true }, { text: "B. นัดประชุมบริษัทจัดจ้างภายนอก (Outsource) เพื่อให้เขาส่งรายงานวิเคราะห์กลับมาเดือนหน้า", isCorrect: false }] },
+                                th: { q: "คุณต้องการสางปัญหายอดคลิปวิดีโอประชาสัมพันธ์บนติ๊กต็อกตกหล่นกะทันหัน คุณควรเริ่มต้นอย่างไร?", choices: [{ text: "A. เปิดดูข้อมูลดิบ เจาะลึกสถิติคอมเมนต์และคลิปด้วยตัวเองทันทีเพื่อตรวจหารอยรั่วความเร็ว", isCorrect: true }, { text: "B. นัดประชุมบริษัทจัดจ้างภายนอก (Outsource) เพื่อให้เขาส่งรายงานวิเคราะห์กลับมาเดือนหน้า", isCorrect: false }] },
                                 en: { q: "A newly deployed system is causing high transaction error rates. What is your first step?", choices: [{ text: "A. Open the log analyzer, review raw database transactions yourself, and locate the query causing the lag.", isCorrect: true }, { text: "B. Schedule a formal review meeting with the software provider next week.", isCorrect: false }] }
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-people-arrows', subtopic: 'Collaborate More, Meeting Less', 
-                        th: { 
-                            def: 'ทำงานร่วมกันอย่างมีประสิทธิภาพ ลดการประชุมที่เยิ่นเย้อ ใช้การสื่อสารที่ตรงประเด็นและรวดเร็ว', 
-                            trad: ['ตั้งปฏิทินนัดประชุมบ่อยครั้งกับเรื่องหยุมหยิมข้ามสาย', 'เข้าประชุมโดยไม่มีวาระการประชุม (Agenda) ที่ชัดเจน', 'ใช้ที่ประชุมเป็นเวทีรายงานอัปเดตความคืบหน้าที่ส่งเมลแทนได้'], 
-                            turbo: ['ยกหูโทรคุยหรือทักแชทสั้นด่วนเพื่อให้ได้ข้อสรุปใน 5 นาที', 'เข้าประชุมเมื่อต้องการระดมสมองเคาะแผนงานที่ซับซ้อนจริงๆ เท่านั้น', 'กางคู่มือสถิติและเป้าหมายที่ชัดเจน และสรุปสเต็ปงานทันที'] 
-                        }, 
-                        en: { 
-                            def: 'Collaborate More, Meeting Less. Meetings are last resorts—small, infrequent, and focused. Limit attendance to 10 people maximum, consuming no more than 20% of anyone\'s time in a week. Use asynchronous communication for updates. If you\'re not contributing to or benefiting from the meeting, leave.', 
-                            trad: ['Scheduling a recurring 1-hour weekly alignment meeting just to hear verbal updates.', 'Inviting 15 people to a meeting where only 3 actually contribute.', 'Staying in a meeting when you have zero inputs or takeaways.'], 
-                            turbo: ['Use shared documents or Slack threads for asynchronous weekly updates.', 'Keep meetings focused strictly on critical decisions with key contributors.', 'Politely leave a meeting if you are not contributing or benefiting.'] 
+                    {
+                        icon: 'fa-people-arrows', subtopic: 'Collaborate More, Meeting Less',
+                        th: {
+                            def: 'ลดเวลาและตัดความหนาแน่นของการเข้าประชุมที่ไม่เกิดประโยชน์ การประชุมคือทางเลือกสุดท้าย ใช้เพื่อหาข้อสรุปที่ซับซ้อน สื่อสารแบบไม่พร้อมกัน (Asynchronous) แทนการรายงานความคืบหน้า',
+                            trad: ['เอะอะก็นัดประชุมเป็นชั่วโมงกับเรื่องเล็กน้อย หรือเข้าประชุมโดยไม่มีวาระชัดเจน (Agenda) สุดท้ายไม่ได้ข้อสรุป'],
+                            turbo: ['ยกหูโทรคุย 5 นาทีจบ หรือทักแชทเคาะข้อสรุปทันที หากต้องประชุมจะมีเป้าหมายชัดเจนและใช้เวลาสั้นที่สุด']
+                        },
+                        en: {
+                            def: 'Meetings are last resorts—keep them small, brief, and decision-focused. Use asynchronous updates to save precious execution hours.',
+                            trad: ['Calling hour-long meetings for trivial matters, or attending meetings without a clear agenda, ending without conclusions.'],
+                            turbo: ['Call for 5 minutes or chat to finalize immediately. If a meeting is needed, have a clear goal and keep it as short as possible.']
                         },
                         practices: [
                             {
@@ -744,19 +1072,21 @@
                 ]
             },
             {
-                id: 4, color: '#fbb245', th: { title: 'SPEED AND IMPACT', overview: 'ให้ความสำคัญกับความเร็วและการลงมือทำจริงด้วยข้อมูลที่มีอย่างคล่องตัว ยึดผลลัพธ์ที่เป็นรูปธรรมเป็นเครื่องชี้วัด เพื่อสร้างความได้เปรียบในการแข่งขัน' }, en: { title: 'SPEED AND IMPACT', overview: 'We act now, fix later, making bold decisions with 80% of the information and adjusting as we go, prioritizing momentum over perfection. Success is measured by outcomes.' },
+                id: 4, color: '#fbb245',
+                th: { title: 'SPEED AND IMPACT', overview: 'ให้ความสำคัญกับความเร็วและการลงมือทำจริงด้วยข้อมูลที่มีอย่างคล่องตัว ยึดผลลัพธ์ที่เป็นรูปธรรมเป็นเครื่องชี้วัด เพื่อสร้างความได้เปรียบในการแข่งขัน' },
+                en: { title: 'SPEED AND IMPACT', overview: 'We act now, fix later, making bold decisions with 80% of the information and adjusting as we go, prioritizing momentum over perfection. Success is measured by outcomes.' },
                 cards: [
-                    { 
-                        icon: 'fa-bolt', subtopic: 'Act Now, Fix Later', 
-                        th: { 
-                            def: 'เน้นลงมือทำทันทีด้วยข้อมูล 80% ทำให้เสร็จสำคัญกว่าสมบูรณ์แบบ แก้ไขปัญหาเฉพาะหน้าไปก่อน', 
-                            trad: ['ลังเล ดึงข้อมูลช้า เพราะต้องการความมั่นใจเต็มร้อยก่อนปล่อยแอป', 'ไม่กล้าตัดสินใจแก้ขัดเฉพาะหน้าด่วน ปล่อยลูกค้ารอนาน', 'มัวแต่นั่งถกเถียงเรื่องฟอนต์หรือรายละเอียดปลีกย่อย'], 
-                            turbo: ['ทำตัว Prototype แบบสเกลเล็กๆ มาทดสอบใช้งานหน้างานทันที', 'ลุยลงมือทำเพื่อสะสมข้อมูลจริง (Iterate) รวดเร็ว', 'กล้าตัดสินใจหาวิธีแก้ขัด (Workaround) สางงานก่อนแล้วแก้ถาวรทีหลัง'] 
-                        }, 
-                        en: { 
-                            def: 'Act Now, Fix Later. Don\'t overly analyze things. Proceed with 80% of the information, trusting your instincts and experience. Make decisions, get results, and think about what to do next. Momentum is critical—adjust course later if needed. Perfect information is rare, and waiting too long leads to missed opportunities.', 
-                            trad: ['Delaying a website launch for weeks to debate minor visual design tweaks.', 'Waiting for absolute 100% complete data before making a market decision.', 'Stalling project deployment due to minor fears.'], 
-                            turbo: ['Launch the web page today with essential layouts.', 'Gather real user data and feedback immediately after launch.', 'Fix the font size or visual issues tomorrow based on live data.'] 
+                    {
+                        icon: 'fa-bolt', subtopic: 'Act Now, Fix Later',
+                        th: {
+                            def: 'กล้าตัดสินใจและลงมือทำทันทีด้วยข้อมูลที่มี 80% ดีกว่ารอข้อมูลครบถ้วนจนสูญเสียโอกาสทางธุรกิจ ความเร็วและโมเมนตัมสำคัญกว่าความสมบูรณ์แบบที่ไม่เคยมีอยู่จริง',
+                            trad: ['เสียเวลากับการโต้เถียง รอคอยแผนการที่สมบูรณ์แบบ 100% จนสูญเสียจังหวะธุรกิจ'],
+                            turbo: ['ทดลองผ่านงานจริง (Action-oriented) ใช้แผนแก้ขัดพยุงงานข้ามวิกฤต แล้วจึงตามแก้ไขอย่างยั่งยืน']
+                        },
+                        en: {
+                            def: 'Proceed with 80% information. Momentum is critical—waiting for perfect data leads to lost opportunities. Launch fast, test live, and refine tomorrow.',
+                            trad: ['Endlessly debating. Waiting for a 100% perfect plan or complete data before starting, ultimately losing opportunities.'],
+                            turbo: ['Create a prototype and test immediately. If facing an urgent issue, find a workaround first, then find a permanent fix later.']
                         },
                         practices: [
                             {
@@ -769,17 +1099,17 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-chart-line', subtopic: 'Outcome, Not Hours', 
-                        th: { 
-                            def: 'ความสำเร็จวัดที่ผลลัพธ์ ไม่ใช่จำนวนชั่วโมงที่นั่งทำงาน ทำงานให้ฉลาดเพื่อสร้างผลงานที่จับต้องได้', 
-                            trad: ['นั่งเฝ้าหน้าคอมถึงดึกเพื่อให้ดูเป็นพนักงานขยันในสายตาหัวหน้า', 'เน้นการบันทึกรายงานการประชุมยาวๆ เพื่อเคลมสถิติชั่วโมงขยัน', 'เอาความยุ่งและเวลาทำงานมาบดบังการส่งมอบผลลัพธ์พังๆ'], 
-                            turbo: ['บริหารจัดการเวลาทำงานของตัวเองอย่างฉลาดและตรงประเด็น', 'เน้นส่งมอบชิ้นงานที่เสร็จสมบูรณ์รวดเร็วและตรงเป้าทางธุรกิจ', 'ภูมิใจกับการปิดโปรเจกต์ยากๆ ทันกำหนดโดยไม่ต้องนั่งแช่ออฟฟิศ'] 
-                        }, 
-                        en: { 
-                            def: 'Outcome, Not Hours. Value concrete outcomes over time invested. Shipped products, resolved issues, and measurable impact define success—not hours worked or meetings attended. Keep meetings minimal and decision-focused, and evaluate performance based on deliverables, not activity metrics.', 
-                            trad: ['Staying at your desk pretending to type until 7 PM because leaving early looks bad.', 'Presenting your exhaustion and late hours in status reports.', 'Focusing on the volume of tasks done rather than their actual business value.'], 
-                            turbo: ['Deliver high-quality tasks efficiently and leave early to recharge.', 'Evaluate performance strictly based on milestones hit and value created.', 'Manage time intelligently to maximize output, not seat time.'] 
+                    {
+                        icon: 'fa-chart-line', subtopic: 'Outcome, Not Hours',
+                        th: {
+                            def: 'วัดคุณค่าความสำเร็จที่ผลงานจริงและผลลัพธ์ทางธุรกิจ ไม่ใช่วัดที่ความเหนื่อยยาก จำนวนชั่วโมงการทำโอที หรือจำนวนชั่วโมงการนั่งเก้าอี้ออฟฟิศ',
+                            trad: ['นั่งแช่ที่ออฟฟิศดึกๆ แกล้งยุ่งเพื่อให้ดูเป็นคนขยัน หรือพรีเซนต์ความเหนื่อยยากแทนที่จะโชว์ผลลัพธ์'],
+                            turbo: ['ประเมินตัวเองจากชิ้นงานที่สำเร็จตามเป้าหมาย (Output/Outcome) บริหารเวลาอย่างมีประสิทธิภาพเพื่อให้งานเสร็จตรงเวลา']
+                        },
+                        en: {
+                            def: 'Value deliverables and core business impact over hours spent at desks or meetings. Activity is not progress; outcomes define success.',
+                            trad: ['Staying late at the office to look busy and hardworking. Presenting exhaustion instead of showing results.'],
+                            turbo: ['Evaluate yourself by completed outcomes/output. Manage time effectively to finish work on time.']
                         },
                         practices: [
                             {
@@ -792,17 +1122,17 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-crosshairs', subtopic: 'Laser Focus on What Matters', 
-                        th: { 
-                            def: 'จัดลำดับความสำคัญ ทำสิ่งที่สร้าง Impact ต่อเป้าหมายหลัก โฟกัสในสิ่งที่สำคัญที่สุดก่อนเสมอ', 
-                            trad: ['พยายามทำทุกอย่างสะเปะสะปะพร้อมกัน 10 รายการ', 'รับทุกงานแทรกที่เข้ามาโดยไม่เคยกล้าปฏิเสธหัวหน้า', 'เสียเวลาจัดการงานปลีกย่อยที่ไม่เพิ่มมูลค่าให้เป้าขายจริง'], 
-                            turbo: ['เลือกปัญหาที่สร้าง Impact สูงสุดต่อองค์กรมาทำเป็นอันดับแรกก่อน', 'กล้าเอ่ยปากปฏิเสธ (Say No) กับงานแทรกที่พาทุกคนหลงทาง', 'ทุ่มเทความพยายาม 100% สางงานหลักให้จบก่อนขยับไปหัวข้ออื่น'] 
-                        }, 
-                        en: { 
-                            def: 'Laser Focus on What Matters. We can\'t do everything. Concentrate intensely on critical priorities—doing everything guarantees failure. Ensure clarity about what matters most and sort work accordingly. Be strategic about what to pursue and what not to do, maximizing impact where it counts.', 
-                            trad: ['Trying to execute a little bit of 10 tasks at once, finishing none.', 'Accepting every incoming minor request because you are afraid to say no.', 'Focusing heavily on easy, low-value administrative tasks first.'], 
-                            turbo: ['Pick the top 2 tasks that actually drive customer growth or revenue.', 'Ignore or postpone the other 8 tasks until the top 2 are 100% complete.', 'Boldly decline non-essential distractions.'] 
+                    {
+                        icon: 'fa-crosshairs', subtopic: 'Laser Focus on What Matters',
+                        th: {
+                            def: 'จัดระเบียบลำดับความสำคัญและเลือกโฟกัสเฉพาะงานหลัก 1-2 ชิ้นที่สร้างอิมแพ็คสูงสุดต่อเป้าหมายบริษัท การพยายามทำทุกอย่างพร้อมกันจะนำไปสู่ความล้มเหลวในทุกอย่าง',
+                            trad: ['พยายามทำทุกอย่างพร้อมกัน งานแทรกก็รับหมด ไม่กล้าปฏิเสธ จนสุดท้ายงานหลักไม่เสร็จ หรือเสร็จแต่ไม่ได้คุณภาพ'],
+                            turbo: ['เลือกแก้ปัญหา 1-2 อย่างที่สร้าง Impact สูงสุดต่อบริษัทให้เสร็จก่อน กล้าพูด "ไม่" กับงานที่ไม่ตอบโจทย์เป้าหมายหลัก']
+                        },
+                        en: {
+                            def: 'Concentrate strictly on 1-2 high-impact tasks. Trying to pursue everything at once guarantees failure. Learn to ruthlessly say \'No\' to distractions.',
+                            trad: ['Trying to do everything at once. Accepting all interrupting tasks. Afraid to say no, resulting in unfinished main tasks or poor quality.'],
+                            turbo: ['Choose 1-2 problems that create the highest impact for the company to solve first. Dare to say "no" to tasks that don\'t meet main goals.']
                         },
                         practices: [
                             {
@@ -810,45 +1140,45 @@
                                 en: { q: "You have 10 'urgent' tasks on your to-do list. How do you approach them?", choices: [{ text: "A. Work on all 10 tasks simultaneously, completing none of them by EOD.", isCorrect: false }, { text: "B. Identify the top 2 tasks driving the highest impact or revenue, and complete them first.", isCorrect: true }] }
                             },
                             {
-                                th: { q: "หัวหน้าฝ่ายอื่นเดินมาขอให้คุณช่วยวาดพรีเซนต์งานฉบับย่อให้เขาด่วน ซึ่งขัดกับกำหนดเดดไลน์งานสร้างแอปพลิเคชันอนุมัติของคุณ คุณจะทำอย่างไร?", choices: [{ text: "A. กล้าบอกปฏิเสธอย่างสุภาพ ชี้แจงกำหนดเดดไลน์งานหลัก และแนะนำหนทางช่วยเหลือสำรอง", isCorrect: true }, { text: "B. รับทำทันทีเพราะเกรงใจระบบความสัมพันธ์ จนทำให้ส่งมอบโค้ดแอปช้า", isCorrect: false }] },
-                                en: { q: "A colleague requests your help with a minor side project while you are on a tight deadline for a critical system release. What do you do?", choices: [{ text: "A. Politely decline: 'I cannot take this on today. I must release this feature to unblock customers first.'", isCorrect: true }, { text: "B. Accept the request immediately, pushing your critical release date back.", isCorrect: false }] }
+                                th: { q: "ผู้บริหารต่างแผนกเดินมาเร่งขอให้คุณช่วยวาดสไลด์งานสรุปของเขาด่วน ซึ่งขัดกับเดดไลน์สัญญาอนุมัติพอร์ตลูกค้า คุณจะสื่อสารอย่างไร?", choices: [{ text: "A. ชี้แจงกำหนดเดดไลน์งานพิจารณาลูกค้าหลักซึ่งเป็นความสำคัญอันดับหนึ่ง และขอเลื่อนการช่วยวาดไปสัปดาห์ถัดไปอย่างสุภาพ", isCorrect: true }, { text: "B. รีบพับเก็บงานลูกค้าทิ้งและนำสไลด์ของผู้บริหารท่านนั้นมาขึ้นรันทำก่อนเพื่อถนอมความเกรงใจ", isCorrect: false }] },
+                                en: { q: "Another department head asks you to format a presentation deck while you are on a tight deadline for a critical system release. What do you do?", choices: [{ text: "A. Politely decline: 'I cannot take this on today. I must release this feature to unblock customers first.'", isCorrect: true }, { text: "B. Accept the request immediately, pushing your critical release date back.", isCorrect: false }] }
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-lightbulb', subtopic: 'Work Smart AND Hard', 
-                        th: { 
-                            def: 'ขยันอย่างมีเป้าหมาย ใช้เครื่องมือทุ่นแรงให้ได้ผลดีที่สุด ไม่ใช่แค่ถึกทน แต่ต้องหาวิธีที่ฉลาดกว่าด้วย', 
-                            trad: ['ก้มหน้าก้มตาทำงานแบบ Manual ซ้ำๆ เพราะชินกับสไตล์ความถึก', 'ภูมิใจที่ทำงานหนักกว่าคนอื่นโดยไม่ประเมินความเร็วทางเทคโนโลยี', 'ปล่อยพฤติกรรมเหนื่อยยากอย่างไร้ประโยชน์สืบทอดต่อไป'], 
-                            turbo: ['หยุด คิด วิเคราะห์ ก่อนลงมือกระโจนลุยงานถึก', 'แสวงหา Tools, เทคโนโลยี หรือสร้าง Automation มาช่วยผ่อนแรง', 'เปลี่ยนพลังงานรูทีนเดิมๆ ให้กลายเป็นระบบที่กดสางงานได้ในคลิกเดียว'] 
-                        }, 
-                        en: { 
-                            def: 'Work Smart AND Hard. Work with purpose—effort without direction achieves nothing. Direction without effort also won\'t go far. Make every task outcome-oriented: engineers debug until systems are bulletproof, marketers refine until campaigns are irresistible. Yield skills and victories with no shortcuts, balancing intensity with sustainability to avoid burnout.', 
-                            trad: ['Yelling at the sales team to \'Make double the calls!\' tomorrow without analyzing lead quality.', 'Doing manual database cleaning for days instead of writing a short script.', 'Confusing pure exhaustion with professional output.'], 
-                            turbo: ['Audit cold call quality first, isolating the actual buying demographic.', 'Train callers to pitch the precise target, closing more deals with fewer calls.', 'Implement software systems to automate redundant operations.'] 
+                    {
+                        icon: 'fa-lightbulb', subtopic: 'Work Smart AND Hard',
+                        th: {
+                            def: 'ทำงานหนักอย่างมีเป้าหมายและใช้ทักษะความรู้รวมถึงเทคโนโลยีใหม่ๆ มาช่วยทุ่นแรงอย่างฉลาดเพื่อทวีคูณผลงาน ไม่ใช่แค่ขยันเหนื่อยล้าทางกายอย่างไร้ทิศทาง',
+                            trad: ['ก้มหน้าทำงานแบบ Manual ซ้ำๆ ถึกทนแบบไม่คิดหาวิธีที่ฉลาดขึ้น หรือภูมิใจที่ตัวเองทำงานหนักกว่าคนอื่นโดยไม่จำเป็น'],
+                            turbo: ['หยุดคิดวิเคราะห์ หาวิธีหรือ Tools/Technology ใหม่ๆ มาช่วยทำงานอัตโนมัติ (Automate) เพื่อลดเวลาและแรงงาน']
+                        },
+                        en: {
+                            def: 'Work hard, but work smart. Combine high intensity with cutting-edge tools to automate and scale. Sustainable success requires direction, not just exhaustion.',
+                            trad: ['Doing manual, repetitive work without thinking of smarter ways. Being proud of working unnecessarily harder than others.'],
+                            turbo: ['Stop and analyze. Find new tools/technology to automate tasks to save time and effort.']
                         },
                         practices: [
                             {
                                 th: { q: "ทีมเซลโทรขายสินเชื่อ 100 สายต่อวันแต่ได้ผลลัพธ์ยอดอนุมัติต่ำมาก วิธีแก้ไขแบบวิถีเทอร์โบคืออะไร?", choices: [{ text: "A. ผู้จัดการสาขาเร่งสั่ง 'พรุ่งนี้ต้องโทรเพิ่มเป็น 200 สาย! ขยันอดทนเพิ่มขึ้นเท่าตัว!'", isCorrect: false }, { text: "B. ดึงเซลมาหยุดวิเคราะห์พฤติกรรม คัดกรองตัวเลขกลั่นกลุ่มเป้าหมาย แล้วโทรเจาะจง 20 สายที่ตรงกลุ่มแทน", isCorrect: true }] },
-                                en: { q: "Your outbound sales team is making 100 cold calls a day with very low conversion. What is the TURBO way?", choices: [{ text: "A. Force the team to double their output to 200 raw calls a day, preaching pure endurance.", isCorrect: false }, { text: "B. Pause and analyze lead data to target only the high-match demographic, closing more with 20 targeted calls.", isCorrect: true }] }
+                                en: { q: "Your outbound sales team is making 100 cold calls a day with very low conversion. What is the TURBO way?", choices: [{ text: "A. Force the team to double their output to 200 raw calls a day, preaching pure intensity and endurance.", isCorrect: false }, { text: "B. Pause and analyze lead data to target only the high-match demographic, closing more with 20 targeted calls.", isCorrect: true }] }
                             },
                             {
-                                th: { q: "คุณต้องจัดกระบวนการคัดกรองสลิปการโอนเงินของลูกค้านับ 1,000 สลิปต่อสัปดาห์ คุณจะจัดการอย่างไร?", choices: [{ text: "A. หาวิธีหรือเขียนสคริปต์สแกนภาพอัตโนมัติ เพื่อคัดกรองข้อมูลสลิปได้รวดเร็วใน 5 นาที", isCorrect: true }, { text: "B. นั่งเปิดภาพสลิปในโทรศัพท์เทียบตัวเลขทีละใบจนตาแฉะ", isCorrect: false }] },
+                                th: { q: "คุณต้องจัดกระบวนการตรวจภาพเอกสารและสลีปสลิปชำระเงินของลูกค้านับ 1,000 ใบต่อสัปดาห์ คุณจะสางงานอย่างไร?", choices: [{ text: "A. ศึกษาประยุกต์และสร้างสคริปต์สแกนภาพสลีปและตัวเลขเงินอัตโนมัติ เพื่อคัดกรองข้อมูลให้เสร็จรวดเร็วในคลิกเดียว", isCorrect: true }, { text: "B. นั่งเปิดภาพสลิปในโทรศัพท์เทียบตัวเลขทีละใบจนตาแฉะ", isCorrect: false }] },
                                 en: { q: "You need to reconcile 1,000 payment receipts against transaction logs manually. What do you do?", choices: [{ text: "A. Write a simple matching script or locate an automation tool to clear the list in minutes.", isCorrect: true }, { text: "B. Open each image file on your monitor, manually typing and comparing the dates.", isCorrect: false }] }
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-puzzle-piece', subtopic: 'Solve the Unsolvable', 
-                        th: { 
-                            def: 'มองปัญหาซับซ้อนเป็นโอกาส ไม่ยอมแพ้คำว่าเป็นไปไม่ได้ หาวิธีพลิกแพลงและสร้างสรรค์', 
-                            trad: ['พองานยาก มีข้อจำกัดทางวิศวกรรมไอทีก็ถอดใจทันที', 'บอกปัดและปิดดีลการพิจารณาเพราะ \"คู่แข่งมีระบบที่ดีกว่า\"', 'อ้างกรอบเงื่อนไขเดิมๆ มาพับโครงการทิ้งอย่างรวดเร็ว'], 
-                            turbo: ['กัดฟันสู้ ไม่ยอมแพ้ต่อกำแพงเทคโนโลยีและพฤติกรรมเดิม', 'มองมุมใหม่ พลิกแพลง และใช้วิธี Hacking ปลดล็อกข้อขัดข้อง', 'หาทางแกะรอยระบบของคู่แข่งเพื่อสร้างทางเลือกที่ฉลาดกว่ากลับไปสู้'] 
-                        }, 
-                        en: { 
-                            def: 'Solve the Unsolvable. Thrive on complex challenges that others avoid. Easy work won\'t last because competitors can replicate it quickly. Pursue difficult assignments to create sustainable advantages. View failures as data for improvement, not reasons to surrender. Transform obstacles into opportunities for innovation.', 
-                            trad: ['Sighing \'we just can\'t compete with that\' when a competitor launches an amazing loan tracking app.', 'Accepting defeat without looking deep into implementation paths.', 'Avoiding hard, complex system integrations.'], 
-                            turbo: ['Reverse engineer how the competitor designed the app flow.', 'Identify the specific flaws in their checkout, and design a simplified, smarter experience.', 'Build a sustainable competitive advantage by tackling the hardest problems.'] 
+                    {
+                        icon: 'fa-puzzle-piece', subtopic: 'Solve the Unsolvable',
+                        th: {
+                            def: 'มองหาทางออกที่คิดค้นขึ้นใหม่และปฏิเสธที่จะท้อถอยต่อความยากลำบากหรืออุปสรรคเชิงระบบ ท้าทายสิ่งที่เป็นไปไม่ได้เพื่อให้ได้เปรียบในการแข่งขันอย่างยั่งยืน',
+                            trad: ['พอนางยาก หรือเจอข้อจำกัดก็ถอดใจยอมแพ้ หนีไปทำแต่งานง่ายๆ หรืออ้างว่า \"มันเป็นไปไม่ได้\"'],
+                            turbo: ['กัดฟันลุย หาวิธีพลิกแพลง (Hacking) หรือมองมุมใหม่เพื่อแก้ปัญหาที่คนอื่นคิดว่าเป็นไปไม่ได้ให้สำเร็จ']
+                        },
+                        en: {
+                            def: 'Tackle complex challenges and reject \'impossible\' verdicts. Hard moats build strong competitive moats. Solve the unsolvable to keep us ahead.',
+                            trad: ['Giving up when tasks are hard or face limitations. Fleeing to easy tasks or claiming \"it\'s impossible.\"'],
+                            turbo: ['Grit your teeth and push through. Find workarounds (hacking) or look from new angles to successfully solve problems others think are impossible.']
                         },
                         practices: [
                             {
@@ -864,19 +1194,21 @@
                 ]
             },
             {
-                id: 5, color: '#80c41c', th: { title: 'GRIT AND GROW', overview: 'ความสำเร็จไม่มีหนทางลัด ยึดมั่นในความมุ่งมั่น กัดไม่ปล่อย และหมั่นฝึกฝนใช้งานซ้ำๆ จนเชี่ยวชาญ ค่อยๆ ปรับปรุงพัฒนาตนเองและงานให้ดีขึ้นทีละนิดในทุกๆ วัน' }, en: { title: 'GRIT AND GROW', overview: 'Success will never be handed to you—it\'s earned through grit, growth, and relentless effort.' },
+                id: 5, color: '#80c41c',
+                th: { title: 'GRIT AND GROW', overview: 'ความสำเร็จไม่มีหนทางลัด ยึดมั่นในความมุ่งมั่น กัดไม่ปล่อย และหมั่นฝึกฝนใช้งานซ้ำๆ จนเชี่ยวชาญ ค่อยๆ ปรับปรุงพัฒนาตนเองและงานให้ดีขึ้นทีละนิดในทุกๆ วัน' },
+                en: { title: 'GRIT AND GROW', overview: 'Success will never be handed to you—it\'s earned through grit, growth, and relentless effort.' },
                 cards: [
-                    { 
-                        icon: 'fa-mountain', subtopic: 'Grit Over Genius', 
-                        th: { 
-                            def: 'ความมุ่งมั่นและกัดไม่ปล่อย สำคัญกว่าพรสวรรค์ ความสำเร็จเกิดจากความพยายามซ้ำๆ ไม่ถอดใจเมื่อเจออุปสรรค', 
-                            trad: ['เจองานยากหรือแก้ไขโค้ดที่รวนไม่ได้ก็ถอดใจทิ้งงานทรานเฟอร์ด่วน', 'คิดว่าความเก่งมาจากพรสวรรค์มาตั้งแต่เกิด ถ้าไม่มีก็พับกระดาษยอมแพ้', 'ไม่อดทนทนอยู่กับความยากลำบากของเนื้องานหน้าร้าน'], 
-                            turbo: ['ทนจมอยู่กับปัญหาระบบที่ขัดข้อง คุ้ยหาสาเหตุสู้ไม่ถอย', 'กัดฟันลุยทดสอบกระบวนงาน คัดสรรทางเลือกแก้อย่างตั้งใจ', 'ยึดมั่นความอดทนและการลงมือทำซ้ำๆ เป็นคีย์หลักปลดล็อกความก้าวหน้า'] 
-                        }, 
-                        en: { 
-                            def: 'Grit Over Genius. Talent is overrated. Grit—the stubborn drive to push through setbacks—beats raw ability every time. You don\'t learn by dreaming or skimming books; you learn by grinding it out, failing, and trying again. The greatest successes come from those who outwork, not outthink.', 
-                            trad: ['An engineer giving up on a complex backend bug because the solution wasn\'t obvious.', 'Assuming you are not smart enough to solve data-science problems, returning the task.', 'Expecting fast answers without clocking in the research hours.'], 
-                            turbo: ['Spend the weekend reading raw system documentation and testing fail-cases.', 'Persist through 50 trial runs until a working script is discovered.', 'Outwork the obstacles with sheer stubborn drive.'] 
+                    {
+                        icon: 'fa-mountain', subtopic: 'Grit Over Genius',
+                        th: {
+                            def: 'ความอุตสาหะและกัดไม่ปล่อยสำคัญกว่าความฉลาด พรสวรรค์ไม่ได้ทำให้คุณเก่งขึ้นหากปราศจากการลงมือทำซ้ำๆ และอดทนสู้กับความล้มเหลวหลายสิบครั้ง',
+                            trad: ['ถอดใจอย่างรวดเร็ว เมื่อเผชิญอุปสรรคและยอมแพ้ต่อความยากลำบาก'],
+                            turbo: ['กัดไม่ปล่อย (Grit) อดทนคลุกคลีกับปัญหา ค้นหาและทดสอบทางเลือกใหม่ ๆ จนเจอทางออก']
+                        },
+                        en: {
+                            def: 'Grit beats raw talent. Mastery is built through endless practice and a refusal to give up. The most successful people simply outwork the obstacles.',
+                            trad: ['Giving up easily on hard tasks or immediate unsolved problems, thinking one is not smart or talented enough.'],
+                            turbo: ['Endure complex problems. Grit your teeth and test solutions until finding the answer. Never give up even if it\'s hard.']
                         },
                         practices: [
                             {
@@ -889,17 +1221,17 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-dumbbell', subtopic: 'Depth Through Practice', 
-                        th: { 
-                            def: 'ความเชี่ยวชาญเกิดจากลงมือทำซ้ำจนชำนาญ ไม่ใช่อ่านทฤษฎีจบ ต้องฝึกฝนจนรู้ลึกและรู้จริง', 
-                            trad: ['เรียนรู้ระบบแบบผิวเผิน เรียนรู้แค่ทฤษฎีรอบเดียวก็ถือว่าเก่งแล้ว', 'ไม่อดทนลุยทำเคสทดสอบ หรือไม่ยอมลูบหน้างานจริง', 'คิดว่าการจำสูตรบนสไลด์นำเสนอคือความเข้าใจที่แท้จริง'], 
-                            turbo: ['ฝึกฝนลงมือรันกระบวนงานอนุมัติเคสจริงซ้ำๆ ทุกวัน', 'นำปัญหาหน้างานมาวิเคราะห์และเปลี่ยนสัญชาตญาณความจำลึก', 'หมั่นทบทวนทักษะเพื่อเปลี่ยนข้อมูลตื้นๆ ให้เป็นความรู้ฝังลึก'] 
-                        }, 
-                        en: { 
-                            def: 'Depth Through Practice. Mastery doesn\'t come from passive study—it\'s forged through repeated, hands-on effort.', 
-                            trad: ['Watching one video tutorial of an automated credit scoring tool and claiming you fully understand it.', 'Avoiding executing actual test files because you rely on pure theory.', 'Memorizing process definitions from slides instead of doing the work.'], 
-                            turbo: ['Build 3 mock projects using the tool and run tests.', 'Fail repeatedly, locate mistakes, and master the exact system shortcuts.', 'Convert passive training data into actual muscle memory.'] 
+                    {
+                        icon: 'fa-dumbbell', subtopic: 'Depth Through Practice',
+                        th: {
+                            def: 'ความเชี่ยวชาญฝังลึกเกิดจากการลงมือฝึกฝนจริงหน้างานด้วยตนเองจนขึ้นใจ ไม่ใช่เพียงการจำหลักการทฤษฎีจากการดูคู่มือหรือสไลด์ประชุม',
+                            trad: ['เรียนรู้แบบผิวเผิน เช่น ดูคลิปสอนจบครั้งเดียวก็เคลมว่า \"เข้าใจแล้ว ทำเป็นแล้ว\" โดยไม่เคยลองลงมือทำจริง'],
+                            turbo: ['ฝึกฝนงานของตัวเองซ้ำๆ จนเกิดความเชี่ยวชาญและแม่นยำ เพื่อเปลี่ยนข้อมูลตื้นๆ ให้เป็นความรู้ฝังลึก']
+                        },
+                        en: {
+                            def: 'True expertise is forged on the ground, not in classroom slides. Practice live queries, contracts, and sales repeatedly until they become muscle memory.',
+                            trad: ['Learning superficially, like watching a tutorial once and claiming \"I understand and can do it\" without ever trying for real.'],
+                            turbo: ['Practice your own work repeatedly until expertise and accuracy are achieved to turn shallow info into deep knowledge.']
                         },
                         practices: [
                             {
@@ -912,17 +1244,17 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-arrow-trend-up', subtopic: 'Better Every Day', 
-                        th: { 
-                            def: 'การเติบโตไม่ใช่วิธีคิดแบบข้ามคืน แต่คือการค่อยๆ พัฒนาและเก็บเล็กผสมน้อยทุกวัน การปรับปรุงแค่วันละนิดจะสร้างผลลัพธ์มหาศาล', 
-                            trad: ['พยายามจะรื้อกระบวนการทำงานขององค์กรใหญ่ข้ามคืนจนทุกฝ่ายแพนิค', 'ไม่เคยนำประเด็นจุดผิดพลาดของสาขามานั่งกางทบทวนเพื่อแก้ไข', 'ทำงานเดิมๆ รูปแบบเดิมแบบเฉื่อยชาโดยไม่คิดปรับปรุงทีละนิด'], 
-                            turbo: ['เก็บปัญหาหน้างานประจำวันมาเขียนเป็น Checklist พัฒนา', 'ค่อยๆ ปรับปรุงจุดบกพร่องของเอกสารทีละจุดอย่างสม่ำเสมอทุกวัน', 'สะสมการปรับปรุงวันละนิดเพื่อพลิกโฉมบริการกู้ให้เร็วขึ้นมหาศาลในหกเดือน'] 
-                        }, 
-                        en: { 
-                            def: 'Better Every Day. Growth is not an overnight mindset, but gradually developing and accumulating small wins every day. Improving just a little bit daily creates massive results.', 
-                            trad: ['Trying to overhaul the system or change everything to be better overnight until burning out. Not reviewing mistakes.', 'Executing tasks in the exact same repetitive, inefficient way forever.'], 
-                            turbo: ['Take problems as lessons. Regularly improve work processes point by point every day.', 'Solve another issue next week, compounding incremental efficiency over months.', 'Turn lessons from minor failures into clear workflow checklist fixes.'] 
+                    {
+                        icon: 'fa-arrow-trend-up', subtopic: 'Better Every Day',
+                        th: {
+                            def: 'การพัฒนาตนเองอย่างยั่งยืนไม่ใช่เรื่องที่เปลี่ยนไปชั่วข้ามคืน แต่คือการค่อยๆ อุดรอยรั่วและปรับปรุงความเร็วสัปดาห์ละนิดอย่างสม่ำเสมอในระยะยาว',
+                            trad: ['พยายามจะรื้อระบบหรือเปลี่ยนทุกอย่างให้ดีขึ้นภายในข้ามคืนจนสุดท้ายหมดไฟ หรือไม่เคยนำข้อผิดพลาดมาทบทวน'],
+                            turbo: ['เก็บปัญหาเป็นบทเรียน ค่อยๆ ปรับปรุงกระบวนการทำงานให้เร็วขึ้นและดีขึ้นทีละจุดอย่างสม่ำเสมอทุกวัน']
+                        },
+                        en: {
+                            def: 'Growth compounds over time. Focus on getting slightly better, solving one friction point, and upgrading your skill checklist every single week.',
+                            trad: ['Trying to overhaul the system or change everything to be better overnight until burning out. Not reviewing mistakes.'],
+                            turbo: ['Take problems as lessons. Regularly improve work processes point by point every day.']
                         },
                         practices: [
                             {
@@ -935,17 +1267,17 @@
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-person-digging', subtopic: 'Leaders Do the Work', 
-                        th: { 
-                            def: 'ผู้นำที่แท้จริงต้องพร้อมลงไปคลุกฝุ่นและลุยงานหน้างานร่วมกับทีม ความเคารพเกิดจากความสามารถและการลงมือทำ ไม่ใช่แค่ตำแหน่ง', 
-                            trad: ['เป็นแค่นักสั่งงาน นั่งเฝ้ามองลูกทีมทำงานดึกดื่นแล้วตัวสลัดกลับบ้านไปดูทีวี', 'พยายามสร้างระบอบตำแหน่งอาวุโสเพื่อกดให้ลูกทีมทำแต่งานถึกรวดเดียว', 'ลืมทักษะการอนุมัติสินเชื่อและระบบพิจารณาเพราะคิดว่ามีตำแหน่งแล้วไม่ต้องลุย'], 
-                            turbo: ['ลงหน้างานไปช่วยทีมอนุมัติเคส สลัดสูทช่วยตอบแชทลูกค้าด่วนเคียงข้างทีม', 'ทำให้ดูเป็นตัวอย่าง (Lead by example) นั่งพิจารณาสัญญาร่วมหัวจมท้าย', 'กอดคอร่วมแก้บั๊ก ลุยทดสอบระบบพังเคียงบ่าเคียงไหล่ยามวิกฤต'] 
-                        }, 
-                        en: { 
-                            def: 'Leaders Do the Work. True leaders must be ready to \'get dirty\' and handle front-line work with the team. Respect comes from ability and action, not just position.', 
-                            trad: ['The manager ordering pizza for the team working late on a crash, then leaving immediately to watch TV.', 'Expecting team members to take on manual grinds while you strictly review summary charts.', 'Shielding yourself from front-line realities behind dashboard metrics.'], 
-                            turbo: ['Stay on-site side-by-side with your team, helping answer tickets or log bug reports.', 'Lead by example. Execute critical files, troubleshoot directly, and absorb the crisis pressure.', 'Earn the respect of your division through hands-on technical competence.'] 
+                    {
+                        icon: 'fa-person-digging', subtopic: 'Leaders Do the Work',
+                        th: {
+                            def: 'ผู้นำที่แท้จริงคือผู้ที่ลุยงานหน้างานเคียงบ่าเคียงไหล่กับลูกทีมยามวิกฤต ความเคารพนับถือต้องสร้างผ่านทักษะความรู้และความรับผิดชอบจริง ไม่ใช่ได้มาตามตำแหน่ง',
+                            trad: ['ดีแต่นั่งสั่งงาน พอทีมต้องลุยงานดึกก็ซื้อแค่ขนมมาให้แล้วตัวเองกลับบ้านไปพักผ่อน ปล่อยให้ทีมเผชิญปัญหาลำพัง'],
+                            turbo: ['ลงไปทำให้ดูเป็นตัวอย่าง (Lead by example) นั่งเทสต์ระบบ หรือช่วยตอบคำถามลูกค้าเคียงบ่าเคียงไหล่ไปพร้อมกับทีม']
+                        },
+                        en: {
+                            def: 'True leaders work side-by-side with their team during crises. Respect is earned through hands-on capability and accountability, not rank or titles.',
+                            trad: ['Only giving orders. When the team works late, just buying snacks and going home to rest, leaving the team to face problems alone.'],
+                            turbo: ['Lead by example. Test systems or help answer customer questions side-by-side with the team during difficult times.']
                         },
                         practices: [
                             {
@@ -954,21 +1286,21 @@
                             },
                             {
                                 th: { q: "หน้าสาขามีลูกค้าเข้าแถวสินเชื่อรถยนต์ล้นทะลักพิกัดจนเจ้าหน้าที่หน้าเคาน์เตอร์ทำงานลนลานล้นมือ คุณจะช่วยอย่างไร?", choices: [{ text: "A. เดินตรงลงไปหน้าร้านเคาน์เตอร์ สลัดมาดผู้จัดการ ช่วยหยิบเอกสาร สัมภาษณ์ข้อมูลเบื้องต้น และประกวดข้างเคียงบ่าทีมทันที", isCorrect: true }, { text: "B. นั่งอยู่ในห้องกระจกเขียนรายงานสรุปปัญหาส่งให้ผู้บริหารส่วนกลางพิจารณาเพิ่มพนักงานสัปดาห์หน้า", isCorrect: false }] },
-                                en: { q: "The branch lobby is flooded with clients, and front-line officers are visibly overwhelmed. What does the branch head do?", choices: [{ text: "A. Retreat to the back office and draft an email requesting additional headcount next month.", isCorrect: false }, { text: "B. Walk out to the lobby immediately, help greet customers, manage forms, and work directly beside the staff.", isCorrect: true }] }
+                                en: { q: "The branch lobby is flooded with clients, and branch officers are visibly overwhelmed. As the branch head, what is your move?", choices: [{ text: "A. Retreat to the back office and draft an email requesting additional headcount next month.", isCorrect: false }, { text: "B. Walk out to the lobby immediately, help greet customers, manage forms, and work directly beside the staff.", isCorrect: true }] }
                             }
                         ]
                     },
-                    { 
-                        icon: 'fa-book-open-reader', subtopic: 'Learn Forever', 
-                        th: { 
-                            def: 'โลกเปลี่ยนตลอดเวลา เราจึงต้องอยากรู้อยากเห็นและเรียนรู้สิ่งใหม่ๆ เพื่อพัฒนาตัวเองอยู่เสมอ', 
-                            trad: ['ตื่นตระหนกและต่อต้านเมื่อมีเทคโนโลยีระบบอัตโนมัติคัดกรองตัวเลขอันใหม่เข้ามา', 'กอดระเบียบวิธีทำ Manual ดั้งเดิมอย่างเหนียวแน่นเพราะขี้เกียจอัปสกิล', 'คิดว่าความรู้เดิมของตนเมื่อห้าปีที่แล้วยังคงดีและเพียงพอใช้ตลอดไป'], 
-                            turbo: ['เปิดใจกว้าง ศึกษาหาทักษะ Tool ใหม่ๆ คีย์หลักประยุกต์ใช้เช่น AI', 'ดึงความรู้เรื่องวิธีย่อกระบวนงานพิจารณาเอกสารจากอุตสาหกรรมอื่นมาปรับใช้', 'ตื่นตัวแสวงหาความเชี่ยวชาญ ค้นพบทักษะใหม่ๆ อัปเกรดตัวเองให้เก่งและมี Value เสมอ'] 
-                        }, 
-                        en: { 
-                            def: 'Learn Forever. Curiosity provides our competitive edge—nurture it relentlessly. Dedicate time to acquire new skills, explore alternate approaches, investigate diverse disciplines like physics or psychology—adopt whatever proves useful. Future challenges will render current solutions obsolete; adaptation is survival.', 
-                            trad: ['Panicking and resisting when a new automated data-matching framework (like AI) is introduced.', 'Sticking strictly to slow manual tasks because learning the new flow is too troublesome.', 'Believing your current operational framework is permanent and perfect.'], 
-                            turbo: ['Set aside time in the evening to learn and master the new system/tools.', 'Use new technology to augment your performance and become a high-value expert.', 'Actively study successful workflows from other industries to improve ours.'] 
+                    {
+                        icon: 'fa-book-open-reader', subtopic: 'Learn Forever',
+                        th: {
+                            def: 'โลกเปลี่ยนไปไวมาก เราจึงต้องตื่นตัว อยากรู้อยากเห็น และหมั่นเรียนรู้เทคโนโลยีใหม่ๆ (เช่น AI) รวมถึงกระบวนงานจากวงการอื่นเพื่อมาช่วยอัปสปีดองค์กร',
+                            trad: ['ตื่นตระหนกและต่อต้านเมื่อมีเทคโนโลยีหรือเครื่องมือใหม่ๆ เข้ามา (เช่น AI) และพยายามปกป้องวิธีทำงานแบบเดิมๆ'],
+                            turbo: ['ตั้งใจศึกษาและเปิดใจรับเครื่องมือใหม่ๆ (เช่น AI) รวมถึงศึกษาวิธีแก้ปัญหาจากอุตสาหกรรมอื่น เพื่ออัปสกิลตัวเอง']
+                        },
+                        en: {
+                            def: 'Continuous learning is survival. Stay curious, master cutting-edge tools like AI, and adopt proven methods from other sectors to keep upgrading yourself.',
+                            trad: ['Panicking and resisting when new technology or tools arrive (like AI). Trying to protect old ways of working.'],
+                            turbo: ['Study and open your mind to new tools (like AI) intentionally. Study solutions from other industries to upskill yourself.']
                         },
                         practices: [
                             {
@@ -976,7 +1308,7 @@
                                 en: { q: "A new AI tool is introduced that can automate parts of your document sorting workflow. What is your strategy?", choices: [{ text: "A. Panic and resist, attempting to find minor software flaws to argue for keeping the old manual process.", isCorrect: false }, { text: "B. Dedicate time to master the AI tool, using it to clear your backlog faster and upskill yourself.", isCorrect: true }] }
                             },
                             {
-                                th: { q: "คุณสังเกตเห็นเทคนิคการจัดการเอกสารของแอปธนาคารอื่นมีความง่ายดายและรวดเร็วกว่าสินเชื่อรถเรา คุณควรทำอย่างไร?", choices: [{ text: "A. เปิดใจ เข้าไปลองแอปของเขา เรียนรู้แนวทางกระบวนงานของอุตสาหกรรมอื่น แล้วนำมาเสนอประยุกต์ปรับใช้กับงานเรา", isCorrect: true }, { text: "B. เฉยไว้ เพราะรูปแบบงานของรถยนต์ไม่เหมือนธนาคาร ไม่จำเป็นต้องกะตือรือร้นศึกษาเรื่องนอกสาย", isCorrect: false }] },
+                                th: { q: "คุณสังเกตเห็นเทคนิคการจัดการเอกสารของแอปธนาคารอื่นมีความง่ายดายและรวดเร็วกว่าสินเชื่อรถเรา คุณควรทำอย่างไร?", choices: [{ text: "A. เปิดใจ เข้าไปลองแอปของเขา เรียนรู้แนวทางกระบวนงานของอุตสาหกรรมอื่น แล้วนำมาเสนอประยุกต์ปรับใช้กับงานเรา", isCorrect: true }, { text: "B. ไม่สนใจและมองว่าอุตสาหกรรมเขาไม่เหมือนเรา ไม่จำเป็นต้องกะตือรือร้นศึกษาเรื่องนอกสาย", isCorrect: false }] },
                                 en: { q: "You notice that modern e-commerce checkout flows are much simpler than our current loan application layout. What do you do?", choices: [{ text: "A. Intentionally study their checkout layout, map the core mechanics, and pitch ideas to simplify our loan workflow.", isCorrect: true }, { text: "B. Ignore it, believing retail e-commerce has zero relevance to the vehicle finance industry.", isCorrect: false }] }
                             }
                         ]
@@ -985,39 +1317,97 @@
             }
         ];
 
-        // --- 3. TRANSLATION DICTIONARY MAPS ---
+        // --- State ---
         const UI_TEXT = {
             th: {
-                loginTitle: 'E-Learning Portal', loginSubtitle: 'เข้าสู่ระบบเพื่อเริ่มการเรียนรู้', emailLabel: 'Email บริษัท', empIdLabel: 'รหัสพนักงาน (ID)',
-                loginBtn: 'เข้าสู่ระบบ (LOG IN)', logout: 'ออกจากระบบ', progress: 'ความคืบหน้าของคุณ', module: 'หมวด', subtopics: 'หัวข้อย่อย',
-                locked: 'รอการปลดล็อค', back: 'กลับไปหน้าหลัก', topic: 'หัวข้อที่', cardHint: 'คลิกที่การ์ดเพื่อพลิกดูวิถี TURBO',
-                tradWay: 'The Traditional Way', turboWay: 'The TURBO Way', prev: 'ก่อนหน้า', next: 'ถัดไป',
-                summaryBtn: 'สรุปบทเรียน', flipWarning: '* กรุณาคลิกพลิกอ่านการ์ดให้ครบทุกใบ เพื่อดูสรุป', flipSuccess: 'เยี่ยมมาก! คุณสามารถกดไปหัวข้อถัดไปได้เลย',
-                summaryTitle: 'สรุปเนื้อหา', reviewDef: 'ทบทวนนิยามสำคัญของหมวดนี้', finishModule: 'จบเนื้อหาหมวดนี้ (กลับสู่หน้าหลัก)', 
-                readyForSummary: 'คุณเรียนจบครบ 5 หมวดแล้ว! พร้อมดูสรุปภาพรวมวิถีชาวเทอร์โบหรือยัง?', viewFinalSummaryBtn: 'ดูสรุปภาพรวมทั้งหมด',
-                finalWelcome: 'ขอต้อนรับสู่ครอบครัวเงินเทอร์โบ', finalSubtitle: 'คุณได้เรียนรู้วิถีชาวเทอร์โบครบทั้ง 5 หมวดแล้ว',
-                finishBtn: 'เสร็จสิ้นการเรียนรู้', adminAccess: 'Admin Setup', pwdPlaceholder: 'รหัสผ่าน', accessBtn: 'เข้าสู่ระบบ',
-                emailError: 'กรุณากรอกข้อมูลให้ครบถ้วน', emailInvalid: 'Email ต้องลงท้าย @turbo.co.th และ ID 8 หลัก',
-                adminSuccess: 'เข้าสู่ระบบแอดมินสำเร็จ', adminFail: 'รหัสผ่านไม่ถูกต้อง', qPrefix: 'ข้อที่',
-                goToFinalQuizBtn: 'ไปสู่แบบทดสอบ'
+                adminAccess: "ระบบผู้ดูแลระบบ",
+                pwdPlaceholder: "รหัสผ่าน",
+                accessBtn: "เข้าสู่ระบบ",
+                logout: "ออกจากระบบ",
+                loginTitle: "พอร์ทัลการเรียนรู้ออนไลน์",
+                loginSubtitle: "เข้าสู่ระบบเพื่อเริ่มการเรียนรู้",
+                emailLabel: "อีเมลบริษัท",
+                empIdLabel: "รหัสพนักงาน",
+                loginBtn: "เข้าสู่ระบบ",
+                progress: "ความคืบหน้าของคุณ",
+                readyForSummary: "คุณเรียนครบทั้ง 5 โมดูลแล้ว! พร้อมดูสรุปผลการเรียนหรือไม่?",
+                viewFinalSummaryBtn: "ดูสรุปผลการเรียนสุดท้าย",
+                back: "ย้อนกลับ",
+                next: "ถัดไป",
+                topic: "หัวข้อ",
+                cardHint: "คลิกเพื่อดูวิถีของ TURBO",
+                tradWay: "วิถีดั้งเดิม (Traditional Way)",
+                turboWay: "วิถีของ TURBO (TURBO Way)",
+                prev: "ก่อนหน้า",
+                summaryBtn: "สรุปบทเรียนประจำโมดูล",
+                flipWarning: "* กรุณาคลิกอ่านการ์ดทั้งสองด้านให้ครบทุกใบเพื่อปลดล็อกบทสรุป",
+                flipSuccess: "คุณอ่านการ์ดครบทุกด้านแล้ว! สามารถไปต่อได้",
+                scenario: "สถานการณ์",
+                wrongAnswer: "คำตอบยังไม่ถูกต้อง ลองใหม่อีกครั้ง! 💡",
+                correctAnswer: "ถูกต้องยอดเยี่ยม! 🎉",
+                reviewDef: "ทบทวนคำจำกัดความสำคัญ",
+                finishModule: "เสร็จสิ้นโมดูล (กลับสู่หน้าหลัก)",
+                finalSubtitle: "คุณได้เรียนรู้คุณค่าและวิถีของ TURBO ครบทั้ง 5 โมดูลแล้ว",
+                finishBtn: "เสร็จสิ้นการเรียนรู้",
+                finalWelcome: "ยินดีต้อนรับสู่ครอบครัวเงินเทอร์โบ!",
+                goToFinalQuizBtn: "ไปทำแบบประเมินผลสุดท้าย",
+                module: "โมดูล",
+                subtopics: "หัวข้อย่อย",
+                locked: "ล็อกอยู่",
+                adminSuccess: "เข้าสู่ระบบผู้ดูแลระบบสำเร็จ",
+                adminFail: "รหัสผ่านไม่ถูกต้อง",
+                emailError: "กรุณากรอกข้อมูลให้ครบถ้วน",
+                emailInvalid: "กรุณากรอกอีเมลของบริษัท (@turbo.co.th) และรหัสพนักงาน 8 หลักให้ถูกต้อง",
+                summaryTitle: "สรุปเนื้อหาโมดูล",
+                redirecting: "กำลังพาท่านกลับสู่ระบบ SuccessFactors..."
             },
             en: {
-                loginTitle: 'E-Learning Portal', loginSubtitle: 'Log in to start learning', emailLabel: 'Company Email', empIdLabel: 'Employee ID',
-                loginBtn: 'LOG IN', logout: 'Log out', progress: 'Your Progress', module: 'Modules', subtopics: 'subtopics',
-                locked: 'Locked', back: 'Back to Dashboard', topic: 'Topic', cardHint: 'Click to see the TURBO Way',
-                tradWay: 'The Traditional Way', turboWay: 'The TURBO Way', prev: 'Previous', next: 'Next',
-                summaryBtn: 'Module Summary', flipWarning: '* Please click to read both sides of all cards.', flipSuccess: 'Great! You can proceed.',
-                summaryTitle: 'Module Summary', reviewDef: 'Review key definitions', finishModule: 'Finish Module (Back to Dashboard)', 
-                readyForSummary: 'You have completed all 5 modules! Ready to view final summary?', viewFinalSummaryBtn: 'View Final Summary',
-                finalWelcome: 'Welcome to the Ngern Turbo Family!', finalSubtitle: 'You have completely understood all 5 modules of the TURBO WAYS.',
-                finishBtn: 'Complete Learning', adminAccess: 'Admin Setup', pwdPlaceholder: 'Password', accessBtn: 'Log in',
-                emailError: 'Please fill in all fields.', emailInvalid: 'Email must end with @turbo.co.th and ID must be 8 digits.',
-                adminSuccess: 'Admin Login Success', adminFail: 'Incorrect Password', qPrefix: 'Question',
-                goToFinalQuizBtn: 'Go to Assessment'
+                adminAccess: "Admin Setup",
+                pwdPlaceholder: "Password",
+                accessBtn: "Log in",
+                logout: "Log out",
+                loginTitle: "E-Learning Portal",
+                loginSubtitle: "Log in to start learning",
+                emailLabel: "Company Email",
+                empIdLabel: "Employee ID",
+                loginBtn: "LOG IN",
+                progress: "Your Progress",
+                readyForSummary: "You have completed all 5 modules! Ready to view final summary?",
+                viewFinalSummaryBtn: "View Final Summary",
+                back: "Back",
+                next: "Next",
+                topic: "Topic",
+                cardHint: "Click to see the TURBO Way",
+                tradWay: "The Traditional Way",
+                turboWay: "The TURBO Way",
+                prev: "Prev",
+                summaryBtn: "Module Summary",
+                flipWarning: "* Please click to read both sides of all cards.",
+                flipSuccess: "You have read all cards! Ready to proceed.",
+                scenario: "Scenario",
+                wrongAnswer: "Incorrect choice. Try again! 💡",
+                correctAnswer: "Excellent! Correct answer. 🎉",
+                reviewDef: "Review key definitions",
+                finishModule: "Finish Module (Back to Dashboard)",
+                finalSubtitle: "You have completed all 5 modules of the TURBO WAYS.",
+                finishBtn: "Complete Learning",
+                finalWelcome: "Welcome to the Ngern Turbo Family!",
+                goToFinalQuizBtn: "Go to Assessment",
+                module: "Modules",
+                subtopics: "subtopics",
+                locked: "Locked",
+                adminSuccess: "Admin authenticated.",
+                adminFail: "Invalid password.",
+                emailError: "Please fill in all fields.",
+                emailInvalid: "Please enter a valid company email (@turbo.co.th) and 8-digit Employee ID.",
+                summaryTitle: "Module Summary",
+                redirecting: "Redirecting you to SuccessFactors..."
             }
         };
 
-        // --- 4. STATE ---
+        // --- STATE ---
+        let lang = 'en'; 
+        let currentUser = null;
         let unlockedModules = [1];
         let completedModules = [];
         let activeModuleId = null;
@@ -1026,40 +1416,48 @@
         let viewedCards = [];
         
         // Practice State (Formative Quiz)
-        let practiceIndex = 0; // 0 = Practice 1, 1 = Practice 2
+        let practiceIndex = 0; 
         let answeredPracticesCount = 0;
         
-        // Deep Storage of Progress
-        let trackingWrongAttempts = {}; // { qId: count }
-        let trackingFirstAttemptSuccess = {}; // { qId: boolean }
+        // Tracking statistics
+        let trackingWrongAttempts = {}; 
+        let trackingFirstAttemptSuccess = {}; 
 
-        // Helper
         function t(key) { return UI_TEXT[lang][key]; }
 
-        // --- 5. SESSION RESTORING & LOADING ---
+        // --- SESSION RESTORING & LOADING WITH LOCAL CACHE MERGING ---
         async function fetchUserProgress(empId) {
+            if (!auth.currentUser) return;
             try {
-                const userDocRef = doc(db, "users_progress", empId);
-                const docSnap = await getDoc(userDocRef);
-                if (docSnap.exists()) {
+                const userDocRef = db.doc(`artifacts/${appId}/users/${empId}/progress/state`);
+                const docSnap = await userDocRef.get();
+                if (docSnap.exists) {
                     const data = docSnap.data();
-                    completedModules = data.completedModules || [];
+                    const serverCompleted = data.completedModules || [];
+                    
+                    // Merge local and server progress to ensure no learning history is lost
+                    completedModules = Array.from(new Set([...completedModules, ...serverCompleted]));
+                    
                     unlockedModules = [1];
-                    // If ONE TURBO (1) is complete, unlock 2-5 instantly per requirement
                     if (completedModules.includes(1)) {
                         [2, 3, 4, 5].forEach(id => {
                             if (!unlockedModules.includes(id)) unlockedModules.push(id);
                         });
                     }
-                    console.log("[Firebase] Restored progress:", data);
+                    
+                    // Sync merged state back to local storage fallbacks
+                    localStorage.setItem('turbo_completed_modules', JSON.stringify(completedModules));
+                    localStorage.setItem('turbo_unlocked_modules', JSON.stringify(unlockedModules));
+                    
+                    console.log("[Firebase] Restored & merged progress:", data);
                 } else {
                     console.log("[Firebase] New profile created for ID:", empId);
-                    await setDoc(userDocRef, {
+                    await userDocRef.set({
                         empId: empId,
                         email: currentUser.email,
                         name: currentUser.name,
-                        completedModules: [],
-                        updatedAt: serverTimestamp()
+                        completedModules: completedModules, // save current offline session progress
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
             } catch (err) {
@@ -1068,12 +1466,12 @@
         }
 
         async function saveUserProgressToFirebase() {
-            if (!currentUser) return;
+            if (!currentUser || !auth.currentUser) return;
             try {
-                const userDocRef = doc(db, "users_progress", currentUser.empId);
-                await setDoc(userDocRef, {
+                const userDocRef = db.doc(`artifacts/${appId}/users/${currentUser.empId}/progress/state`);
+                await userDocRef.set({
                     completedModules: completedModules,
-                    updatedAt: serverTimestamp()
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
                 console.log("[Firebase] Progress saved successfully.");
             } catch (err) {
@@ -1081,11 +1479,8 @@
             }
         }
 
-        // --- 6. UI SCREEN NAVIGATION CONTROLLERS ---
-        function toggleLanguage() {
-            lang = lang === 'th' ? 'en' : 'th';
-            document.getElementById('lang-text').innerText = lang === 'th' ? 'EN' : 'TH';
-            
+        // --- UI LANG UPDATER ---
+        function updateLanguageDOM() {
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (UI_TEXT[lang][key]) el.innerHTML = UI_TEXT[lang][key];
@@ -1094,6 +1489,12 @@
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (UI_TEXT[lang][key]) el.placeholder = UI_TEXT[lang][key];
             });
+        }
+
+        function toggleLanguage() {
+            lang = lang === 'th' ? 'en' : 'th';
+            document.getElementById('lang-text').innerText = lang === 'th' ? 'EN' : 'TH';
+            updateLanguageDOM();
 
             const activeId = document.querySelector('.screen.active').id;
             if (activeId === 'screen-dashboard') renderDashboard();
@@ -1119,38 +1520,66 @@
             window.scrollTo(0,0);
         }
 
-        // --- 7. AUTHENTICATION & LOGIN ---
+        // --- ADMIN LOGIN ---
+        function openAdminModal() { document.getElementById('admin-modal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; document.getElementById('admin-alert').className = 'alert-box'; }
+        function adminLogin() {
+            const pwd = document.getElementById('admin-pwd').value;
+            const alertBox = document.getElementById('admin-alert');
+            if (pwd === 'turboway') {
+                alertBox.className = 'alert-box success active';
+                alertBox.innerHTML = t('adminSuccess');
+                setTimeout(() => {
+                    closeAdminModal();
+                    // Admin unlocked features (unlock all modules)
+                    unlockedModules = [1, 2, 3, 4, 5];
+                    renderDashboard();
+                }, 1500);
+            } else {
+                alertBox.className = 'alert-box error active';
+                alertBox.innerHTML = t('adminFail');
+            }
+        }
+
+        // --- USER LOGIN ---
         async function login() {
             const email = document.getElementById('in-email').value.trim();
             const empId = document.getElementById('in-id').value.trim();
             const alertBox = document.getElementById('login-alert');
 
             if (!email || !empId) {
-                alertBox.className = 'alert-box error';
+                alertBox.className = 'alert-box error active';
                 alertBox.innerHTML = t('emailError');
                 return;
             }
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@turbo\.co\.th$/i;
-            const idPattern = /^\d{8}$/;
-
-            if (emailPattern.test(email) && idPattern.test(empId)) {
-                alertBox.className = 'alert-box';
+            if (email.endsWith('@turbo.co.th') && empId.length === 8 && !isNaN(empId)) {
+                alertBox.className = 'alert-box active';
                 currentUser = { email, empId, name: email.split('@')[0] };
                 document.getElementById('user-name').innerText = currentUser.name.toUpperCase();
                 
-                // RESTORE PROGRESS
+                // SAVE USER DATA TO LOCAL STORAGE
+                localStorage.setItem('turbo_user_data', JSON.stringify(currentUser));
+                
+                // Reset local module state triggers to default before merge fetch
+                completedModules = [];
+                unlockedModules = [1];
+                
+                // RESTORE PROGRESS FROM FIREBASE
                 await fetchUserProgress(empId);
                 
                 renderDashboard();
                 showScreen('screen-dashboard');
             } else {
-                alertBox.className = 'alert-box error';
+                alertBox.className = 'alert-box error active';
                 alertBox.innerHTML = t('emailInvalid');
             }
         }
 
         function logout() {
             currentUser = null;
+            localStorage.removeItem('turbo_user_data');
+            localStorage.removeItem('turbo_completed_modules');
+            localStorage.removeItem('turbo_unlocked_modules');
             document.getElementById('in-email').value = '';
             document.getElementById('in-id').value = '';
             unlockedModules = [1];
@@ -1158,26 +1587,11 @@
             showScreen('screen-login');
         }
 
-        // --- 8. ADMIN MODAL LOGIC ---
-        function openAdminModal() { document.getElementById('admin-modal').classList.add('active'); }
-        function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); document.getElementById('admin-alert').className = 'alert-box'; }
-        function adminLogin() {
-            const pwd = document.getElementById('admin-pwd').value;
-            const alertBox = document.getElementById('admin-alert');
-            if (pwd === 'turboway') {
-                alertBox.className = 'alert-box success';
-                alertBox.innerHTML = t('adminSuccess');
-                setTimeout(closeAdminModal, 1500);
-            } else {
-                alertBox.className = 'alert-box error';
-                alertBox.innerHTML = t('adminFail');
-            }
-        }
-
-        // --- 9. DASHBOARD ---
+        // --- DASHBOARD ---
         function renderDashboard() {
             document.getElementById('dash-prog-text').innerText = `${completedModules.length} / 5 ${t('module')}`;
             document.getElementById('dash-prog-fill').style.width = `${(completedModules.length/5)*100}%`;
+            document.getElementById('dash-prog-fill').style.backgroundColor = 'var(--accent)';
 
             const list = document.getElementById('dash-module-list');
             list.innerHTML = '';
@@ -1186,15 +1600,19 @@
                 const isUn = unlockedModules.includes(mod.id);
                 const isCom = completedModules.includes(mod.id);
                 
-                let icon = '<i class="fa-solid fa-lock"></i>';
+                let icon = '<i class="fa-solid fa-lock text-gray-400"></i>';
                 let cls = 'locked';
-                // Flat colors, no graying out original module background
                 let color = isUn || isCom ? mod.color : '#ccc';
-                if (isCom) { icon = `<i class="fa-solid fa-circle-check" style="color:var(--success);"></i>`; cls = 'completed'; }
-                else if (isUn) { icon = `<i class="fa-solid fa-circle-play" style="color:${mod.color};"></i>`; cls = 'unlocked'; }
+                if (isCom) { 
+                    icon = `<i class="fa-solid fa-circle-check text-green-500"></i>`; 
+                    cls = 'completed'; 
+                } else if (isUn) { 
+                    icon = `<i class="fa-solid fa-circle-play" style="color:${mod.color};"></i>`; 
+                    cls = 'unlocked'; 
+                }
 
                 list.innerHTML += `
-                    <div class="module-card ${cls}" onclick="if(${isUn || isCom}) enterOverview(${mod.id})" style="border-left-color: ${isUn || isCom ? mod.color : '#eaeaea'}">
+                    <div class="module-card ${cls}" onclick="if(${isUn} || ${isCom}) enterOverview(${mod.id})" style="border-left-color: ${isUn || isCom ? mod.color : '#eaeaea'}">
                         <div class="m-icon" style="background: ${color}">${mod.id}</div>
                         <div class="m-info">
                             <h3 style="color: ${isUn || isCom ? '#1f2937' : '#888'}">${mod[lang].title}</h3>
@@ -1212,7 +1630,7 @@
             }
         }
 
-        // --- 9.5 MODULE OVERVIEW ---
+        // --- MODULE OVERVIEW SCREEN ---
         function enterOverview(moduleId) {
             activeModuleId = moduleId;
             const modData = COURSE_DATA.find(m => m.id === moduleId);
@@ -1236,7 +1654,7 @@
             showScreen('screen-flashcard');
         }
 
-        // --- 10. FLASHCARDS SYSTEM ---
+        // --- FLASHCARD ---
         function renderFlashcard() {
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
             const cData = mod.cards[cardIndex];
@@ -1246,12 +1664,12 @@
             document.getElementById('fc-main-title').style.color = mod.color;
             document.getElementById('fc-counter').innerText = `${t('topic')} ${cardIndex + 1} / ${mod.cards.length}`;
             
-            // Solid flat background (No gradient)
+            // Solid flat background
             document.getElementById('fc-front').style.borderColor = mod.color;
-            document.getElementById('fc-front').style.backgroundColor = mod.color;
+            document.getElementById('fc-front').style.background = mod.color;
             document.getElementById('fc-back').style.borderColor = mod.color;
 
-            // Setup Locked Title (Top Bar)
+            // Setup Title (Top Bar)
             document.getElementById('fc-sub-f').innerText = cData.subtopic;
             document.getElementById('fc-sub-b').innerText = cData.subtopic;
             document.getElementById('fc-sub-b').style.color = mod.color;
@@ -1262,24 +1680,24 @@
             document.getElementById('fc-icon-main').className = `fa-solid ${cData.icon}`;
             document.getElementById('fc-icon-b').style.color = mod.color;
 
-            // Set Content
+            // Set Concept
             document.getElementById('fc-def').innerText = cData[lang].def;
 
-            // Process Traditional / TURBO Way as clean bullet points
-            const tradList = document.getElementById('fc-trad-bullets');
-            tradList.innerHTML = '';
+            // Render Traditional & TURBO Way Bullet Points
+            const tradBullets = document.getElementById('fc-trad-bullets');
+            tradBullets.innerHTML = '';
             cData[lang].trad.forEach(point => {
                 const li = document.createElement('li');
                 li.innerText = point;
-                tradList.appendChild(li);
+                tradBullets.appendChild(li);
             });
 
-            const turboList = document.getElementById('fc-turbo-bullets');
-            turboList.innerHTML = '';
+            const turboBullets = document.getElementById('fc-turbo-bullets');
+            turboBullets.innerHTML = '';
             cData[lang].turbo.forEach(point => {
                 const li = document.createElement('li');
                 li.innerText = point;
-                turboList.appendChild(li);
+                turboBullets.appendChild(li);
             });
 
             document.getElementById('btn-fc-prev').disabled = cardIndex === 0;
@@ -1289,7 +1707,6 @@
         function flipCard() {
             isCardFlipped = !isCardFlipped;
             document.getElementById('flashcard').classList.toggle('flipped');
-            // Unlocks next when flipped to the back, no need to flip back to front
             if (isCardFlipped && !viewedCards.includes(cardIndex)) {
                 viewedCards.push(cardIndex);
                 checkFCProgress();
@@ -1300,11 +1717,9 @@
             isCardFlipped = false;
             document.getElementById('flashcard').classList.remove('flipped');
             
-            // TRIGGER PRACTICE QUIZ INTERMEDIATELY ON EACH SUBTOPIC NEXT CLICK
             if (dir === 1) {
-                practiceIndex = 0; // Reset to question 1
-                renderPracticeQuestion();
-                showScreen('screen-practice');
+                // Trigger Formative Practice Quiz before moving to the next card
+                startPracticeForCurrentCard();
             } else {
                 setTimeout(() => { cardIndex += dir; renderFlashcard(); }, 300);
             }
@@ -1323,19 +1738,25 @@
                 btnNext.style.display = 'none'; btnSum.style.display = 'flex';
                 if (viewedCards.length === mod.cards.length) {
                     btnSum.disabled = false; btnSum.style.background = mod.color;
-                    document.getElementById('icon-summary-lock').className = 'fa-solid fa-check-circle';
+                    document.getElementById('icon-summary-lock').className = 'fa-solid fa-check-circle mr-2';
                     document.getElementById('fc-warning').innerText = t('flipSuccess');
-                    document.getElementById('fc-warning').style.color = 'var(--text-light)';
+                    document.getElementById('fc-warning').style.color = 'var(--success)';
                 } else {
                     btnSum.disabled = true; btnSum.style.background = '#ccc';
-                    document.getElementById('icon-summary-lock').className = 'fa-solid fa-lock';
+                    document.getElementById('icon-summary-lock').className = 'fa-solid fa-lock mr-2';
                     document.getElementById('fc-warning').innerText = t('flipWarning');
                     document.getElementById('fc-warning').style.color = 'var(--danger)';
                 }
             }
         }
 
-        // --- 11. FORMATIVE PRACTICE QUIZ SYSTEM ---
+        // --- FORMATIVE PRACTICE QUIZ ---
+        function startPracticeForCurrentCard() {
+            practiceIndex = 0; // Question 1 of 2
+            renderPracticeQuestion();
+            showScreen('screen-practice');
+        }
+
         function renderPracticeQuestion() {
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
             const subtopicData = mod.cards[cardIndex];
@@ -1348,18 +1769,19 @@
 
             document.getElementById('practice-q-text').innerText = currentLangQ.q;
 
-            // Reset dynamic states
+            // Reset banner feedback
             const banner = document.getElementById('practice-feedback-banner');
-            banner.className = 'quiz-feedback-banner';
-            banner.style.display = 'none';
+            banner.className = 'w-full p-4 rounded-xl text-lg md:text-xl font-bold text-center mt-6 hidden';
 
             const choicesWrapper = document.getElementById('practice-choices');
             choicesWrapper.innerHTML = '';
             
-            currentLangQ.choices.forEach(c => {
+            const letters = ['A.', 'B.'];
+            
+            currentLangQ.choices.forEach((c, idx) => {
                 const btn = document.createElement('button');
                 btn.className = 'choice-btn-practice';
-                btn.innerHTML = `<span><i class="fa-regular fa-circle mr-2"></i></span> <span>${c.text}</span>`;
+                btn.innerHTML = `<span class="choice-letter font-bold text-primary mr-2">${letters[idx]}</span> <span>${c.text}</span>`;
                 btn.onclick = () => verifyPracticeAnswer(c.isCorrect, btn, qItem);
                 choicesWrapper.appendChild(btn);
             });
@@ -1368,8 +1790,6 @@
         async function verifyPracticeAnswer(isCorrect, btn, qItem) {
             const banner = document.getElementById('practice-feedback-banner');
             const allBtns = document.querySelectorAll('.choice-btn-practice');
-            
-            // Unique identifier for this question
             const qId = qItem.id || `mod${activeModuleId}_card${cardIndex}_q${practiceIndex}`;
             
             if (!trackingWrongAttempts[qId]) {
@@ -1378,15 +1798,12 @@
 
             if (!isCorrect) {
                 btn.classList.add('wrong');
-                btn.querySelector('i').className = 'fa-solid fa-circle-xmark mr-2';
-                btn.disabled = true; // lock wrong choice
+                btn.disabled = true; // Lock wrong choice
                 
-                // บันทึกสถิติตอบผิดสะสม
                 trackingWrongAttempts[qId] += 1;
                 
                 banner.innerText = t('wrongAnswer');
-                banner.className = 'quiz-feedback-banner wrong-banner';
-                banner.style.display = 'block';
+                banner.className = 'w-full p-4 rounded-xl text-lg md:text-xl font-bold text-center mt-6 bg-red-50 text-red-700 block';
 
                 setTimeout(() => {
                     // Unlock other non-wrong buttons
@@ -1396,33 +1813,27 @@
                 }, 800);
             } else {
                 btn.classList.add('correct');
-                btn.querySelector('i').className = 'fa-solid fa-circle-check mr-2';
-                allBtns.forEach(b => b.disabled = true); // lock all
+                allBtns.forEach(b => b.disabled = true); // Lock all
                 
                 banner.innerText = t('correctAnswer');
-                banner.className = 'quiz-feedback-banner correct-banner';
-                banner.style.display = 'block';
+                banner.className = 'w-full p-4 rounded-xl text-lg md:text-xl font-bold text-center mt-6 bg-green-50 text-green-700 block';
 
-                // เก็บสถิติ First Attempt Score
                 if (trackingWrongAttempts[qId] === 0) {
                     trackingFirstAttemptSuccess[qId] = true;
-                    answeredPracticesCount += 1; // นับข้อสะสมที่ตอบถูกในครั้งแรก
+                    answeredPracticesCount += 1; // Increment correct score on first try
                 }
 
                 setTimeout(() => {
                     if (practiceIndex < 1) {
-                        // ไปข้อ 2 ของหัวข้อย่อยนี้
                         practiceIndex++;
                         renderPracticeQuestion();
                     } else {
-                        // จบแบบฝึกหัด 2 ข้อของหัวข้อนี้ ขยับไปขั้นถัดไป
                         const mod = COURSE_DATA.find(m => m.id === activeModuleId);
                         if (cardIndex < mod.cards.length - 1) {
                             cardIndex++;
                             renderFlashcard();
                             showScreen('screen-flashcard');
                         } else {
-                            // สิ้นสุด Flashcard ทุกใบแล้ว -> พาไปหน้า summary
                             showSummary();
                         }
                     }
@@ -1430,13 +1841,16 @@
             }
         }
 
-        // --- 12. SUMMARY (HORIZONTAL GRID - 1 ROW 5 COLS) ---
+        // --- SUMMARY ---
         function showSummary() {
             const mod = COURSE_DATA.find(m => m.id === activeModuleId);
-            document.getElementById('sum-icon').style.color = mod.color;
-            document.getElementById('sum-icon').style.background = `${mod.color}20`;
-            document.getElementById('sum-icon').style.padding = '25px';
-            document.getElementById('sum-icon').style.borderRadius = '50%';
+            
+            // Clean up and style central summary icon
+            const sIcon = document.getElementById('sum-icon');
+            sIcon.style.color = mod.color;
+            sIcon.style.background = `${mod.color}20`;
+            sIcon.style.padding = '25px';
+            sIcon.style.borderRadius = '50%';
             
             document.getElementById('sum-title').innerText = `${t('summaryTitle')}: ${mod[lang].title}`;
             document.getElementById('sum-title').style.color = mod.color;
@@ -1445,15 +1859,14 @@
             const list = document.getElementById('sum-list');
             list.innerHTML = '';
             
-            // Build Horizontal Cards
-            mod.cards.forEach((c, idx) => {
+            mod.cards.forEach((c) => {
                 list.innerHTML += `
                     <div class="summary-item" style="border-top: 8px solid ${mod.color}">
                         <div class="summary-header-row">
                             <div class="summary-icon-cir" style="background: ${mod.color}"><i class="fa-solid ${c.icon}"></i></div>
                             <h4>${c.subtopic}</h4>
                         </div>
-                        <p>${c[lang].def}</p>
+                        <p class="text-gray-600 font-medium leading-relaxed">${c[lang].def}</p>
                     </div>
                 `;
             });
@@ -1463,21 +1876,24 @@
         async function completeModule() {
             if (!completedModules.includes(activeModuleId)) completedModules.push(activeModuleId);
             
-            // ปลดล็อคบทที่ 2-5 ทันทีเมื่อจบ One Turbo (id=1)
             if (completedModules.includes(1)) {
                 [2, 3, 4, 5].forEach(id => {
                     if (!unlockedModules.includes(id)) unlockedModules.push(id);
                 });
             }
             
-            // [FIREBASE] Save progress to Firebase
+            // Dual persistence backup: save locally immediately so progress is remembered instantly
+            localStorage.setItem('turbo_completed_modules', JSON.stringify(completedModules));
+            localStorage.setItem('turbo_unlocked_modules', JSON.stringify(unlockedModules));
+            
+            // Save state progress to Firebase
             await saveUserProgressToFirebase();
             
             renderDashboard(); 
             showScreen('screen-dashboard');
         }
 
-        // --- 13. FINAL RESULT (5 COLUMNS) ---
+        // --- FINAL RESULT (5 COLUMNS) ---
         function showFinalResult() {
             const grid = document.getElementById('final-grid');
             grid.innerHTML = '';
@@ -1498,10 +1914,9 @@
             showScreen('screen-welcome');
         }
 
-        // --- 14. REDIRECT TO SUCCESSFACTORS ---
+        // --- REDIRECT TO SUCCESSFACTORS ---
         async function goToFinalQuizPlatform() {
-            // ลิงก์ข้อสอบของ SF เตรียมไว้ให้แก้ไขที่นี่
-            const SF_EXAM_URL = "https://example.com/pending-sf-link"; 
+            const SF_EXAM_URL = "https://your-successfactors-link.com"; 
             
             const overlay = document.createElement('div');
             overlay.style.position = 'fixed';
@@ -1527,25 +1942,26 @@
             const text = document.createElement('div');
             text.style.textAlign = 'center';
             text.style.lineHeight = '1.6';
+            text.style.padding = '0 20px';
             text.innerHTML = lang === 'th' 
-                ? "กำลังพาท่านเข้าสู่ระบบ SuccessFactors เพื่อทำแบบทดสอบ...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>กรุณารอสักครู่ ระบบกำลังบันทึกข้อมูลการเรียนของคุณ</span>" 
+                ? "กำลังพาท่านกลับสู่ระบบ SuccessFactors เพื่อทำแบบทดสอบ...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>กรุณารอสักครู่ ระบบกำลังบันทึกข้อมูลการเรียนของคุณ</span>" 
                 : "Redirecting you to SuccessFactors to start the assessment...<br><span style='font-size: 1.3rem; font-weight: normal; color: #ccc;'>Please wait, we are saving your learning records.</span>";
             
             overlay.appendChild(spinner);
             overlay.appendChild(text);
             document.body.appendChild(overlay);
 
-            // [FIREBASE] เขียนสถิติลงคอลเลกชันผลลัพธ์สุดท้าย (learning_completions)
+            // [FIREBASE] Save final completion log details
             try {
-                if (currentUser) {
-                    await addDoc(collection(db, "learning_completions"), {
+                if (currentUser && auth.currentUser) {
+                    await db.collection(`artifacts/${appId}/public/data/learning_completions`).add({
                         empId: currentUser.empId,
                         email: currentUser.email,
                         name: currentUser.name,
-                        completedAt: serverTimestamp(),
+                        completedAt: firebase.firestore.FieldValue.serverTimestamp(),
                         modulesCompleted: 5,
-                        firstAttemptQuizScore: answeredPracticesCount, // คะแนนรอบแรกเต็ม 50
-                        detailedWrongAttempts: trackingWrongAttempts // สถิติตอบผิดรายข้อต่อหัวข้อ
+                        firstAttemptQuizScore: answeredPracticesCount, // out of 50
+                        detailedWrongAttempts: trackingWrongAttempts 
                     });
                     console.log("[Firebase] Learning Completion successfully saved.");
                 }
@@ -1559,7 +1975,11 @@
             }, 2500);
         }
 
-        // Bind global window functions so they work inside ES Modules
+        function startModule(id) {
+            enterOverview(id);
+        }
+
+        // --- GLOBAL ES BINDINGS ---
         window.toggleLanguage = toggleLanguage;
         window.showScreen = showScreen;
         window.openAdminModal = openAdminModal;
@@ -1567,7 +1987,6 @@
         window.adminLogin = adminLogin;
         window.login = login;
         window.logout = logout;
-        window.startModule = startModule;
         window.flipCard = flipCard;
         window.changeCard = changeCard;
         window.showSummary = showSummary;
@@ -1577,6 +1996,46 @@
         window.goToFinalQuizPlatform = goToFinalQuizPlatform;
         window.enterOverview = enterOverview;
         window.enterFlashcards = enterFlashcards;
+        window.startModule = startModule;
+
+        // --- INITIAL SETUP ON PAGE LOAD ---
+        window.onload = async function() {
+            updateLanguageDOM();
+
+            // Anonymous Auth Sign in first (Rule 3)
+            try {
+                await auth.signInAnonymously();
+                console.log("[Firebase] Anonymous Authentication complete.");
+            } catch(e) {
+                console.error("[Firebase] Anonymous Auth error:", e);
+            }
+
+            // Restore from local storage if page reloaded
+            const savedUserStr = localStorage.getItem('turbo_user_data');
+            if (savedUserStr) {
+                currentUser = JSON.parse(savedUserStr);
+                document.getElementById('user-name').innerText = currentUser.name.toUpperCase();
+                document.getElementById('user-badge').style.display = 'flex';
+                
+                // Fast Local Storage restoration fallback
+                const localCompleted = localStorage.getItem('turbo_completed_modules');
+                const localUnlocked = localStorage.getItem('turbo_unlocked_modules');
+                if (localCompleted) completedModules = JSON.parse(localCompleted);
+                if (localUnlocked) unlockedModules = JSON.parse(localUnlocked);
+                
+                // Show immediate cached state
+                renderDashboard();
+                showScreen('screen-dashboard');
+                
+                // Asynchronously sync/fetch latest update from Firebase
+                await fetchUserProgress(currentUser.empId);
+                
+                // Re-render matching database updates
+                renderDashboard();
+            } else {
+                showScreen('screen-login');
+            }
+        };
 
     </script>
 </body>
