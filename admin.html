@@ -16,6 +16,15 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
+        // --- สั่งให้หน้าหลังบ้านล็อกอินเข้าระบบคลาวด์โดยอัตโนมัติเมื่อเปิดหน้าจอ ---
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await auth.signInAnonymously();
+        console.log("[Firebase] แอดมินยืนยันสิทธิ์เข้าถึงคลาวด์เรียบร้อย");
+    } catch(e) {
+        console.error("[Firebase] เกิดข้อผิดพลาดในการยืนยันสิทธิ์แอดมิน:", e);
+    }
+});
         tailwind.config = {
             theme: {
                 extend: {
