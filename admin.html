@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HQ Dashboard - Problem Tree Canvas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- โหลด React และ Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- โหลด Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
+
+    <style>
+        * { font-family: 'Sarabun', sans-serif !important; }
+        body { background-color: #f8fafc; }
+        .modal-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+        .modal-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        select:focus, input:focus { border-color: #db2777 !important; outline: none; box-shadow: 0 0 0 2px #fbcfe8; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
+
+        // --- Icons ---
+        const Lock = () => <svg className="w-16 h-16 text-pink-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>;
+        const Search = () => <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>;
+        const Download = () => <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>;
+        const Eye = () => <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>;
+        const X = () => <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>;
+        const Target = () => <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>;
+        const ArrowUp = ({ className }) => <svg className={className || "w-6 h-6 opacity-60 my-2"} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="m5 12 7-7 7 7"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5"/></svg>;
+        const Users = () => <svg className="w-12 h-12 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>;
+        const TreeDeciduous = ({ className }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22v-8"/><path d="M12 14a6 6 0 0 0-6-6c0-3 2-4 4-4 0-3 4-3 6 0 2 0 4 1 4 4a6 6 0 0 0-6 6z"/></svg>;
+        const Activity = () => <svg className="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>;
+        const Trash = ({ className }) => <svg className={className || "w-4 h-4"} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>;
+
+        // --- UI โครงสร้างต้นไม้ (สำหรับโชว์ในสไลด์เต็ม แบบ Read-Only) ---
+        const ImpactNodeUI = ({ node }) => (
+            <div className="flex flex-col items-center">
+              {node.children && node.children.length > 0 && (
+                <div className="flex items-end justify-center gap-6 mb-4">
+                  {node.children.map(child => (
+                    <div key={child.id} className="flex flex-col items-center relative">
+                      <ImpactNodeUI node={child} />
+                      <ArrowUp className="text-emerald-400 my-2 h-6 w-6 opacity-60" />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center justify-center gap-3 p-0 rounded-2xl">
+                {node.items.map(item => (
+                  <div key={item.id} className="flex items-center border border-emerald-300 rounded-md shadow-sm w-[180px] z-10 bg-emerald-50/90 min-h-[40px] p-2">
+                    <div className="w-full text-center text-sm font-bold text-slate-800 break-words whitespace-pre-wrap leading-snug">{item.text || "-"}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+        );
+
+        const RootNodeUI = ({ node, selectedId }) => (
+            <div className="flex flex-col items-center">
+              <div className="flex items-center justify-center gap-3 p-0 rounded-2xl">
+                {node.items.map(item => {
+                  const isSelected = selectedId === item.id;
+                  return (
+                    <div key={item.id} className={`flex items-center rounded-md p-2 w-[200px] z-10 transition-all border min-h-[40px] ${isSelected ? 'border-pink-500 ring-2 ring-pink-200 shadow-md bg-white' : 'bg-white/90 border-slate-300'}`}>
+                      <div className="w-full text-center text-sm font-medium text-slate-800 break-words whitespace-pre-wrap leading-snug">{item.text || "-"}</div>
+                      {isSelected && <div className="p-1 rounded bg-pink-100 text-pink-600 flex-shrink-0 ml-1 shadow-sm" title="รากแก้วที่ถูกเลือก"><Target className="w-4 h-4"/></div>}
+                    </div>
+                  )
+                })}
+              </div>
+              {node.children && node.children.length > 0 && (
+                <div className="flex items-start justify-center gap-6 mt-4">
+                  {node.children.map(child => (
+                    <div key={child.id} className="flex flex-col items-center relative">
+                      <ArrowUp className="text-rose-400 my-2 h-6 w-6 opacity-60" />
+                      <RootNodeUI node={child} selectedId={selectedId} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+        );
+
+        // --- แถบกราฟบาร์ (Bar Chart) ---
+        const ProgressBar = ({ label, percentage, colorClass, bgColorClass }) => (
+            <div className="mb-4">
+                <div className="flex justify-between text-sm font-semibold mb-1">
+                    <span className="text-slate-700">{label}</span>
+                    <span className="text-slate-900 font-bold">{percentage}%</span>
+                </div>
+                <div className={`w-full ${bgColorClass} rounded-full h-3 shadow-inner overflow-hidden`}>
+                    <div className={`${colorClass} h-3 rounded-full transition-all duration-1000`} style={{ width: `${percentage}%` }}></div>
+                </div>
+            </div>
+        );
+
+        // ================= MAIN ADMIN APP =================
+        function AdminApp() {
+            const [isLogin, setIsLogin] = useState(false);
+            const [password, setPassword] = useState('');
+            const [loginError, setLoginError] = useState('');
+            const [search, setSearch] = useState('');
+            
+            // Filters
+            const [filterArea, setFilterArea] = useState('All');
+            const [filterRole, setFilterRole] = useState('All'); 
+            const [filterBatch, setFilterBatch] = useState('All'); 
+            const [filter4M1E, setFilter4M1E] = useState('All'); // ตัวกรองใหม่ 4M1E
+            
+            const [selectedData, setSelectedData] = useState(null);
+            const [deleteTarget, setDeleteTarget] = useState(null);
+            const [isDeleting, setIsDeleting] = useState(false);
+            const [realtimeData, setRealtimeData] = useState([]);
+            const [loading, setLoading] = useState(false);
+
+            // 1. ระบบ Login ใช้ Shared Password
+            const handleLogin = (e) => { 
+                e.preventDefault(); 
+                if (password === 'leadership1234') {
+                    setIsLogin(true); 
+                    setLoginError('');
+                } else {
+                    setLoginError('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่'); 
+                    setPassword('');
+                }
+            };
+
+            // ดึงข้อมูล Firebase ทันทีที่ล็อกอินสำเร็จ
+            useEffect(() => {
+                if (!isLogin) return;
+                let unsubscribe = null;
+                
+                const fetchFirebaseData = async () => {
+                    setLoading(true);
+                    try {
+                        const firebaseConfig = {
+                            apiKey: "AIzaSyBLsXSyzZz1MxPHOqp1c3SQLXZOYGu3vqE",
+                            authDomain: "leadership-problem-tree.firebaseapp.com",
+                            projectId: "leadership-problem-tree",
+                            storageBucket: "leadership-problem-tree.firebasestorage.app",
+                            messagingSenderId: "235048343097",
+                            appId: "1:235048343097:web:6c628b6ff5e4b6fd63dfe8",
+                            measurementId: "G-CVXWV2HLKP"
+                        };
+                        
+                        if (!window.firebase.apps.length) {
+                            window.firebase.initializeApp(firebaseConfig);
+                        }
+                        
+                        const auth = window.firebase.auth();
+                        const db = window.firebase.firestore();
+                        
+                        await auth.signInAnonymously();
+                        
+                        unsubscribe = db.collection('artifacts').doc('leadership-app').collection('public').doc('data').collection('problems')
+                            .onSnapshot((snapshot) => {
+                                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                                docs.sort((a,b) => b.timestamp - a.timestamp); // เรียงล่าสุดขึ้นก่อน
+                                setRealtimeData(docs);
+                                setLoading(false);
+                            }, (error) => {
+                                console.error("Firebase Error:", error);
+                                setLoading(false);
+                            });
+                    } catch (error) {
+                        console.error("Init Error:", error);
+                        setLoading(false);
+                    }
+                };
+                
+                fetchFirebaseData();
+                return () => { if (unsubscribe) unsubscribe(); };
+            }, [isLogin]);
+
+            // --- ฟังก์ชันดึง "รุ่นอบรม" ทั้งหมดแบบไม่ซ้ำกัน (Dynamic Filter) ---
+            const uniqueBatches = useMemo(() => {
+                const batches = realtimeData.map(item => item.batch).filter(b => b && b.trim() !== '');
+                return [...new Set(batches)].sort(); // ดึงเฉพาะค่าที่ไม่ซ้ำ
+            }, [realtimeData]);
+
+            // 3. ระบบ Search & Filter
+            const filteredData = useMemo(() => {
+                return realtimeData.filter(item => {
+                    const matchArea = filterArea === 'All' || item.area === filterArea;
+                    const matchRole = filterRole === 'All' || item.role === filterRole;
+                    const matchBatch = filterBatch === 'All' || item.batch === filterBatch;
+                    const match4M1E = filter4M1E === 'All' || item.selectedRootCategory === filter4M1E; // Filter 4M1E
+
+                    const kw = search.toLowerCase();
+                    const matchSearch = item.name?.toLowerCase().includes(kw) || 
+                                        item.nickname?.toLowerCase().includes(kw) || 
+                                        item.empId?.toLowerCase().includes(kw) || 
+                                        item.area?.toLowerCase().includes(kw) || 
+                                        item.problemWhat?.toLowerCase().includes(kw) || 
+                                        item.selectedRoot?.toLowerCase().includes(kw) ||
+                                        item.batch?.toLowerCase().includes(kw) ||
+                                        item.selectedRootCategory?.toLowerCase().includes(kw);
+                                        
+                    return matchArea && matchRole && matchBatch && match4M1E && matchSearch;
+                });
+            }, [search, filterArea, filterRole, filterBatch, filter4M1E, realtimeData]);
+
+            // 4. ระบบ Grouping แบบใหม่ จับจาก "หมวดหมู่ 4M1E ที่ผู้ใช้เลือกตรงๆ"
+            const get4M1EInsights = (data) => {
+                if (data.length === 0) return { man: 0, material: 0, method: 0, machine: 0, environment: 0, other: 0 };
+                let counts = { man: 0, material: 0, method: 0, machine: 0, environment: 0, other: 0 };
+                
+                data.forEach(item => {
+                    const cat = item.selectedRootCategory || '';
+                    if (cat === 'คน (Man)') counts.man++;
+                    else if (cat === 'วัตถุดิบ (Materials)') counts.material++;
+                    else if (cat === 'เครื่องมือ (Machine)') counts.machine++;
+                    else if (cat === 'วิธีการ (Method)') counts.method++;
+                    else if (cat === 'สภาพแวดล้อม (Environment)') counts.environment++;
+                    else counts.other++; // สำหรับกรณีไม่ได้กรอก หรือข้อมูลเก่า
+                });
+                
+                const t = data.length;
+                return {
+                    man: Math.round((counts.man/t)*100), 
+                    material: Math.round((counts.material/t)*100), 
+                    method: Math.round((counts.method/t)*100), 
+                    machine: Math.round((counts.machine/t)*100),
+                    environment: Math.round((counts.environment/t)*100),
+                    other: Math.round((counts.other/t)*100)
+                };
+            };
+
+            const overallInsights = get4M1EInsights(filteredData);
+            const roleBreakdown = useMemo(() => {
+                return {
+                    AM: get4M1EInsights(filteredData.filter(d => d.role === 'AM')),
+                    DAM: get4M1EInsights(filteredData.filter(d => d.role === 'DAM')),
+                    SAM: get4M1EInsights(filteredData.filter(d => d.role === 'SAM'))
+                };
+            }, [filteredData]);
+
+            // 5. ปุ่ม Export to CSV (อัปเดตเพิ่ม 4M1E)
+            const exportCSV = () => {
+                let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+                csvContent += "วันที่,รหัสพนักงาน,ตำแหน่ง,ชื่อจริง,ชื่อเล่น,เขต/ภูมิภาค,รุ่นอบรม,ปัญหาหลัก (What),หมวดหมู่ 4M1E,รากแก้วที่แก้ไข (Root),แผนงาน (Action Plan)\n";
+                filteredData.forEach(row => {
+                    const actions = (row.actionPlans || []).map(a => `${a.action}`).join(' | ');
+                    const rowData = [
+                        row.date, 
+                        `="${row.empId || ''}"`, 
+                        row.role, 
+                        `"${row.name}"`, 
+                        `"${row.nickname}"`, 
+                        `"${row.area}"`, 
+                        `"${row.batch || ''}"`, 
+                        `"${row.problemWhat}"`, 
+                        `"${row.selectedRootCategory || ''}"`, 
+                        `"${row.selectedRoot}"`, 
+                        `"${actions}"`
+                    ];
+                    csvContent += rowData.join(",") + "\n";
+                });
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "ProblemTree_HQ_Summary.csv");
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            };
+
+            // --- ฟังก์ชันลบข้อมูล ---
+            const confirmDelete = async () => {
+                if (!deleteTarget) return;
+                setIsDeleting(true);
+                try {
+                    const db = window.firebase.firestore();
+                    await db.collection('artifacts').doc('leadership-app').collection('public').doc('data').collection('problems').doc(deleteTarget.id).delete();
+                    setDeleteTarget(null);
+                } catch (error) {
+                    console.error("Delete Error:", error);
+                } finally {
+                    setIsDeleting(false);
+                }
+            };
+
+            // Badge Color Helper สำหรับตาราง
+            const getBadgeColor = (cat) => {
+                if(cat === 'คน (Man)') return 'bg-pink-100 text-pink-700 border-pink-200';
+                if(cat === 'เครื่องมือ (Machine)') return 'bg-indigo-100 text-indigo-700 border-indigo-200';
+                if(cat === 'วิธีการ (Method)') return 'bg-amber-100 text-amber-700 border-amber-200';
+                if(cat === 'วัตถุดิบ (Materials)') return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+                if(cat === 'สภาพแวดล้อม (Environment)') return 'bg-teal-100 text-teal-700 border-teal-200';
+                return 'bg-slate-100 text-slate-500 border-slate-200';
+            };
+
+            // หน้าจอ: Login Screen
+            if (!isLogin) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)' }}>
+                        <div className="bg-white p-10 rounded-3xl shadow-2xl max-w-md w-full text-center border-t-8 border-pink-500">
+                            <div className="flex justify-center animate-bounce"><Lock /></div>
+                            <h2 className="text-2xl font-bold text-slate-800 mb-2">เข้าสู่ระบบ (HQ)</h2>
+                            <p className="text-slate-500 text-sm mb-6">ระบบจัดการข้อมูล Problem Tree Canvas</p>
+                            <form onSubmit={handleLogin} className="space-y-5">
+                                <div>
+                                    <input type="password" placeholder="รหัสผ่าน" className="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-pink-500 text-center tracking-widest text-lg outline-none transition-all" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus />
+                                    {loginError && <p className="text-rose-500 text-sm mt-2 font-semibold">{loginError}</p>}
+                                </div>
+                                <button type="submit" className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all hover:-translate-y-1">เข้าสู่ระบบ</button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            // หน้าจอ: Dashboard
+            return (
+                <div className="min-h-screen pb-10 bg-slate-50">
+                    {/* Header */}
+                    <div className="bg-slate-900 text-white p-6 shadow-lg border-b-4 border-pink-500">
+                        <div className="max-w-7xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <TreeDeciduous className="w-10 h-10 text-pink-400" />
+                                <div>
+                                    <h1 className="text-2xl font-bold">HQ Dashboard</h1>
+                                    <p className="text-sm text-pink-200">ระบบประมวลผล Problem Tree Canvas (4M1E)</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsLogin(false)} className="text-sm bg-slate-800 hover:bg-pink-600 px-5 py-2.5 rounded-lg transition-colors font-semibold shadow-sm border border-slate-700">ออกจากระบบ</button>
+                        </div>
+                    </div>
+
+                    <div className="max-w-[1600px] mx-auto px-4 md:px-6 mt-8 space-y-6">
+                        
+                        {/* 📊 สถิติและกราฟเปรียบเทียบภาพรวม 4M1E */}
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-full h-2 bg-pink-500"></div>
+                                <Users />
+                                <h3 className="font-bold text-slate-500 mt-4 text-lg">มีผู้ตอบมาแล้ว</h3>
+                                <div className="flex items-baseline gap-2 mt-2">
+                                    <p className="text-6xl font-black text-slate-800 tracking-tight">
+                                        {loading ? <span className="text-3xl text-slate-400 animate-pulse">...</span> : filteredData.length}
+                                    </p>
+                                    <span className="text-xl font-bold text-pink-600">คน</span>
+                                </div>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-3 relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-full h-2 bg-slate-800"></div>
+                                <h3 className="font-bold text-xl text-slate-800 mb-6 flex items-center gap-2">🔥 1. ภาพรวมรากแก้วที่ถูกแก้ไข (4M1E Analysis)</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                                    <ProgressBar label="คน (Man)" percentage={overallInsights.man} colorClass="bg-pink-500" bgColorClass="bg-pink-100" />
+                                    <ProgressBar label="เครื่องมือ (Machine)" percentage={overallInsights.machine} colorClass="bg-indigo-500" bgColorClass="bg-indigo-100" />
+                                    <ProgressBar label="วิธีการ (Method)" percentage={overallInsights.method} colorClass="bg-amber-500" bgColorClass="bg-amber-100" />
+                                    <ProgressBar label="วัตถุดิบ (Materials)" percentage={overallInsights.material} colorClass="bg-emerald-500" bgColorClass="bg-emerald-100" />
+                                    <ProgressBar label="สภาพแวดล้อม (Environment)" percentage={overallInsights.environment} colorClass="bg-teal-600" bgColorClass="bg-teal-100" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 📊 กราฟแยกตามตำแหน่ง */}
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-2 bg-slate-800"></div>
+                            <h3 className="font-bold text-xl text-slate-800 mb-6 flex items-center gap-2">👥 2. สัดส่วนปัญหา 4M1E แยกตามตำแหน่ง</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {['AM', 'DAM', 'SAM'].map(role => (
+                                    <div key={role} className="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                        <h4 className="text-lg font-bold text-slate-800 mb-5 bg-white p-2 text-center rounded-lg shadow-sm border border-slate-100">ระดับ {role}</h4>
+                                        <ProgressBar label="คน (Man)" percentage={roleBreakdown[role].man} colorClass="bg-pink-500" bgColorClass="bg-slate-200" />
+                                        <ProgressBar label="เครื่องมือ (Machine)" percentage={roleBreakdown[role].machine} colorClass="bg-indigo-500" bgColorClass="bg-slate-200" />
+                                        <ProgressBar label="วิธีการ (Method)" percentage={roleBreakdown[role].method} colorClass="bg-amber-500" bgColorClass="bg-slate-200" />
+                                        <ProgressBar label="วัตถุดิบ (Materials)" percentage={roleBreakdown[role].material} colorClass="bg-emerald-500" bgColorClass="bg-slate-200" />
+                                        <ProgressBar label="สภาพแวดล้อม (Environment)" percentage={roleBreakdown[role].environment} colorClass="bg-teal-600" bgColorClass="bg-slate-200" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 🔍 ระบบค้นหาและตัวกรอง */}
+                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col xl:flex-row justify-between items-center gap-4">
+                            <div className="flex flex-wrap flex-1 gap-3 w-full">
+                                <div className="relative flex-1 min-w-[200px] max-w-sm">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center"><Search /></div>
+                                    <input type="text" placeholder="ค้นหารหัส, ชื่อ, ปัญหา, หมวดหมู่..." className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-pink-500 text-sm outline-none" value={search} onChange={(e) => setSearch(e.target.value)} />
+                                </div>
+                                <select className="py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 font-semibold text-slate-700" value={filterRole} onChange={(e) => setFilterRole(e.target.value)}>
+                                    <option value="All">ตำแหน่ง</option>
+                                    <option value="AM">AM</option><option value="DAM">DAM</option><option value="SAM">SAM</option>
+                                </select>
+                                <select className="py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 font-semibold text-slate-700" value={filterArea} onChange={(e) => setFilterArea(e.target.value)}>
+                                    <option value="All">ภูมิภาค</option>
+                                    <option value="กรุงเทพฯ-ปริมณฑลตะวันตก">กทม-ตะวันตก</option><option value="กรุงเทพฯ-ปริมณฑลตะวันออก">กทม-ตะวันออก</option>
+                                    <option value="ภาคกลาง">ภาคกลาง</option><option value="ภาคตะวันออก">ภาคตะวันออก</option>
+                                    <option value="ภาคตะวันออกเฉียงเหนือตอนบน">อีสานบน</option><option value="ภาคตะวันออกเฉียงเหนือตอนล่าง">อีสานล่าง</option>
+                                    <option value="ภาคใต้">ภาคใต้</option>
+                                </select>
+                                <select className="py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-pink-500 font-semibold text-slate-700" value={filterBatch} onChange={(e) => setFilterBatch(e.target.value)}>
+                                    <option value="All">ทุกรุ่นอบรม</option>
+                                    {uniqueBatches.map(batch => ( <option key={batch} value={batch}>รุ่น: {batch}</option> ))}
+                                </select>
+                                {/* ตัวกรองใหม่: 4M1E */}
+                                <select className="py-2 px-3 bg-blue-50 border border-blue-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-blue-700" value={filter4M1E} onChange={(e) => setFilter4M1E(e.target.value)}>
+                                    <option value="All">ทุกหมวดหมู่ (4M1E)</option>
+                                    <option value="คน (Man)">คน (Man)</option>
+                                    <option value="เครื่องมือ (Machine)">เครื่องมือ (Machine)</option>
+                                    <option value="วิธีการ (Method)">วิธีการ (Method)</option>
+                                    <option value="วัตถุดิบ (Materials)">วัตถุดิบ (Materials)</option>
+                                    <option value="สภาพแวดล้อม (Environment)">สภาพแวดล้อม (Environment)</option>
+                                </select>
+                            </div>
+                            <button onClick={exportCSV} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-bold shadow-md w-full xl:w-auto transition-all text-sm"><Download /> Export Excel</button>
+                        </div>
+
+                        {/* 📋 Data Table */}
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left border-collapse min-w-[1300px]">
+                                    <thead>
+                                        <tr className="bg-slate-900 text-white text-sm tracking-wider">
+                                            <th className="p-4 font-semibold border-b border-slate-700">วันที่</th>
+                                            <th className="p-4 font-semibold border-b border-slate-700">รหัส</th>
+                                            <th className="p-4 font-semibold border-b border-slate-700">ชื่อ - นามสกุล</th>
+                                            <th className="p-4 font-semibold border-b border-slate-700">รุ่น</th>
+                                            <th className="p-4 font-semibold border-b border-slate-700">ตำแหน่ง</th>
+                                            <th className="p-4 font-semibold border-b border-slate-700">ปัญหาหลัก (What)</th>
+                                            <th className="p-4 font-semibold border-b border-slate-700 text-center">หมวดหมู่ (4M1E)</th>
+                                            <th className="p-4 font-semibold border-b border-slate-700 text-center">จัดการ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-sm">
+                                        {filteredData.length === 0 ? (
+                                            <tr><td colSpan="8" className="p-8 text-center text-slate-400 font-medium">ไม่พบข้อมูลการวิเคราะห์</td></tr>
+                                        ) : filteredData.map((row) => (
+                                            <tr key={row.id} className="border-b border-slate-100 hover:bg-pink-50 transition-colors">
+                                                <td className="p-4 text-slate-500 whitespace-nowrap">{row.date}</td>
+                                                <td className="p-4 font-bold text-indigo-700">{row.empId}</td>
+                                                <td className="p-4 font-bold text-slate-800">{row.name} ({row.nickname})</td>
+                                                <td className="p-4"><span className="bg-slate-100 px-2 py-1 rounded text-xs font-bold border border-slate-200">{row.batch || '-'}</span></td>
+                                                <td className="p-4"><span className="bg-slate-800 text-white px-2 py-1 rounded text-xs font-bold">{row.role}</span></td>
+                                                <td className="p-4 text-slate-700 font-medium truncate max-w-[200px]" title={row.problemWhat}>{row.problemWhat}</td>
+                                                
+                                                {/* คอลัมน์ 4M1E */}
+                                                <td className="p-4 text-center">
+                                                    <span className={`px-3 py-1 rounded-full text-[11px] font-bold border ${getBadgeColor(row.selectedRootCategory)}`}>
+                                                        {row.selectedRootCategory || 'ไม่ได้ระบุ'}
+                                                    </span>
+                                                </td>
+
+                                                <td className="p-4 text-center flex justify-center gap-2">
+                                                    <button onClick={() => setSelectedData(row)} className="inline-flex items-center gap-1 bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-1.5 rounded-md text-xs font-bold transition-all border border-pink-200 shadow-sm"><Eye /> ดูสไลด์เต็ม</button>
+                                                    <button onClick={() => setDeleteTarget(row)} className="inline-flex items-center gap-1 bg-rose-100 hover:bg-rose-200 text-rose-700 px-3 py-1.5 rounded-md text-xs font-bold transition-all border border-rose-200 shadow-sm" title="ลบข้อมูลนี้"><Trash /> ลบ</button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ================= MODAL: ยืนยันการลบ ================= */}
+                    {deleteTarget && (
+                        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+                            <div className="bg-white max-w-md w-full rounded-2xl shadow-2xl p-6 text-center animate-in fade-in zoom-in duration-200">
+                                <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Trash className="w-8 h-8" />
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบข้อมูล</h3>
+                                <p className="text-slate-600 mb-6">
+                                    คุณต้องการลบข้อมูลการวิเคราะห์ของ<br/>
+                                    <span className="font-bold text-slate-800">{deleteTarget.name} ({deleteTarget.nickname})</span><br/>
+                                    ใช่หรือไม่? การกระทำนี้ไม่สามารถกู้คืนได้
+                                </p>
+                                <div className="flex justify-center gap-3">
+                                    <button onClick={() => setDeleteTarget(null)} className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-colors w-full">ยกเลิก</button>
+                                    <button onClick={confirmDelete} disabled={isDeleting} className={`px-5 py-2.5 font-bold rounded-lg transition-colors w-full text-white ${isDeleting ? 'bg-slate-400' : 'bg-rose-600 hover:bg-rose-700 shadow-md'}`}>
+                                        {isDeleting ? 'กำลังลบ...' : 'ยืนยันการลบ'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ================= MODAL: สไลด์เต็มรูปแบบ (View Full Details) ================= */}
+                    {selectedData && (
+                        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                            <div className="bg-slate-50 w-full max-w-6xl max-h-[95vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+                                
+                                <div className="bg-white p-5 border-b border-slate-200 flex justify-between items-center shrink-0">
+                                    <div>
+                                        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><TreeDeciduous className="w-6 h-6 text-pink-600"/> รายละเอียด Problem Tree Canvas</h2>
+                                        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 mt-2">
+                                            <span><b>ผู้จัดทำ:</b> {selectedData.name} ({selectedData.nickname})</span>
+                                            <span className="text-slate-300">|</span>
+                                            <span><b>รหัส:</b> {selectedData.empId}</span>
+                                            <span className="text-slate-300">|</span>
+                                            <span><b>ตำแหน่ง:</b> {selectedData.role}</span>
+                                            <span className="text-slate-300">|</span>
+                                            <span><b>เขต:</b> {selectedData.area}</span>
+                                            <span className="text-slate-300">|</span>
+                                            <span className="bg-slate-100 px-2 py-0.5 rounded text-xs font-bold border border-slate-200">รุ่น: {selectedData.batch}</span>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setSelectedData(null)} className="p-2 bg-slate-100 hover:bg-rose-100 hover:text-rose-600 rounded-md text-slate-500 transition-colors border border-slate-200"><X /></button>
+                                </div>
+
+                                <div className="p-6 overflow-y-auto modal-scroll space-y-6 bg-slate-100">
+                                    
+                                    <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
+                                        <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><div className="w-6 h-6 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xs">1</div>ปัญหาที่นำมาวิเคราะห์</h3>
+                                        <div className="text-xl font-bold text-slate-800 bg-amber-50 p-4 rounded-md border border-amber-200">
+                                            "{`${selectedData.problemWhat} ${selectedData.problemHowMuch} ${selectedData.problemWhereWhen}`.trim()}"
+                                        </div>
+                                    </section>
+
+                                    <section className="bg-slate-900 p-8 rounded-xl shadow-xl border border-slate-700 overflow-x-auto relative">
+                                        <h3 className="text-sm font-bold text-white mb-6 flex items-center gap-2 min-w-[800px]"><div className="w-6 h-6 bg-pink-500 text-white rounded-full flex items-center justify-center text-xs">2</div>โครงสร้างต้นไม้ปัญหา และ รากที่วิเคราะห์มาทั้งหมด</h3>
+                                        <div className="relative min-w-[900px] flex flex-col items-center pb-4">
+                                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-full bg-slate-800 blur-3xl rounded-full pointer-events-none"></div>
+                                            
+                                            <div className="relative z-10 mb-6 flex items-end justify-center gap-8 w-full">
+                                                {selectedData.impacts && selectedData.impacts.map(node => <ImpactNodeUI key={node.id} node={node} />)}
+                                            </div>
+                                            
+                                            <div className="relative z-10 mb-6 w-full max-w-2xl bg-white p-4 rounded-md shadow-lg border-l-4 border-amber-500 text-center">
+                                                <span className="text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-200 bg-amber-50 mb-1 inline-block uppercase">ปัญหาหลัก</span>
+                                                <p className="text-lg font-bold text-slate-900">
+                                                    {`${selectedData.problemWhat} ${selectedData.problemHowMuch} ${selectedData.problemWhereWhen}`.trim()}
+                                                </p>
+                                            </div>
+                                            
+                                            <div className="relative z-10 flex items-start justify-center gap-8 w-full">
+                                                {selectedData.roots && selectedData.roots.map(node => (
+                                                    <div key={node.id} className="flex flex-col items-center">
+                                                        <ArrowUp className="text-rose-400 my-2 h-5 w-5 opacity-60" />
+                                                        <RootNodeUI node={node} selectedId={selectedData.selectedRootId} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
+                                        <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2"><div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">3</div>แผนแก้ปัญหาแบบขุดราก (Action Plan)</h3>
+                                        
+                                        <div className="mb-6 bg-pink-50 p-4 rounded-md border border-pink-200 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+                                            <div className="flex items-center gap-3">
+                                                <Target className="w-8 h-8 text-pink-600 flex-shrink-0" />
+                                                <div>
+                                                    <h3 className="text-xs font-bold text-pink-800 mb-0.5">เป้าหมายรากแก้วที่แก้ไข</h3>
+                                                    <p className="text-lg font-bold text-slate-900">{selectedData.selectedRoot}</p>
+                                                </div>
+                                            </div>
+                                            <div className="md:ml-auto bg-white px-4 py-2 rounded-md border border-pink-200 shadow-sm flex items-center gap-2 whitespace-nowrap">
+                                                <Activity />
+                                                <span className="text-xs font-bold text-slate-500 uppercase">หมวดหมู่ 4M1E:</span>
+                                                <span className={`text-sm font-bold px-2 py-0.5 rounded ${getBadgeColor(selectedData.selectedRootCategory)}`}>{selectedData.selectedRootCategory || "ไม่ได้ระบุ"}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="overflow-hidden rounded-md border border-slate-200">
+                                            <table className="w-full text-left border-collapse text-sm">
+                                                <thead className="bg-slate-100 text-slate-700">
+                                                    <tr><th className="p-3 font-semibold border-r border-b border-slate-200 w-[40%]">ลงมือทำอะไร (Action)</th><th className="p-3 font-semibold border-r border-b border-slate-200 w-[15%]">ผู้เกี่ยวข้อง (Who)</th><th className="p-3 font-semibold border-r border-b border-slate-200 w-[15%]">กำหนดเสร็จ (When)</th><th className="p-3 font-semibold border-b border-slate-200 w-[30%]">วัดผล (Measure)</th></tr>
+                                                </thead>
+                                                <tbody className="bg-white">
+                                                    {(selectedData.actionPlans || []).map((plan, idx) => (
+                                                        <tr key={idx} className="border-b border-slate-200 last:border-0 hover:bg-slate-50">
+                                                            <td className="p-3 border-r border-slate-200 text-slate-800">{plan.action}</td>
+                                                            <td className="p-3 border-r border-slate-200 text-slate-800">{plan.who}</td>
+                                                            <td className="p-3 border-r border-slate-200 text-rose-600 font-bold">{plan.when}</td>
+                                                            <td className="p-3 text-slate-800">{plan.measure}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<AdminApp />);
+    </script>
+</body>
+</html>
