@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,11 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TURBO WAYS Learning Portal</title>
     
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Tailwind CSS for Modern Responsive Widescreen UI -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
@@ -468,7 +467,6 @@
 
     <div class="app-container w-full max-w-[1440px] bg-white min-h-screen flex flex-col shadow-2xl relative overflow-x-hidden">
         
-        <!-- Admin Login Modal -->
         <div class="modal-overlay fixed inset-0 bg-black/60 backdrop-blur-sm hidden justify-center items-center z-[1000]" id="admin-modal">
             <div class="modal-box bg-white p-10 rounded-2xl w-full max-w-[400px] text-center relative shadow-2xl m-4">
                 <button class="absolute top-4 right-5 text-2xl text-gray-400 hover:text-red-500" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -479,7 +477,6 @@
             </div>
         </div>
 
-        <!-- TOP NAVBAR -->
         <nav class="top-navbar bg-primary text-white px-6 md:px-10 py-4 justify-between items-center sticky top-0 z-50 shadow-md" id="top-navbar" style="display: none;">
             <div class="nav-logo text-xl md:text-2xl font-bold tracking-wide"><span>TURBO</span> WAYS</div>
             <div class="nav-actions flex items-center gap-3 md:gap-6">
@@ -495,7 +492,6 @@
             </div>
         </nav>
 
-        <!-- ==================== 0. LOGIN ==================== -->
         <div id="screen-login" class="screen active flex justify-center items-center py-10 px-4">
             <div class="login-box bg-white p-8 md:p-12 rounded-3xl shadow-2xl border-t-8 border-accent w-full max-w-[500px] m-auto">
                 <h1 class="text-4xl font-extrabold text-center text-primary mb-2">TURBO WAYS</h1>
@@ -516,7 +512,6 @@
             </div>
         </div>
 
-        <!-- ==================== 1. DASHBOARD ==================== -->
         <div id="screen-dashboard" class="screen flex-col items-center py-10 px-4 md:px-10">
             <div class="dash-header w-full text-center mb-10">
                 <h1 class="text-3xl md:text-5xl font-extrabold text-primary mb-4">WELCOME TO TURBO!</h1>
@@ -541,7 +536,6 @@
             </div>
         </div>
 
-        <!-- ==================== 1.5 MODULE OVERVIEW ==================== -->
         <div id="screen-overview" class="screen flex-col items-center py-10 px-4">
             <div class="w-full max-w-[1000px] bg-white p-8 md:p-12 rounded-3xl shadow-xl border-t-8 flex flex-col justify-between" id="overview-card" style="min-height: 500px;">
                 <div class="text-center mb-10">
@@ -560,7 +554,6 @@
             </div>
         </div>
 
-        <!-- ==================== 2. FLASHCARD ==================== -->
         <div id="screen-flashcard" class="screen flex-col items-center py-10 px-4">
             <div class="fc-header w-full max-w-[1100px] flex justify-between items-center mb-8 border-b-2 border-gray-100 pb-4">
                 <button class="btn-back" onclick="showScreen('screen-dashboard')"><i class="fa-solid fa-chevron-left"></i> <span data-i18n="back">Back</span></button>
@@ -572,7 +565,6 @@
 
             <div class="flashcard-wrapper" onclick="flipCard()">
                 <div class="flashcard" id="flashcard">
-                    <!-- หน้าการ์ด (FRONT) -->
                     <div class="card-face card-front" id="fc-front">
                         <div class="card-top-bar bg-white/10 border-b border-white/20 text-white flex justify-between items-center px-6 py-4">
                             <h3 id="fc-sub-f" class="text-xl md:text-2xl font-bold">Subtopic</h3>
@@ -584,7 +576,6 @@
                             <div class="hint-pulse text-white text-base mt-6"><i class="fa-solid fa-hand-pointer mr-2"></i> <span data-i18n="cardHint">Click to see the TURBO Way</span></div>
                         </div>
                     </div>
-                    <!-- หลังการ์ด (BACK) -->
                     <div class="card-face card-back" id="fc-back">
                         <div class="card-top-bar border-b border-gray-100 flex justify-between items-center px-6 py-4">
                             <h3 id="fc-sub-b" class="text-xl md:text-2xl font-bold text-primary">Subtopic</h3>
@@ -615,9 +606,11 @@
             <div class="flip-warning text-base md:text-lg text-center mt-3 font-semibold text-red-500" id="fc-warning" data-i18n="flipWarning">* Please click to read both sides of all cards.</div>
         </div>
 
-        <!-- ==================== 2.5 PRACTICE QUIZ ==================== -->
         <div id="screen-practice" class="screen flex-col items-center py-10 px-4">
             <div class="quiz-container w-full max-w-[1000px] flex flex-col items-center mx-auto">
+                <div class="w-full flex justify-start mb-4">
+                    <button class="btn-back" onclick="backToFlashcard()"><i class="fa-solid fa-chevron-left"></i> <span data-i18n="backToCard">Back to Card</span></button>
+                </div>
                 <div class="quiz-header text-center mb-8 w-full border-b-2 border-gray-100 pb-4">
                     <h1 class="text-2xl md:text-3xl font-bold text-primary" id="practice-header-title">Topic Practice</h1>
                     <div class="text-base md:text-lg text-gray-500 font-medium mt-2" id="practice-counter-text">Practice 1 / 2</div>
@@ -634,7 +627,6 @@
             </div>
         </div>
 
-        <!-- ==================== 3. MODULE SUMMARY (HORIZONTAL) ==================== -->
         <div id="screen-summary" class="screen flex-col items-center py-10 px-4 md:px-10">
             <div class="text-center mb-8">
                 <i class="fa-solid fa-book-open" id="sum-icon" style="font-size: 2.5rem; margin-bottom: 15px;"></i>
@@ -649,7 +641,6 @@
             </button>
         </div>
 
-        <!-- ==================== 5. FINAL RESULT ==================== -->
         <div id="screen-final" class="screen flex-col items-center py-10 px-4 md:px-10">
             <div class="text-center mb-8">
                 <i class="fa-solid fa-flag-checkered text-accent mb-4 block" style="font-size: 5rem;"></i>
@@ -664,7 +655,6 @@
             </button>
         </div>
 
-        <!-- ==================== 6. WELCOME FAMILY ==================== -->
         <div id="screen-welcome" class="screen flex-col justify-center items-center py-20 px-4">
             <div class="welcome-family-box text-center max-w-[800px] bg-white p-8 md:p-12 rounded-3xl shadow-xl border-2 border-slate-100">
                 <i class="fa-solid fa-crown text-yellow-400 text-8xl mb-6 inline-block animate-bounce"></i>
@@ -679,7 +669,6 @@
 
     </div>
 
-    <!-- Firebase v10.8.0 Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -717,7 +706,7 @@
                             turbo: ['ร่วมมือทำงานตั้งแต่แรก (Co-create) ร่วมกันออกแบบและแก้ปัญหา', 'ถ้างานเสร็จไม่ทันจะแจ้งทีมทันที อัปเดตงานสม่ำเสมอ', 'โฟกัสที่ทางออก (Solution-focused) รีบปรึกษาทีมเพื่อแก้ไข ไม่มุ่งหาคนผิด'] 
                         }, 
                         en: { 
-                            def: '"This is not my job" doesn\'t exist. We solve problems together without pointing fingers. If someone is stuck, we step in to help without being asked.', 
+                            def: '"This is not my job" doesn\'t exist. We solve problems together without pointing fingers. If someone is stuck, we step in to help without being asked,', 
                             trad: ['Working in silos, throwing unclear briefs.', 'Blaming others when things go wrong. Ignoring teammates\' problems.', 'Staying silent about delays until the last minute.'], 
                             turbo: ['Work together (Co-create).', 'Notify the team immediately if a deadline will be missed. Update progress regularly.', 'If a project stalls, call the team to find a solution immediately. Focus on "how to fix" rather than "who to blame."'] 
                         },
@@ -758,12 +747,12 @@
                     { 
                         icon: 'fa-share-nodes', subtopic: 'Share Knowledge Always', 
                         th: { 
-                            def: 'แบ่งปันความรู้รอบตัวเสมอ อย่าเก็บไว้คนเดียวเพราะความรู้เป็นของกลาง ยิ่งแบ่งปันกันมากเท่าไหร่ ทีมและบริษัทก็ก็จะยิ่งก้าวหน้าเร็วขึ้นเท่านั้น การสร้างเอกสาร คู่มือ หรือสอนงานคนอื่น คือการลดปัญหาการพึ่งพาตัวบุคคล', 
+                            def: 'พวกเราสอนและเรียนรู้จากกันและกันอยู่เสมอ มีเทคนิคหรือความรู้อะไรก็แชร์กัน ไม่เก็บไว้คนเดียว เพราะการแบ่งปันทำให้ทีมและบริษัทแข็งแกร่งขึ้น การทำเอกสาร คู่มือ หรือการสอนงาน ช่วยให้ทุกคนทำงานได้อย่างราบรื่นและต่อเนื่อง', 
                             trad: ['พอแก้ปัญยากๆ หรือเจอบั๊กได้ ก็เก็บวิธีแก้ไว้กับตัว หวังว่าคราวหน้าตัวเองจะได้ดูเป็น "ผู้วิเศษ" ที่เก่งอยู่คนเดียว หรือสอนงานแบบกั๊กๆ'], 
                             turbo: ['เขียนสรุปวิธีแก้ปัญหาแบบสั้นๆ หรืออัดคลิปหน้าจอแชร์ลงในช่องทางส่วนรวม (เช่น Slack/Teams)', 'ยินดีสอนและให้คำแนะนำเพื่อนใหม่เสมอ'] 
                         }, 
                         en: { 
-                            def: 'We share knowledge freely, because knowledge is power only when shared. The more we teach each other, the faster we grow. Building clear manuals, wiki pages, or doing short peer trainings reduces the risk of relying on a single person.', 
+                            def: 'We are constantly teaching and learning from each other. We always share techniques and knowledge, not keeping them to ourselves. Sharing makes the team and the company stronger. Creating documents, manuals, or teaching others helps everyone work smoothly and continuously.', 
                             trad: ['When solving difficult problems or finding a bug, keeping the solution to oneself to look like a "wizard" or teaching others half-heartedly.'], 
                             turbo: ['Write short summaries of solutions or record screen clips to share in public channels (like Slack/Teams).', 'Always be willing to teach and guide new colleagues.'] 
                         },
@@ -781,12 +770,12 @@
                     { 
                         icon: 'fa-building-circle-arrow-right', subtopic: 'Blow Up Departments', 
                         th: { 
-                            def: 'ทลายกำแพงแผนกและลดอัตรา (Ego) เราคือทีมเดียวกัน ทำงานข้ามฝ่ายอย่างสมบูรณ์แบบโดยยึดเป้าหมายสูงสุดของเงินเทอร์โบเป็นหลัก โดยไม่ปล่อยให้ KPI แผนกมาขัดขวางการเติบโตขององค์กร', 
+                            def: 'โฟกัสที่ "เป้าหมายของงาน" ไม่ใช่ "โครงสร้างแผนก" คุยข้ามสายงานกันได้โดยตรงเพื่อความรวดเร็ว ไม่ต้องมัวรอทำตามลำดับขั้นจนงานสะดุด', 
                             trad: ['ทำงานแบบไซโล (Silo) สนใจแต่ KPI ของแผนกตัวเอง ไม่สนว่าแผนกอื่นจะทำงานยากขึ้นแค่ไหน หรือตั้งป้อมจับผิดแผนกอื่น'], 
                             turbo: ['มองเป้าหมายของบริษัทเป็นหลัก พร้อมปรับกระบวนการทำงานของแผนกตัวเองเพื่อให้แผนกอื่นทำงานได้ราบรื่นและเร็วขึ้น'] 
                         }, 
                         en: { 
-                            def: 'Break down walls between teams. We are one. We collaborate across boundaries without ego, prioritizing overall corporate success over local metrics. Don\'t let departmental KPIs block enterprise speed.', 
+                            def: 'Focus on "work goals," not "department structure." Talk directly to whoever you need to, whenever you need to, to keep things moving. Letting the org chart dictate how we work only slows us down.', 
                             trad: ['Working in silos, caring only about one\'s own department\'s KPIs, ignoring if it makes it harder for others, or constantly fault-finding with other departments.'], 
                             turbo: ['Focus on the company\'s goals primarily. Ready to adjust one\'s own department\'s processes to help other departments work more smoothly and faster.'] 
                         },
@@ -804,12 +793,12 @@
                     { 
                         icon: 'fa-folder-open', subtopic: 'Open Information', 
                         th: { 
-                            def: 'สื่อสารข้อมูลที่เกี่ยวข้องอย่างโปร่งใส เข้าถึงได้ง่าย ข้อมูลคือพลังเมื่อทุกคนรู้เท่ากัน สื่อสารข้อมูลทั้งข่าวดีและข่าวร้ายด้วยความเร็วที่เท่ากันเสมอเพื่อความน่าเชื่อถือ', 
+                            def: 'เราแชร์ข้อมูลและเหตุผลในการตัดสินใจอย่างเปิดเผย เพื่อให้ทุกคนเห็นภาพใหญ่ร่วมกันและขับเคลื่อนองค์กรไปในทิศทางเดียวกัน เว้นแต่จะเป็นเรื่องที่ต้องปกปิดเป็นความลับจริงๆ', 
                             trad: ['เก็บข้อมูลสำคัญไว้กับตัว ไม่ยอมแชร์ไฟล์กลาง (เช่น แอบทำในคอมตัวเอง) ทำให้คนอื่นต้องคอยตามทวงถามตลอดเวลา'], 
                             turbo: ['จัดเก็บไฟล์และข้อมูลสำคัญไว้ใน Shared Drive หรือระบบกลางที่ทุกคนที่เกี่ยวข้องสามารถเข้าถึงและนำไปใช้งานต่อได้ทันที'] 
                         }, 
                         en: { 
-                            def: 'Access to info is equal for all. Transparency creates alignment. Always broadcast both good and bad news with identical speed to build absolute credibility.', 
+                            def: 'Teams can\'t succeed if they are left in the dark. We always explain the "why" behind our decisions and share information openly unless it absolutely must be kept private. When everyone has the full picture, we all understand the big picture and aligns.', 
                             trad: ['Keeping important information to oneself, refusing to share files centrally (e.g., hiding them on a personal computer), forcing others to constantly ask for them.'], 
                             turbo: ['Store important files and data in a Shared Drive or central system that everyone involved can access and use immediately.'] 
                         },
@@ -834,12 +823,12 @@
                     {
                         icon: 'fa-handshake', subtopic: 'Do What You Say',
                         th: {
-                            def: 'รักษาคำสัญญาและเป็นคนที่พึ่งพาได้ คำพูดของคุณต้องมีน้ำหนัก ถ้ารับปากแล้วต้องทำให้สำเร็จสุดความสามารถ หากเกิดเหตุสุดวิสัย ต้องส่งสัญญาณเตือนภัยทันทีและขอแผนรับมือสำรอง',
+                            def: 'ความน่าเชื่อถือเริ่มต้นที่คำพูด "พูดคำไหน ต้องทำตามนั้น" เรารักษาคำพูดและยึดถือความรับผิดชอบเป็นที่ตั้ง ไม่รับปากส่งเดชเพื่อให้จบปัญหา ถ้าตกลงอะไรไว้ต้องทำให้สำเร็จ เพื่อให้ทีมเชื่อใจและพึ่งพาเราได้เสมอ',
                             trad: ['รับปากส่งเดช เพื่อเอาตัวรอด แล้วปล่อยเลยกำหนดโดยไม่แจ้งล่วงหน้า'],
                             turbo: ['ประเมินตนเองก่อนตกลง หากพบปัญหาให้รีบส่งสัญญาณเตือนและแจ้งผู้เกี่ยวข้องทันที']
                         },
                         en: {
-                            def: 'Deliver on your commitments. Your word is your bond. Once promised, do everything to execute. If a blocker appears, raise a flag immediately and propose backup scenarios.',
+                            def: 'Reliability starts with words: "Say what you\'ll do, do what you sai" We keep our word and hold responsibility as a priority. No empty promises just to end a problem. If we agree on something, we must succeed so the team can always trust and rely on us.',
                             trad: ['Making empty promises and failing to deliver. Missing deadlines without notice, or making promises hoping for luck.'],
                             turbo: ['Evaluate yourself before promising. If promised, manage to succeed. If you realize you won\'t make it or face issues, notify stakeholders in advance immediately.']
                         },
@@ -857,12 +846,12 @@
                     {
                         icon: 'fa-comments', subtopic: 'Give Direct Feedback',
                         th: {
-                            def: 'สื่อสารแบบตรงไปตรงมา ติเพื่อก่อ และเปิดใจกว้าง รับฟังฟีดแบ็กทันทีแบบซึ่งหน้าด้วยความเคารพ เพื่อการปรับปรุงพัฒนาตนเองโดยไม่มีข้ออ้างและอีโก้',
+                            def: 'เรากล้าให้คำเสนอแนะอย่างตรงไปตรงมา เพื่อให้เกิดการพัฒนา ไม่ว่าจะเป็นการให้ข้อเสนอแนะกับเพื่อนร่วมงานหรือหัวหน้า เราจะไม่ปิดบังความจริงเพียงเพราะต้องการเลี่ยงความอึดอัดใจ เพราะการเพิกเฉยต่อปัญหาในวันนี้ มีแต่จะสร้างปัญหาที่ใหญ่กว่าเดิมในวันหน้า',
                             trad: ['เอาไปนินทาลับหลัง ไม่กล้าพูดตรงๆ ปล่อยให้เพื่อนทำผิดซ้ำๆ หรือเวลาตัวเองโดนฟีดแบ็กก็ตั้งป้อมเถียง ปิดใจรับฟัง'],
-                            turbo: ['ให้และรับ Feedback ทันทีด้วยความจริงใจและสุภาพ โฟกัสที่ \"พฤติกรรม\" ไม่ใช่ตัวบุคคล และนำฟีดแบ็กนั้นไปพัฒนาตัวเองต่อ']
+                            turbo: ['ให้และรับ Feedback ทันทีด้วยความจริงใจและสุภาพ โฟกัสที่ "พฤติกรรม" ไม่ใช่ตัวบุคคล และนำฟีดแบ็กนั้นไปพัฒนาตัวเองต่อ']
                         },
                         en: {
-                            def: 'Give direct and constructive feedback immediately, face-to-face and respectfully. Receive criticism as data to grow, dropping excuses and ego.',
+                            def: 'We dare to give direct feedback for development, whether to colleagues or leaders. We don\'t hide the truth just to avoid an awkward conversation, because ignoring problems now only creates bigger ones later.',
                             trad: ['Gossiping behind backs. Not daring to speak directly. Letting colleagues repeat mistakes. Defensiveness and closed-mindedness when receiving feedback.'],
                             turbo: ['Give and receive feedback immediately with sincerity and politeness. Focus on "behavior," not the person, and use that feedback to improve.']
                         },
@@ -880,12 +869,12 @@
                     {
                         icon: 'fa-circle-question', subtopic: '"I Don\'t Know" Shows Strength',
                         th: {
-                            def: 'กล้ายอมรับว่าไม่รู้เมื่อไม่ทราบความจริง เพื่อนำไปสู่การหาคำตอบที่แท้จริงแทนการเดาสุ่ม การยอมรับความจริงแบบตรงไปตรงมาคือจุดเริ่มต้นของการแก้ปัญหา',
+                            def: 'การยอมรับว่า "ไม่รู้" ไม่ใช่ความอ่อนแอ แต่คือความกล้าหาญและเป็นจุดเริ่มต้นของการเรียนรู้ที่แท้จริง เราจะมุ่งมั่นหาคำตอบนั้น ที่นี่เราเคารพความซื่อสัตย์มากกว่าการแกล้งทำเป็นรู้ในสิ่งที่ตัวเองไม่รู้',
                             trad: ['แกล้งทำเป็นรู้เพราะกลัวเสียหน้า หรือดำน้ำทำไปทั้งที่ไม่เข้าใจจนสุดท้ายงานพัง'],
-                            turbo: ['กล้าพูดคำว่า \"ไม่รู้\" และถามทันทีเมื่อไม่เข้าใจ เพื่อขอคำแนะนำจากผู้รู้และนำไปศึกษาเพิ่มเติมจนเข้าใจอย่างแท้จริง']
+                            turbo: ['กล้าพูดคำว่า "ไม่รู้" และถามทันทีเมื่อไม่เข้าใจ เพื่อขอคำแนะนำจากผู้รู้และนำไปศึกษาเพิ่มเติมจนเข้าใจอย่างแท้จริง']
                         },
                         en: {
-                            def: 'Dare to say \'I don\'t know\' rather than guessing. Honesty builds trust. Admitting limitations is the starting block of true learning and problem-solving.',
+                            def: 'We openly admit when we don\'t have the answer, but we always commit to finding it. Honesty is far more respected here than pretending to know something you don\'t.',
                             trad: ['Pretending to know out of fear of losing face, or winging it without understanding until the work is ruined.'],
                             turbo: ['Dare to say "I don\'t know" and ask immediately when you don\'t understand to get advice from experts and study further until truly understanding.']
                         },
@@ -903,12 +892,12 @@
                     {
                         icon: 'fa-circle-xmark', subtopic: 'It\'s OK to be Wrong',
                         th: {
-                            def: 'ยอมรับความผิดพลาด ทิ้งอีโก้ และเร่งหาหนทางแก้ไข ความผิดพลาดไม่ใช่ตราบาปแต่คือข้อมูลชั้นดีในการอุดรอยรั่ว รีบแจ้งปัญหาด้วยความจริงใจก่อนที่มันจะบานปลาย',
+                            def: 'คนที่ไม่เคยทำผิดคือคนที่ไม่เคยทำอะไรเลย ความผิดพลาดเป็นเรื่องปกติของการทำงาน สิ่งสำคัญคือต้องกล้ายอมรับ ลดอีโก้ลง แล้วรีบหาทางแก้ไขให้เร็วที่สุด TURBO คือพื้นที่ปลอดภัยที่สนับสนุนให้ทุกคนกล้าลองสิ่งใหม่ๆ โดยไม่ต้องกลัวว่าจะโดนซ้ำเติมเมื่อล้มเหลว',
                             trad: ['พยายามปกปิดความผิดพลาด โยนความผิดให้คนอื่น หรือซ้ำเติมเมื่อเพื่อนร่วมงานทำพลาด'],
                             turbo: ['ยอมรับผิดทันทีโดยไม่มีข้ออ้าง โฟกัสที่การแก้ไขสถานการณ์เฉพาะหน้า และวางระบบป้องกันไม่ให้เกิดความผิดพลาดซ้ำสอง']
                         },
                         en: {
-                            def: 'Own your mistakes, drop the ego, and resolve them. Failure is not a crime, but hiding it is. Proactively report errors with full transparency before they cascade.',
+                            def: 'The only people who never make mistakes are those who never do anything. It is okay to be wrong. The important thing is to admit it, drop the ego, and quickly find a fix. TURBO is a safe space where everyone dares to try new things, knowing they won\'t be crushed when they fail.',
                             trad: ['Trying to hide mistakes, blaming others, or rubbing it in when colleagues make mistakes.'],
                             turbo: ['Admit mistakes immediately without excuses. Focus on solving the immediate situation and building a system to prevent repeating the mistake.']
                         },
@@ -926,12 +915,12 @@
                     {
                         icon: 'fa-scale-balanced', subtopic: 'Fairness, Always',
                         th: {
-                            def: 'ยึดมั่นความเที่ยงธรรมและมาตรฐานเดียวกันอย่างจริงจัง ปราศจากลูกรัก ระบบอาวุโส หรือพรีวิลเลจ ทุกคนต้องได้รับการปฏิบัติด้วยความเคารพอย่างโปร่งใสภายใต้หลักเกณฑ์เดียวกัน',
+                            def: 'เปิดใจรับฟังไอเดียจากทุกคนอย่างเท่าเทียม โดยใช้ใช้มาตรฐานเดียวกันเสมอ เปิดรับไอเดียและฟีดแบ็กจากทุกคนอย่างเท่าเทียม และจัดการความขัดแย้งอย่างตรงไปตรงมา',
                             trad: ['มีมาตรฐานไม่เท่ากัน ให้อภิสิทธิ์คนสนิท หรือคนตำแหน่งสูงกว่า ทำผิดไม่เป็นไร แต่คนอื่นทำผิดโดนด่า'],
                             turbo: ['ยึดมาตรฐานเดียวกันอย่างเด็ดขาด สนใจที่ "เนื้อหาและความถูกต้อง" มากกว่า "ตำแหน่งหรือความสนิทสนม"']
                         },
                         en: {
-                            def: 'Apply core rules uniformly without exceptions. No favorites, no privileges. Everyone stands equal under corporate values, regardless of rank or closeness.',
+                            def: 'Respect is mandatory for everyone. We hold all people to the same standards, no matter their job title. We care about the results you deliver—not how long you\'ve been here—and we handle disagreements directly instead of talking behind people\'s backs.',
                             trad: ['Having unequal standards. Giving privileges to close friends or higher-ups. It\'s fine if they make a mistake, but others get scolded.'],
                             turbo: ['Strictly adhere to the same standard. Focus on "content and correctness" rather than "position or closeness."']
                         },
@@ -941,7 +930,7 @@
                                 en: { q: "A junior employee and a Head of Department both arrive late to a critical meeting. How is this addressed?", choices: [{ text: "A. Scold the junior for lack of respect, but let the department head slide silently.", isCorrect: false }, { text: "B. Hold both to the exact same standard, as... punctuality respects everyone's time equally.", isCorrect: true }] }
                             },
                             {
-                                th: { q: "คุณได้รับเอกสารวิจารณ์ระบบงานชิ้นสำคัญจากพนักงานฝึกงานจูเนียร์ คุณจะทำอย่างไร?", choices: [{ text: "A. โยนทิ้งไม่เปิดอ่านเพราะคิดว่าพนักงานเด็กใหม่ไม่น่าจะมีความเห็นลึกซึ้งพอ", isCorrect: false }, { text: "B. เปิดใจกว้าง ตรวจสอบ \'เนื้อหา\' ของคำติชมว่าตรงจุดและสอดคล้องกับความจริงหน้างานหรือไม่", isCorrect: true }] },
+                                th: { q: "คุณได้รับเอกสารวิจารณ์ระบบงานชิ้นสำคัญจากพนักงานฝึกงานจูเนียร์ คุณจะทำอย่างไร?", choices: [{ text: "A. โยนทิ้งไม่เปิดอ่านเพราะคิดว่าพนักงานเด็กใหม่ไม่น่าจะมีความเห็นลึกซึ้งพอ", isCorrect: false }, { text: "B. เปิดใจกว้าง ตรวจสอบ 'เนื้อหา' ของคำติชมว่าตรงจุดและสอดคล้องกับความจริงหน้างานหรือไม่", isCorrect: true }] },
                                 en: { q: "A newly joined intern submits a list of suggested improvements for your database system. What do you do?", choices: [{ text: "A. Dismiss the document, believing a trainee doesn't have the context to suggest structural changes.", isCorrect: false }, { text: "B. Review the actual content of the suggestions objectively, valuing good ideas regardless of rank.", isCorrect: true }] }
                             }
                         ]
@@ -956,12 +945,12 @@
                     {
                         icon: 'fa-magnifying-glass', subtopic: 'First, Ask Why?',
                         th: {
-                            def: 'ถามหาเหตุผลและเป้าหมายที่แท้จริงก่อนลงมือทำงานเสมอ หากขั้นตอนหรืองานนั้นไม่ได้สร้างผลลัพธ์หรือคุณค่าที่แท้จริง (Value) ต่อลูกค้าและองค์กร ให้กล้าทักท้วงและเสนอตัดทิ้ง',
+                            def: 'พวกเราไม่ทำงานเพียงแค่ให้มีงานทำ ก่อนจะเริ่มลงมือทำอะไรก็ตาม เราต้องถามตัวเองก่อนเสมอว่า เราทำสิ่งนี้ไปเพื่ออะไร มันช่วยแก้ปัญหาอะไร และจะสร้างผลกระทบอย่างไรบ้าง ถ้าสิ่งนั้นไม่ได้สร้างคุณค่าที่แท้จริง พวกเราก็จะไม่ทำ',
                             trad: ['รับคำสั่งมาก็ทำแบบหุ่นยนต์ ไม่เคยถามหาเหตุผล พอผลลัพธ์ออกมาไม่ตรงเป้าก็บอกว่า "ก็สั่งมาแบบนี้"'],
                             turbo: ['ถามหาความชัดเจนว่า "เป้าหมายของงานนี้คืออะไร?" หรือ "ทำไปทำไม?" เพื่อให้สามารถเลือกวิธีทำงานที่ตรงจุดที่สุด']
                         },
                         en: {
-                            def: 'Always ask \'Why\' before starting. If a workflow doesn\'t add tangible value to customers or enterprise growth, boldly suggest deleting it.',
+                            def: 'We don\'t just do work for the sake of working. Before we start anything, we ask why we are doing it, what problem it solves, and what impact it will have. If it doesn\'t add real value, we don\'t do it.',
                             trad: ['Following orders like a robot without asking why. When results miss the mark, saying, "That\'s what was ordered."'],
                             turbo: ['Ask for clarity: "What is the goal of this work?" or "Why are we doing this?" to choose the most spot-on working method.']
                         },
@@ -979,12 +968,12 @@
                     {
                         icon: 'fa-bullseye', subtopic: 'Obsess on Effectiveness',
                         th: {
-                            def: 'หมกมุ่นกับความสมบูรณ์เชิงผลลัพธ์ ตรวจงานของตนอย่างละเอียดประณีตเสมือนเราเป็นลูกค้าผู้ใช้งานจริง และไม่ยอมให้ออโตเมชันรันงานที่ไม่มีประสิทธิภาพและควรถูกกำจัด',
+                            def: 'พวกเราต้องมั่นใจว่างานนั้นมีคุณค่าควรแก่การทำ ก่อนที่จะคิดหาวิธีทำมันให้เร็วขึ้น ไม่มีประโยชน์อะไรที่จะต้องมานั่งทำกระบวนการที่ไร้สาระให้สมบูรณ์แบบ หาคำตอบให้ได้ก่อนว่าอะไรที่ได้ผลจริง แล้วค่อยปรับปรุงให้มันมีประสิทธิภาพ และอย่าเสียเวลาพัฒนาระบบอัตโนมัติให้กับสิ่งที่ไม่จำเป็นต้องมีตั้งแต่แรก',
                             trad: ['ทำงานลวกๆ อ้างว่าพยายามเต็มที่แล้ว ยอมลดคุณภาพงานเมื่อเวลาจำกัด หรือทำงานเสร็จแต่ใช้ไม่ได้จริง'],
                             turbo: ['รักษาคุณภาพงานให้ได้มาตรฐานแม้เวลาจำกัด ตรวจทานงานตัวเองเสมอ (Self-review) และวางระบบป้องกันไม่ให้พลาดซ้ำสอง']
                         },
                         en: {
-                            def: 'Obsess over actual effectiveness first. Self-review your output as if you were the customer. Never automate a broken process—delete it instead.',
+                            def: 'We make sure a task is actually worth doing before we try to do it faster. There is no point in perfecting a useless process. Figure out what works first, then make it efficient. Never automate something that shouldn\'t exist in the first place.',
                             trad: ['Doing sloppy work and claiming "I tried my best." Reducing quality when time is limited, or finishing work that isn\'t practical.'],
                             turbo: ['Maintain quality standards even when time is limited. Always self-review work and build systems to prevent repeating mistakes.']
                         },
@@ -1002,12 +991,12 @@
                     {
                         icon: 'fa-scissors', subtopic: 'Delete, Then Simplify',
                         th: {
-                            def: 'ตัดขั้นตอนที่ซับซ้อนและส่วนเกินออกไปก่อน แล้วค่อยจัดกระบวนการที่เหลือให้เรียบง่าย เข้าใจได้ภายใน 10 วินาที ระบบที่ซับซ้อนมักจะพังง่ายและซุกซ่อนรอยรั่วไว้',
+                            def: 'กล้าเสนอให้ตัดขั้นตอนที่ซ้ำซ้อนหรือกฎเกณฑ์ที่ไม่จำเป็นทิ้งเพื่อลดความล่าช้า แล้วจึงค่อยทำให้สิ่งที่เหลืออยู่เข้าใจง่ายขึ้น เพื่อให้เราโฟกัสแค่สิ่งที่สร้างมูลค่าจริงๆ พร้อมกับหมั่นถามตัวเองเสมอว่า "เราตัดสิ่งนี้ออกไปได้ไหม?" และ "เราทำให้มันง่ายกว่านี้ได้อีกหรือเปล่า?"',
                             trad: ['สร้างขั้นตอนยุ่งยาก ยึดติดกับกฎเกณฑ์หยุมหยิม และนำเสนอเยิ่นเย้อไร้แก่นสาร'],
                             turbo: ['มุ่งตัดทอนสิ่งไม่จำเป็น (Rethink & Delete) และสรุปเนื้อหาให้เข้าใจได้ภายใน 10 วินาที']
                         },
                         en: {
-                            def: 'Delete first, then simplify. Complex systems hide flaws and break easily. Condense workflows until they are clear and understandable in 10 seconds.',
+                            def: 'Don\'t waste time fixing things that shouldn\'t exist at all. Cut the unnecessary parts first, then make what is left as simple as possible. Complexity hides mistakes and breaks easily, so keep asking: "Can we delete this?" and "Can we make this simpler?"',
                             trad: ['Allowing petty rules. Working through unnecessary steps. Writing emails or presentations full of jargon and fluff.'],
                             turbo: ['Always propose cutting unnecessary steps or processes. Summarize information concisely to be understood within 10 seconds.']
                         },
@@ -1025,12 +1014,12 @@
                     {
                         icon: 'fa-hammer', subtopic: 'Hands-On',
                         th: {
-                            def: 'ลงสัมผัสหน้างานจริงด้วยตัวเองเพื่อจับต้องต้นตอของปัญหา การเข้าใจปัญหาแบบลอยๆ ผ่านกระดาษรายงานจะทำให้การออกแบบแนวทางการแก้ไขพังและไม่สมจริง',
+                            def: 'ลงมือแก้ปัญหาหน้างานด้วยตัวเองทันที ไม่รอให้ใครมาป้อนคำตอบ ไอเดียจะไม่มีค่าเลยถ้าไม่ถูกนำมาทำให้เกิดขึ้นจริง และไม่เอาแต่นั่งสั่งงาน แต่เราพร้อมลงหน้างาน เพื่อให้เข้าใจปัญหาอย่างถ่องแท้',
                             trad: ['เป็นแค่นักทฤษฎี ดีแต่สั่ง นั่งรอคนมาป้อนคำตอบ หรือไม่ยอมลงไปดูปัญหาจริงๆ ที่หน้างาน'],
                             turbo: ['คุ้ย Data หรือลงหน้างานจริงเพื่อค้นหาต้นตอของปัญหาด้วยตัวเอง และสามารถอธิบายรายละเอียดของงานได้อย่างทะลุปรุโปร่ง']
                         },
                         en: {
-                            def: 'Go to the front-line to experience real problems first-hand. Detached metrics and remote reports hide the real operational leaks.',
+                            def: 'The best solutions come from doing the work, not just watching from the sidelines. By personally testing products, talking to customers, and fixing things directly, we discover the real truth that reports and data simply can\'t show us.',
                             trad: ['Being just a theorist. Only giving orders. Waiting for answers to be spoon-fed, or refusing to look at actual front-line problems.'],
                             turbo: ['Dig into data or go to the actual front-line to find the root cause of problems yourself. Be able to explain task details thoroughly.']
                         },
@@ -1048,12 +1037,12 @@
                     {
                         icon: 'fa-people-arrows', subtopic: 'Collaborate More, Meeting Less',
                         th: {
-                            def: 'ลดเวลาและตัดความหนาแน่นของการเข้าประชุมที่ไม่เกิดประโยชน์ การประชุมคือทางเลือกสุดท้าย ใช้เพื่อหาข้อสรุปที่ซับซ้อน สื่อสารแบบไม่พร้อมกัน (Asynchronous) แทนการรายงานความคืบหน้า',
+                            def: 'การประชุมควรมีขนาดเล็ก จัดเมื่อจำเป็นจริงๆ และโฟกัสเฉพาะเรื่องที่สำคัญ จำกัดคนเข้าไม่เกิน 10 คน และใช้เป็นทางเลือกสุดท้าย อัปเดตงานให้ชัดเจนผ่านแชตหรือระบบอัตโนมัติ แทนที่จะต้องรอพูดในประชุมใหญ่ประจำสัปดาห์ และถ้าคุณรู้สึกว่าประชุมนี้ไม่มีประโยชน์ต่อตัวคุณแล้ว คุณสามารถเดินออกได้ทันที',
                             trad: ['เอะอะก็นัดประชุมเป็นชั่วโมงกับเรื่องเล็กน้อย หรือเข้าประชุมโดยไม่มีวาระชัดเจน (Agenda) สุดท้ายไม่ได้ข้อสรุป'],
                             turbo: ['ยกหูโทรคุย 5 นาทีจบ หรือทักแชทเคาะข้อสรุปทันที หากต้องประชุมจะมีเป้าหมายชัดเจนและใช้เวลาสั้นที่สุด']
                         },
                         en: {
-                            def: 'Meetings are last resorts—keep them small, brief, and decision-focused. Use asynchronous updates to save precious execution hours.',
+                            def: 'Meetings should be small, rare, and highly focuse Keep them under 10 people and use them only as a last resort. Update work clearly through chat or automated systems instead of waiting for a weekly big meeting. if you realize a meeting isn\'t useful to you, you are expected to leave.',
                             trad: ['Calling hour-long meetings for trivial matters, or attending meetings without a clear agenda, ending without conclusions.'],
                             turbo: ['Call for 5 minutes or chat to finalize immediately. If a meeting is needed, have a clear goal and keep it as short as possible.']
                         },
@@ -1078,12 +1067,12 @@
                     {
                         icon: 'fa-bolt', subtopic: 'Act Now, Fix Later',
                         th: {
-                            def: 'กล้าตัดสินใจและลงมือทำทันทีด้วยข้อมูลที่มี 80% ดีกว่ารอข้อมูลครบถ้วนจนสูญเสียโอกาสทางธุรกิจ ความเร็วและโมเมนตัมสำคัญกว่าความสมบูรณ์แบบที่ไม่เคยมีอยู่จริง',
+                            def: 'เน้นการลงมือทำทันทีด้วยข้อมูลที่มี แล้วค่อยๆ ปรับแก้ ดีกว่าการมัวแต่วิเคราะห์จนไม่ได้ทำอะไรเลย การมัวแต่รอข้อมูลที่สมบูรณ์แบบ 100% มีแต่จะทำลายแรงขับเคลื่อนและทำให้เราเสียโอกาส',
                             trad: ['เสียเวลากับการโต้เถียง รอคอยแผนการที่สมบูรณ์แบบ 100% จนสูญเสียจังหวะธุรกิจ'],
                             turbo: ['ทดลองผ่านงานจริง (Action-oriented) ใช้แผนแก้ขัดพยุงงานข้ามวิกฤต แล้วจึงตามแก้ไขอย่างยั่งยืน']
                         },
                         en: {
-                            def: 'Proceed with 80% information. Momentum is critical—waiting for perfect data leads to lost opportunities. Launch fast, test live, and refine tomorrow.',
+                            def: 'Don\'t get stuck overthinking. Move forward when you have most of the facts, trust your gut, and fix mistakes as you go. Waiting for perfect information just kills momentum and costs us opportunities.',
                             trad: ['Endlessly debating. Waiting for a 100% perfect plan or complete data before starting, ultimately losing opportunities.'],
                             turbo: ['Create a prototype and test immediately. If facing an urgent issue, find a workaround first, then find a permanent fix later.']
                         },
@@ -1101,12 +1090,12 @@
                     {
                         icon: 'fa-chart-line', subtopic: 'Outcome, Not Hours',
                         th: {
-                            def: 'วัดคุณค่าความสำเร็จที่ผลงานจริงและผลลัพธ์ทางธุรกิจ ไม่ใช่วัดที่ความเหนื่อยยาก จำนวนชั่วโมงการทำโอที หรือจำนวนชั่วโมงการนั่งเก้าอี้ออฟฟิศ',
+                            def: 'ความสำเร็จวัดกันที่ "ผลลัพธ์" ไม่ใช่จำนวนชั่วโมงที่นั่งทำงานหรือความพยายาม',
                             trad: ['นั่งแช่ที่ออฟฟิศดึกๆ แกล้งยุ่งเพื่อให้ดูเป็นคนขยัน หรือพรีเซนต์ความเหนื่อยยากแทนที่จะโชว์ผลลัพธ์'],
                             turbo: ['ประเมินตัวเองจากชิ้นงานที่สำเร็จตามเป้าหมาย (Output/Outcome) บริหารเวลาอย่างมีประสิทธิภาพเพื่อให้งานเสร็จตรงเวลา']
                         },
                         en: {
-                            def: 'Value deliverables and core business impact over hours spent at desks or meetings. Activity is not progress; outcomes define success.',
+                            def: 'Success means delivering real results and fixing problems, not just attending meetings or trying to look busy.',
                             trad: ['Staying late at the office to look busy and hardworking. Presenting exhaustion instead of showing results.'],
                             turbo: ['Evaluate yourself by completed outcomes/output. Manage time effectively to finish work on time.']
                         },
@@ -1124,12 +1113,12 @@
                     {
                         icon: 'fa-crosshairs', subtopic: 'Laser Focus on What Matters',
                         th: {
-                            def: 'จัดระเบียบลำดับความสำคัญและเลือกโฟกัสเฉพาะงานหลัก 1-2 ชิ้นที่สร้างอิมแพ็คสูงสุดต่อเป้าหมายบริษัท การพยายามทำทุกอย่างพร้อมกันจะนำไปสู่ความล้มเหลวในทุกอย่าง',
+                            def: 'พวกเราไม่สามารถทำทุกอย่างพร้อมกันได้ การดันทุรังทำทุกสิ่งมีแต่จะการันตีความล้มเหลว เราจึงต้องเลือกอย่างรอบครอบว่าจะทำอะไรและจะไม่ทำอะไร',
                             trad: ['พยายามทำทุกอย่างพร้อมกัน งานแทรกก็รับหมด ไม่กล้าปฏิเสธ จนสุดท้ายงานหลักไม่เสร็จ หรือเสร็จแต่ไม่ได้คุณภาพ'],
                             turbo: ['เลือกแก้ปัญหา 1-2 อย่างที่สร้าง Impact สูงสุดต่อบริษัทให้เสร็จก่อน กล้าพูด "ไม่" กับงานที่ไม่ตอบโจทย์เป้าหมายหลัก']
                         },
                         en: {
-                            def: 'Concentrate strictly on 1-2 high-impact tasks. Trying to pursue everything at once guarantees failure. Learn to ruthlessly say \'No\' to distractions.',
+                            def: 'We cannot do everything at once. Trying to do everything just guarantees we will fail. Instead, we focus intensely on our biggest priorities, deciding carefully what we must do and—just as importantly—what we need to ignore.',
                             trad: ['Trying to do everything at once. Accepting all interrupting tasks. Afraid to say no, resulting in unfinished main tasks or poor quality.'],
                             turbo: ['Choose 1-2 problems that create the highest impact for the company to solve first. Dare to say "no" to tasks that don\'t meet main goals.']
                         },
@@ -1147,12 +1136,12 @@
                     {
                         icon: 'fa-lightbulb', subtopic: 'Work Smart AND Hard',
                         th: {
-                            def: 'ทำงานหนักอย่างมีเป้าหมายและใช้ทักษะความรู้รวมถึงเทคโนโลยีใหม่ๆ มาช่วยทุ่นแรงอย่างฉลาดเพื่อทวีคูณผลงาน ไม่ใช่แค่ขยันเหนื่อยล้าทางกายอย่างไร้ทิศทาง',
+                            def: 'ความขยันต้องมาพร้อมกับทิศทางที่ถูกต้อง ทำงานหนักอย่างมีเป้าหมาย และรู้จักใช้เครื่องมือหรือเทคนิคเพื่อทุ่นแรงให้ได้ผลลัพธ์ดีที่สุด',
                             trad: ['ก้มหน้าทำงานแบบ Manual ซ้ำๆ ถึกทนแบบไม่คิดหาวิธีที่ฉลาดขึ้น หรือภูมิใจที่ตัวเองทำงานหนักกว่าคนอื่นโดยไม่จำเป็น'],
                             turbo: ['หยุดคิดวิเคราะห์ หาวิธีหรือ Tools/Technology ใหม่ๆ มาช่วยทำงานอัตโนมัติ (Automate) เพื่อลดเวลาและแรงงาน']
                         },
                         en: {
-                            def: 'Work hard, but work smart. Combine high intensity with cutting-edge tools to automate and scale. Sustainable success requires direction, not just exhaustion.',
+                            def: 'Working hard without a goal is pointless, and having a goal without putting in the work gets you nowhere. We focus on getting top-notch results without taking shortcuts, while making sure we pace ourselves so nobody burns out.',
                             trad: ['Doing manual, repetitive work without thinking of smarter ways. Being proud of working unnecessarily harder than others.'],
                             turbo: ['Stop and analyze. Find new tools/technology to automate tasks to save time and effort.']
                         },
@@ -1170,12 +1159,12 @@
                     {
                         icon: 'fa-puzzle-piece', subtopic: 'Solve the Unsolvable',
                         th: {
-                            def: 'มองหาทางออกที่คิดค้นขึ้นใหม่และปฏิเสธที่จะท้อถอยต่อความยากลำบากหรืออุปสรรคเชิงระบบ ท้าทายสิ่งที่เป็นไปไม่ได้เพื่อให้ได้เปรียบในการแข่งขันอย่างยั่งยืน',
+                            def: 'พวกเราพร้อมพุ่งชนปัญหายากๆ ที่คนอื่นพยายามหลีกเลี่ยง งานง่ายๆ คู่แข่งย่อมลอกเลียนแบบได้ไว แต่งานยากๆ ต่างหากที่จะสร้างความได้เปรียบที่ยั่งยืนให้เรา เมื่อเราล้มเหลว เราไม่ล้มเลิก—เราแค่ใช้ข้อมูลนั้นมาเรียนรู้ ปรับทิศทาง และเปลี่ยนอุปสรรคให้กลายเป็นไอเดียใหม่ๆ',
                             trad: ['พอนางยาก หรือเจอข้อจำกัดก็ถอดใจยอมแพ้ หนีไปทำแต่งานง่ายๆ หรืออ้างว่า \"มันเป็นไปไม่ได้\"'],
                             turbo: ['กัดฟันลุย หาวิธีพลิกแพลง (Hacking) หรือมองมุมใหม่เพื่อแก้ปัญหาที่คนอื่นคิดว่าเป็นไปไม่ได้ให้สำเร็จ']
                         },
                         en: {
-                            def: 'Tackle complex challenges and reject \'impossible\' verdicts. Hard moats build strong competitive moats. Solve the unsolvable to keep us ahead.',
+                            def: 'Don\'t give up on the word "impossible." We take on the tough problems that others avoi Easy work gets copied quickly by competitors, but doing the hard work gives us a lasting edge. When we fail, we don\'t quit—we just use that data to learn, pivot, and turn roadblocks into fresh ideas.',
                             trad: ['Giving up when tasks are hard or face limitations. Fleeing to easy tasks or claiming \"it\'s impossible.\"'],
                             turbo: ['Grit your teeth and push through. Find workarounds (hacking) or look from new angles to successfully solve problems others think are impossible.']
                         },
@@ -1200,12 +1189,12 @@
                     {
                         icon: 'fa-mountain', subtopic: 'Grit Over Genius',
                         th: {
-                            def: 'ความอุตสาหะและกัดไม่ปล่อยสำคัญกว่าความฉลาด พรสวรรค์ไม่ได้ทำให้คุณเก่งขึ้นหากปราศจากการลงมือทำซ้ำๆ และอดทนสู้กับความล้มเหลวหลายสิบครั้ง',
+                            def: 'ความมุ่งมั่นและกัดไม่ปล่อย (Grit) สำคัญกว่าพรสวรรค์ (Genius) ความสำเร็จเกิดจากการลงมือทำซ้ำๆ ล้มแล้วลุก ไม่ใช่แค่ความฉลาด',
                             trad: ['ถอดใจอย่างรวดเร็ว เมื่อเผชิญอุปสรรคและยอมแพ้ต่อความยากลำบาก'],
                             turbo: ['กัดไม่ปล่อย (Grit) อดทนคลุกคลีกับปัญหา ค้นหาและทดสอบทางเลือกใหม่ ๆ จนเจอทางออก']
                         },
                         en: {
-                            def: 'Grit beats raw talent. Mastery is built through endless practice and a refusal to give up. The most successful people simply outwork the obstacles.',
+                            def: 'Raw talent is overrate Persistence and the drive to push through tough times will always win out. You don\'t learn by just dreaming about it; you learn by putting in the hard work, making mistakes, and trying again until you succee',
                             trad: ['Giving up easily on hard tasks or immediate unsolved problems, thinking one is not smart or talented enough.'],
                             turbo: ['Endure complex problems. Grit your teeth and test solutions until finding the answer. Never give up even if it\'s hard.']
                         },
@@ -1223,13 +1212,13 @@
                     {
                         icon: 'fa-dumbbell', subtopic: 'Depth Through Practice',
                         th: {
-                            def: 'ความเชี่ยวชาญฝังลึกเกิดจากการลงมือฝึกฝนจริงหน้างานด้วยตนเองจนขึ้นใจ ไม่ใช่เพียงการจำหลักการทฤษฎีจากการดูคู่มือหรือสไลด์ประชุม',
-                            trad: ['เรียนรู้แบบผิวเผิน เช่น ดูคลิปสอนจบครั้งเดียวก็เคลมว่า \"เข้าใจแล้ว ทำเป็นแล้ว\" โดยไม่เคยลองลงมือทำจริง'],
+                            def: 'ความเชี่ยวชาญไม่ได้มาจากการนั่งอ่านเพียงอย่างเดียว แต่เกิดจากการลงมือทำจริง ฝึกฝนอย่างบ้าคลั่ง และเปลี่ยนข้อมูลพื้นฐานให้กลายเป็นความเชี่ยวชาญที่แท้จริง',
+                            trad: ['เรียนรู้แบบผิวเผิน เช่น ดูคลิปสอนจบครั้งเดียวก็เคลมว่า "เข้าใจแล้ว ทำเป็นแล้ว" โดยไม่เคยลองลงมือทำจริง'],
                             turbo: ['ฝึกฝนงานของตัวเองซ้ำๆ จนเกิดความเชี่ยวชาญและแม่นยำ เพื่อเปลี่ยนข้อมูลตื้นๆ ให้เป็นความรู้ฝังลึก']
                         },
                         en: {
-                            def: 'True expertise is forged on the ground, not in classroom slides. Practice live queries, contracts, and sales repeatedly until they become muscle memory.',
-                            trad: ['Learning superficially, like watching a tutorial once and claiming \"I understand and can do it\" without ever trying for real.'],
+                            def: 'Anyone can look up a quick answer online, but deep knowledge is what sets you apart. Mastery doesn\'t come from just reading about a topic—it comes from getting your hands dirty, practicing relentlessly, and turning basic information into true expertise.',
+                            trad: ['Learning superficially, like watching a tutorial once and claiming "I understand and can do it" without ever trying for real.'],
                             turbo: ['Practice your own work repeatedly until expertise and accuracy are achieved to turn shallow info into deep knowledge.']
                         },
                         practices: [
@@ -1246,12 +1235,12 @@
                     {
                         icon: 'fa-arrow-trend-up', subtopic: 'Better Every Day',
                         th: {
-                            def: 'การพัฒนาตนเองอย่างยั่งยืนไม่ใช่เรื่องที่เปลี่ยนไปชั่วข้ามคืน แต่คือการค่อยๆ อุดรอยรั่วและปรับปรุงความเร็วสัปดาห์ละนิดอย่างสม่ำเสมอในระยะยาว',
+                            def: 'การเติบโตไม่ใช่วิธีคิดแบบข้ามคืน แต่คือการค่อยๆ พัฒนาและเก็บเล็กผสมน้อยทุกวัน การปรับปรุงแค่วันละนิดจะสร้างผลลัพธ์มหาศาลในระยะยาว',
                             trad: ['พยายามจะรื้อระบบหรือเปลี่ยนทุกอย่างให้ดีขึ้นภายในข้ามคืนจนสุดท้ายหมดไฟ หรือไม่เคยนำข้อผิดพลาดมาทบทวน'],
                             turbo: ['เก็บปัญหาเป็นบทเรียน ค่อยๆ ปรับปรุงกระบวนการทำงานให้เร็วขึ้นและดีขึ้นทีละจุดอย่างสม่ำเสมอทุกวัน']
                         },
                         en: {
-                            def: 'Growth compounds over time. Focus on getting slightly better, solving one friction point, and upgrading your skill checklist every single week.',
+                            def: 'Growth is not an overnight mindset, but gradually developing and accumulating small wins every day. Improving just a little bit daily creates massive results in the long run.',
                             trad: ['Trying to overhaul the system or change everything to be better overnight until burning out. Not reviewing mistakes.'],
                             turbo: ['Take problems as lessons. Regularly improve work processes point by point every day.']
                         },
@@ -1269,12 +1258,12 @@
                     {
                         icon: 'fa-person-digging', subtopic: 'Leaders Do the Work',
                         th: {
-                            def: 'ผู้นำที่แท้จริงคือผู้ที่ลุยงานหน้างานเคียงบ่าเคียงไหล่กับลูกทีมยามวิกฤต ความเคารพนับถือต้องสร้างผ่านทักษะความรู้และความรับผิดชอบจริง ไม่ใช่ได้มาตามตำแหน่ง',
+                            def: 'ผู้นำที่แท้จริงต้องพร้อมลงไปคลุกฝุ่นและลุยงานหน้างานร่วมกับทีม ความเคารพเกิดจากความสามารถและการลงมือทำ ไม่ใช่แค่ตำแหน่ง',
                             trad: ['ดีแต่นั่งสั่งงาน พอทีมต้องลุยงานดึกก็ซื้อแค่ขนมมาให้แล้วตัวเองกลับบ้านไปพักผ่อน ปล่อยให้ทีมเผชิญปัญหาลำพัง'],
                             turbo: ['ลงไปทำให้ดูเป็นตัวอย่าง (Lead by example) นั่งเทสต์ระบบ หรือช่วยตอบคำถามลูกค้าเคียงบ่าเคียงไหล่ไปพร้อมกับทีม']
                         },
                         en: {
-                            def: 'True leaders work side-by-side with their team during crises. Respect is earned through hands-on capability and accountability, not rank or titles.',
+                            def: 'True leaders must be ready to "get dirty" and handle front-line work with the team. Respect comes from ability and action, not just position.',
                             trad: ['Only giving orders. When the team works late, just buying snacks and going home to rest, leaving the team to face problems alone.'],
                             turbo: ['Lead by example. Test systems or help answer customer questions side-by-side with the team during difficult times.']
                         },
@@ -1292,12 +1281,12 @@
                     {
                         icon: 'fa-book-open-reader', subtopic: 'Learn Forever',
                         th: {
-                            def: 'โลกเปลี่ยนไปไวมาก เราจึงต้องตื่นตัว อยากรู้อยากเห็น และหมั่นเรียนรู้เทคโนโลยีใหม่ๆ (เช่น AI) รวมถึงกระบวนงานจากวงการอื่นเพื่อมาช่วยอัปสปีดองค์กร',
+                            def: 'โลกเปลี่ยนแปลงตลอดเวลา เราจึงต้องมีความอยากรู้อยากเห็นและพร้อมที่จะเรียนรู้สิ่งใหม่ๆ อยู่เสมอ แม้จะเป็นเรื่องนอกอุตสาหกรรมของเราก็ตาม เพราะความท้าทายที่เราจะต้องเจอนั้น จำเป็นจะต้องการใช้วิธีแก้ปัญหาแบบใหม่ๆ',
                             trad: ['ตื่นตระหนกและต่อต้านเมื่อมีเทคโนโลยีหรือเครื่องมือใหม่ๆ เข้ามา (เช่น AI) และพยายามปกป้องวิธีทำงานแบบเดิมๆ'],
                             turbo: ['ตั้งใจศึกษาและเปิดใจรับเครื่องมือใหม่ๆ (เช่น AI) รวมถึงศึกษาวิธีแก้ปัญหาจากอุตสาหกรรมอื่น เพื่ออัปสกิลตัวเอง']
                         },
                         en: {
-                            def: 'Continuous learning is survival. Stay curious, master cutting-edge tools like AI, and adopt proven methods from other sectors to keep upgrading yourself.',
+                            def: 'Curiosity is our biggest advantage. Always make time to learn new skills and explore fresh ideas, even from outside our usual industry. The challenges of tomorrow will need brand-new solutions, so we have to keep adapting to survive and thrive.',
                             trad: ['Panicking and resisting when new technology or tools arrive (like AI). Trying to protect old ways of working.'],
                             turbo: ['Study and open your mind to new tools (like AI) intentionally. Study solutions from other industries to upskill yourself.']
                         },
@@ -1358,7 +1347,8 @@
                 emailError: "กรุณากรอกข้อมูลให้ครบถ้วน",
                 emailInvalid: "กรุณากรอกอีเมลของบริษัท (@turbo.co.th) และรหัสพนักงาน 8 หลักให้ถูกต้อง",
                 summaryTitle: "สรุปเนื้อหาโมดูล",
-                redirecting: "กำลังพาท่านกลับสู่ระบบ SuccessFactors..."
+                redirecting: "กำลังพาท่านกลับสู่ระบบ SuccessFactors...",
+                backToCard: "ย้อนกลับไปการ์ดก่อนหน้า"
             },
             en: {
                 adminAccess: "Admin Setup",
@@ -1400,7 +1390,8 @@
                 emailError: "Please fill in all fields.",
                 emailInvalid: "Please enter a valid company email (@turbo.co.th) and 8-digit Employee ID.",
                 summaryTitle: "Module Summary",
-                redirecting: "Redirecting you to SuccessFactors..."
+                redirecting: "Redirecting you to SuccessFactors...",
+                backToCard: "Back to Flashcard"
             }
         };
 
@@ -1650,6 +1641,10 @@
             isCardFlipped = false;
             document.getElementById('flashcard').classList.remove('flipped');
             renderFlashcard();
+            showScreen('screen-flashcard');
+        }
+
+        function backToFlashcard() {
             showScreen('screen-flashcard');
         }
 
@@ -1996,6 +1991,7 @@
         window.enterOverview = enterOverview;
         window.enterFlashcards = enterFlashcards;
         window.startModule = startModule;
+        window.backToFlashcard = backToFlashcard;
 
         // --- INITIAL SETUP ON PAGE LOAD ---
         window.onload = async function() {
@@ -2039,3 +2035,5 @@
     </script>
 </body>
 </html>
+
+```
